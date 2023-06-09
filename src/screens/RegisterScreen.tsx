@@ -18,7 +18,7 @@ function RegisterScreen() {
 
   return (
     <div>
-      <div className="flex justify-center items-center min-h-screen bg-cover bg-center bg-[url('/assets/images/map.svg')] dark:bg-[url('/assets/images/map-dark.svg')]">
+      <div className="flex justify-center items-center min-h-screen bg-cover bg-center bg-[url('./assets/images/map.svg')] dark:bg-[url('./assets/images/map-dark.svg')]">
         <div className="panel sm:w-[480px] m-6 max-w-lg w-full">
           <h2 className="font-bold text-2xl mb-3">Sign Up</h2>
           <p className="mb-7">Enter your email and password to register</p>
