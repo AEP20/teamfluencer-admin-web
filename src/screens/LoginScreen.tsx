@@ -1,38 +1,85 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { login, logout, selectUser } from '../redux/store/userSlice';
+import { TAlogin, TAsignup } from '../services/authAPI';
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
-
-  const handleLogin = () => {
-    dispatch(login({ name: 'John Doe' }));
-  };
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const handleLogout = () => {
     dispatch(logout());
   };
+
+  const handleForm = async (e: any) => {
+    e.preventDefault();
+
+    if (email === '') {
+      setError('Email is required');
+    } else if (password === '') {
+      setError('Password is required');
+    } else {
+      setError(null);
+      handleLogin();
+    }
+  };
+
+  const handleLogin = async () => {
+    try {
+      const response = await TAlogin(email, password);
+      console.log('response', response);
+      dispatch(login(response));
+    } catch (error: any) {
+      if (error.response) {
+        setError(error.response.data.error);
+      } else {
+        setError(error.message);
+      }
+    }
+  };
+
   // const dispatch = useDispatch();
   useEffect(() => {}, []);
   // const isDark =
-  //   useSelector(state => state.themeConfig.theme) === 'dark' ? true : false;
+  // useSelector(state => state.themeConfig.theme) === 'dark' ? true : false;
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-cover bg-center bg-[url('./assets/images/map.svg')] dark:bg-[url('./assets/images/map-dark.svg')]">
       <div className="panel sm:w-[480px] m-6 max-w-lg w-full">
         <h2 className="font-bold text-2xl mb-3">Sign In</h2>
         <p className="mb-7">Enter your email and password to login</p>
-        <form className="space-y-5" onSubmit={handleLogin}>
+        <form className="space-y-5" onSubmit={handleForm}>
           <div>
             <label htmlFor="email">Email</label>
-            <input id="email" type="email" className="form-input" placeholder="Enter Email" />
+            <input
+              id="email"
+              type="email"
+              className="form-input"
+              placeholder="Enter Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
           <div>
             <label htmlFor="password">Password</label>
-            <input id="password" type="password" className="form-input" placeholder="Enter Password" />
+            <input
+              id="password"
+              type="password"
+              className="form-input"
+              placeholder="Enter Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
-          <button type="button" onClick={handleLogin} className="btn btn-primary w-full">
+          {error && (
+            <div className="text-center text-red-500">
+              <p>{error}</p>
+            </div>
+          )}
+          <button type="submit" className="btn btn-primary w-full">
             SIGN IN
           </button>
         </form>

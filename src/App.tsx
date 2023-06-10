@@ -9,6 +9,7 @@ import { login, logout, selectUser } from './redux/store/userSlice';
 
 function App() {
   const user = useSelector(selectUser);
+  console.log('user', user);
 
   return (
     <BrowserRouter>
