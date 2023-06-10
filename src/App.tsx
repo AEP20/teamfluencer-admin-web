@@ -1,39 +1,43 @@
 import { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, BrowserRouter, Routes, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import Index from './screens/Index';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import { login, logout, selectUser } from './redux/store/userSlice';
 
-
-function ProtectedIndex() {
-  const user =  useSelector(selectUser);
-  const navigate = useNavigate();
-  console.log("App user:"+user)
-  useEffect(() => {
-    if (!user) {
-      navigate('/login');
-    }
-  }, [user, navigate]);
-
-  return user ? <Index /> : null;
-}
-
 function App() {
+  const user = useSelector(selectUser);
+
   return (
-    <Router>
-      <Header />
-      <main>
-        <Routes>
-          <Route path="/register" element={<LoginScreen />} />
-          <Route path="/login" element={<LoginScreen />} />
-          <Route path="/" element={<ProtectedIndex />} />
-        </Routes>
-      </main>
-    </Router>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/auth/*" element={!user ? <AuthLayout /> : <Navigate to="/" />} />
+        <Route path="/*" element={user ? <MainLayout /> : <Navigate to="/auth/login" />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
 export default App;
+
+function AuthLayout() {
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginScreen />} />
+      <Route path="/register" element={<RegisterScreen />} />
+    </Routes>
+  );
+}
+
+function MainLayout() {
+  return (
+    <>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Index />} />
+      </Routes>
+    </>
+  );
+}
