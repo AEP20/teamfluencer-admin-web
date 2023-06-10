@@ -1,8 +1,19 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
+import { login, logout, selectUser } from '../redux/store/userSlice';
 
 const LoginScreen = () => {
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
+
+  const handleLogin = () => {
+    dispatch(login({ name: "John Doe" }));
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
   // const dispatch = useDispatch();
   useEffect(() => {}, []);
   const navigate = useNavigate();
