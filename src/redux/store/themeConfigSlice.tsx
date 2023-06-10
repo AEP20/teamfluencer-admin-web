@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import i18next from 'i18next';
 import themeConfig from '../../theme.config';
 
@@ -15,21 +15,21 @@ const defaultState = {
   sidebar: false,
   pageTitle: '',
   languageList: [
-    {code: 'zh', name: 'Chinese'},
-    {code: 'da', name: 'Danish'},
-    {code: 'en', name: 'English'},
-    {code: 'fr', name: 'French'},
-    {code: 'de', name: 'German'},
-    {code: 'el', name: 'Greek'},
-    {code: 'hu', name: 'Hungarian'},
-    {code: 'it', name: 'Italian'},
-    {code: 'ja', name: 'Japanese'},
-    {code: 'pl', name: 'Polish'},
-    {code: 'pt', name: 'Portuguese'},
-    {code: 'ru', name: 'Russian'},
-    {code: 'es', name: 'Spanish'},
-    {code: 'sv', name: 'Swedish'},
-    {code: 'tr', name: 'Turkish'},
+    { code: 'zh', name: 'Chinese' },
+    { code: 'da', name: 'Danish' },
+    { code: 'en', name: 'English' },
+    { code: 'fr', name: 'French' },
+    { code: 'de', name: 'German' },
+    { code: 'el', name: 'Greek' },
+    { code: 'hu', name: 'Hungarian' },
+    { code: 'it', name: 'Italian' },
+    { code: 'ja', name: 'Japanese' },
+    { code: 'pl', name: 'Polish' },
+    { code: 'pt', name: 'Portuguese' },
+    { code: 'ru', name: 'Russian' },
+    { code: 'es', name: 'Spanish' },
+    { code: 'sv', name: 'Swedish' },
+    { code: 'tr', name: 'Turkish' },
   ],
   semidark: false,
 };
@@ -46,21 +46,21 @@ const initialState = {
   sidebar: localStorage.getItem('sidebar') || defaultState.sidebar,
   semidark: localStorage.getItem('semidark') || themeConfig.semidark,
   languageList: [
-    {code: 'zh', name: 'Chinese'},
-    {code: 'da', name: 'Danish'},
-    {code: 'en', name: 'English'},
-    {code: 'fr', name: 'French'},
-    {code: 'de', name: 'German'},
-    {code: 'el', name: 'Greek'},
-    {code: 'hu', name: 'Hungarian'},
-    {code: 'it', name: 'Italian'},
-    {code: 'ja', name: 'Japanese'},
-    {code: 'pl', name: 'Polish'},
-    {code: 'pt', name: 'Portuguese'},
-    {code: 'ru', name: 'Russian'},
-    {code: 'es', name: 'Spanish'},
-    {code: 'sv', name: 'Swedish'},
-    {code: 'tr', name: 'Turkish'},
+    { code: 'zh', name: 'Chinese' },
+    { code: 'da', name: 'Danish' },
+    { code: 'en', name: 'English' },
+    { code: 'fr', name: 'French' },
+    { code: 'de', name: 'German' },
+    { code: 'el', name: 'Greek' },
+    { code: 'hu', name: 'Hungarian' },
+    { code: 'it', name: 'Italian' },
+    { code: 'ja', name: 'Japanese' },
+    { code: 'pl', name: 'Polish' },
+    { code: 'pt', name: 'Portuguese' },
+    { code: 'ru', name: 'Russian' },
+    { code: 'es', name: 'Spanish' },
+    { code: 'sv', name: 'Swedish' },
+    { code: 'tr', name: 'Turkish' },
   ],
 };
 
@@ -68,7 +68,7 @@ const themeConfigSlice = createSlice({
   name: 'auth',
   initialState: initialState,
   reducers: {
-    toggleTheme(state, {payload}) {
+    toggleTheme(state, { payload }) {
       payload = payload || state.theme; // light | dark | system
       localStorage.setItem('theme', payload);
       state.theme = payload;
@@ -77,10 +77,7 @@ const themeConfigSlice = createSlice({
       } else if (payload === 'dark') {
         state.isDarkMode = true;
       } else if (payload === 'system') {
-        if (
-          window.matchMedia &&
-          window.matchMedia('(prefers-color-scheme: dark)').matches
-        ) {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
           state.isDarkMode = true;
         } else {
           state.isDarkMode = false;
@@ -93,42 +90,40 @@ const themeConfigSlice = createSlice({
         document.querySelector('body')?.classList.remove('dark');
       }
     },
-    toggleMenu(state, {payload}) {
+    toggleMenu(state, { payload }) {
       payload = payload || state.menu; // vertical, collapsible-vertical, horizontal
       state.sidebar = false; // reset sidebar state
       localStorage.setItem('menu', payload);
       state.menu = payload;
     },
-    toggleLayout(state, {payload}) {
+    toggleLayout(state, { payload }) {
       payload = payload || state.layout; // full, boxed-layout
       localStorage.setItem('layout', payload);
       state.layout = payload;
     },
-    toggleRTL(state, {payload}) {
+    toggleRTL(state, { payload }) {
       payload = payload || state.rtlClass; // rtl, ltr
       localStorage.setItem('rtlClass', payload);
       state.rtlClass = payload;
-      document
-        .querySelector('html')
-        ?.setAttribute('dir', state.rtlClass || 'ltr');
+      document.querySelector('html')?.setAttribute('dir', state.rtlClass || 'ltr');
     },
-    toggleAnimation(state, {payload}) {
+    toggleAnimation(state, { payload }) {
       payload = payload || state.animation; // animate__fadeIn, animate__fadeInDown, animate__fadeInUp, animate__fadeInLeft, animate__fadeInRight, animate__slideInDown, animate__slideInLeft, animate__slideInRight, animate__zoomIn
       payload = payload?.trim();
       localStorage.setItem('animation', payload);
       state.animation = payload;
     },
-    toggleNavbar(state, {payload}) {
+    toggleNavbar(state, { payload }) {
       payload = payload || state.navbar; // navbar-sticky, navbar-floating, navbar-static
       localStorage.setItem('navbar', payload);
       state.navbar = payload;
     },
-    toggleSemidark(state, {payload}) {
+    toggleSemidark(state, { payload }) {
       payload = payload === true || payload === 'true' ? true : false;
       localStorage.setItem('semidark', payload);
       state.semidark = payload;
     },
-    toggleLocale(state, {payload}) {
+    toggleLocale(state, { payload }) {
       payload = payload || state.locale;
       i18next.changeLanguage(payload);
       state.locale = payload;
@@ -137,7 +132,7 @@ const themeConfigSlice = createSlice({
       state.sidebar = !state.sidebar;
     },
 
-    setPageTitle(state, {payload}) {
+    setPageTitle(state, { payload }) {
       document.title = `${payload} | VRISTO - Multipurpose Tailwind Dashboard Template`;
     },
   },

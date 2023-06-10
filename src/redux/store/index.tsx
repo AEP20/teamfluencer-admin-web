@@ -1,18 +1,14 @@
-import {combineReducers, configureStore} from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import themeConfigSlice from './themeConfigSlice';
-import userReducer from '../store/userSlice';
-
-
+import userSlice from './userSlice';
 
 const rootReducer = combineReducers({
   themeConfig: themeConfigSlice,
+  user: userSlice,
 });
-
 
 export default configureStore({
-  reducer: {
-    root: rootReducer,
-    user: userReducer
-  },
+  reducer: rootReducer,
 });
+
 export type IRootState = ReturnType<typeof rootReducer>;
