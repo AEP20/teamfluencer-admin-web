@@ -3,10 +3,15 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import Index from './screens/Index';
 import { login, logout, selectUser } from './redux/store/userSlice';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Setting from './components/Setting';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
+import FindUser from './screens/FindUser';
+import { useEffect, useState } from 'react';
+import { IRootState } from './redux/store/index';
+import { toggleSidebar } from './redux/store/themeConfigSlice';
+import CommonLayout from './components/CommonLayout';
 
 function App() {
   const storedUser = useSelector(selectUser); // Redux durumunu al
@@ -18,6 +23,7 @@ function App() {
       <Routes>
         <Route path="/auth/*" element={!user ? <AuthLayout /> : <Navigate to="/" />} />
         <Route path="/*" element={user ? <MainLayout /> : <Navigate to="/auth/login" />} />
+        <Route path="/user/*" element={user ? <UserLayout /> : <Navigate to="/auth/login" />} />
       </Routes>
     </BrowserRouter>
   );
@@ -37,12 +43,22 @@ function AuthLayout() {
 function MainLayout() {
   return (
     <>
-      <Header />
-      <Setting />
-      <Sidebar />
+      <CommonLayout />
       <Routes>
         <Route path="/" element={<Index />} />
       </Routes>
+    </>
+  );
+}
+
+function UserLayout() {
+  return (
+    <>
+      <CommonLayout>
+        <Routes>
+          <Route path="/find" element={<FindUser />} />
+        </Routes>
+      </CommonLayout>
     </>
   );
 }
