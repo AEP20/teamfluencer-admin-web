@@ -12,6 +12,10 @@ import Dropdown from './Dropdown';
 
 
 function Header() {
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    dispatch(logout());
+  };
   const location = useLocation();
   useEffect(() => {
     const selector = document.querySelector('ul.horizontal-menu a[href="' + window.location.pathname + '"]');
@@ -39,7 +43,6 @@ function Header() {
 
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);
   const [, setTheme] = useState<any>();
-  const dispatch = useDispatch();
 
   function createMarkup(messages: any) {
     return { __html: messages };
@@ -208,9 +211,8 @@ function Header() {
           <div className="sm:flex-1 ltr:sm:ml-0 ltr:ml-auto sm:rtl:mr-0 rtl:mr-auto flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]">
             <div className="sm:ltr:mr-auto sm:rtl:ml-auto">
               <form
-                className={`${
-                  search && '!block'
-                } sm:relative absolute inset-x-0 sm:top-0 top-1/2 sm:translate-y-0 -translate-y-1/2 sm:mx-0 mx-4 z-10 sm:block hidden`}
+                className={`${search && '!block'
+                  } sm:relative absolute inset-x-0 sm:top-0 top-1/2 sm:translate-y-0 -translate-y-1/2 sm:mx-0 mx-4 z-10 sm:block hidden`}
                 onSubmit={() => setSearch(false)}
               >
                 <div className="relative">
@@ -273,10 +275,9 @@ function Header() {
             <div>
               {themeConfig.theme === 'light' ? (
                 <button
-                  className={`${
-                    themeConfig.theme === 'light' &&
+                  className={`${themeConfig.theme === 'light' &&
                     'flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60'
-                  }`}
+                    }`}
                   onClick={() => {
                     setTheme('dark');
                     dispatch(toggleTheme('dark'));
@@ -323,10 +324,9 @@ function Header() {
               )}
               {themeConfig.theme === 'dark' && (
                 <button
-                  className={`${
-                    themeConfig.theme === 'dark' &&
+                  className={`${themeConfig.theme === 'dark' &&
                     'flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60'
-                  }`}
+                    }`}
                   onClick={() => {
                     setTheme('system');
                     dispatch(toggleTheme('system'));
@@ -342,10 +342,9 @@ function Header() {
               )}
               {themeConfig.theme === 'system' && (
                 <button
-                  className={`${
-                    themeConfig.theme === 'system' &&
+                  className={`${themeConfig.theme === 'system' &&
                     'flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60'
-                  }`}
+                    }`}
                   onClick={() => {
                     setTheme('light');
                     dispatch(toggleTheme('light'));
@@ -382,9 +381,8 @@ function Header() {
                       <li key={item.code}>
                         <button
                           type="button"
-                          className={`flex w-full hover:text-primary rounded-lg ${
-                            i18next.language === item.code ? 'bg-primary/10 text-primary' : ''
-                          }`}
+                          className={`flex w-full hover:text-primary rounded-lg ${i18next.language === item.code ? 'bg-primary/10 text-primary' : ''
+                            }`}
                           onClick={() => {
                             i18next.changeLanguage(item.code);
                             setFlag(item.code);
@@ -800,7 +798,7 @@ function Header() {
                     </Link>
                   </li>
                   <li className="border-t border-white-light dark:border-white-light/10">
-                    <Link to="/auth/boxed-signin" className="text-danger !py-3">
+                    <Link to="/auth/boxed-signin" onClick={handleLogout} className="text-danger !py-3">
                       <svg
                         className="ltr:mr-2 rtl:ml-2 rotate-90"
                         width="18"
