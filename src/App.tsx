@@ -4,11 +4,14 @@ import Header from './components/Header';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import Index from './screens/Index';
+import {useSelector} from 'react-redux';
+import { login, logout, selectUser } from './redux/store/userSlice';
+
 
 function ProtectedIndex() {
-  const user = "eşşek"; // Burada gerçek bir kimlik doğrulama mekanizması olmalı
+  const user =  useSelector(selectUser);
   const navigate = useNavigate();
-
+  console.log("App user:"+user)
   useEffect(() => {
     if (!user) {
       navigate('/login');
@@ -24,7 +27,7 @@ function App() {
       <Header />
       <main>
         <Routes>
-          <Route path="/register" element={<RegisterScreen />} />
+          <Route path="/register" element={<LoginScreen />} />
           <Route path="/login" element={<LoginScreen />} />
           <Route path="/" element={<ProtectedIndex />} />
         </Routes>

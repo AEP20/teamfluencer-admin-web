@@ -8,7 +8,8 @@ const LoginScreen = () => {
   const dispatch = useDispatch();
 
   const handleLogin = () => {
-    dispatch(login({ name: "John Doe" }));
+    console.log("deneme handlelogin")
+    dispatch(login({ name: 'John Doe' }));
   };
 
   const handleLogout = () => {
@@ -44,7 +45,7 @@ const LoginScreen = () => {
               <span className="text-white-dark">Subscribe to weekly newsletter</span>
             </label>
           </div>
-          <button type="submit" className="btn btn-primary w-full">
+          <button type="button" onClick={handleLogin} className="btn btn-primary w-full">
             SIGN IN
           </button>
         </form>
