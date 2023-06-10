@@ -3,12 +3,13 @@ import Header from './components/Header';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import Index from './screens/Index';
-import { useSelector, useDispatch } from 'react-redux';
 import { login, logout, selectUser } from './redux/store/userSlice';
-import store from './redux/store/index';
+import { useSelector } from 'react-redux';
 
 function App() {
-  const user = 'useSelector(selectUser);';
+  const storedUser = useSelector(selectUser); // Redux durumunu al
+  const user = localStorage.getItem("user") || storedUser; // LocalStorage'dan kullanıcıyı al
+  console.log('user', user);
 
   return (
     <BrowserRouter>

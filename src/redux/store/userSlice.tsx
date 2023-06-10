@@ -10,10 +10,13 @@ export const userSlice = createSlice({
         login: (state, action) => {
             state.user = action.payload;
             state.isLoggedIn = true;
-        },
+            localStorage.setItem("user", JSON.stringify(action.payload));
+            return state;
+          },          
         logout: (state) => {
             state.user = null;
             state.isLoggedIn = false;
+            localStorage.removeItem("user");
         }
     }
 });
