@@ -5,10 +5,11 @@ import RegisterScreen from './screens/RegisterScreen';
 import Index from './screens/Index';
 import { login, logout, selectUser } from './redux/store/userSlice';
 import { useSelector } from 'react-redux';
+import Setting from './components/Setting';
 
 function App() {
   const storedUser = useSelector(selectUser); // Redux durumunu al
-  const user = localStorage.getItem("user") || storedUser; // LocalStorage'dan kullanıcıyı al
+  const user = localStorage.getItem('user') || storedUser; // LocalStorage'dan kullanıcıyı al
   console.log('user', user);
 
   return (
@@ -36,6 +37,7 @@ function MainLayout() {
   return (
     <>
       <Header />
+      <Setting />
       <Routes>
         <Route path="/" element={<Index />} />
       </Routes>
