@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink, useLocation } from 'react-router-dom';
+import { logout } from '../redux/store/userSlice';
 import { IRootState } from '../redux/store';
 import { toggleTheme } from '../redux/store/themeConfigSlice';
 import { useTranslation } from 'react-i18next';
 import { toggleSidebar } from '../redux/store/themeConfigSlice';
 import i18next from 'i18next';
 import Dropdown from './Dropdown';
+
+
 
 function Header() {
   const location = useLocation();

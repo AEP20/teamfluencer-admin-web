@@ -10,10 +10,6 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  const handleLogout = () => {
-    dispatch(logout());
-  };
-
   const handleForm = async (e: any) => {
     e.preventDefault();
 
