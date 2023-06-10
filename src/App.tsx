@@ -1,11 +1,12 @@
 import { BrowserRouter as Router, Route, BrowserRouter, Routes, Navigate } from 'react-router-dom';
-import Header from './components/Header';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import Index from './screens/Index';
 import { login, logout, selectUser } from './redux/store/userSlice';
 import { useSelector } from 'react-redux';
 import Setting from './components/Setting';
+import Header from './components/Header';
+import Sidebar from './components/Sidebar';
 
 function App() {
   const storedUser = useSelector(selectUser); // Redux durumunu al
@@ -38,6 +39,7 @@ function MainLayout() {
     <>
       <Header />
       <Setting />
+      <Sidebar />
       <Routes>
         <Route path="/" element={<Index />} />
       </Routes>
