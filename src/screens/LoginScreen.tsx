@@ -1,8 +1,20 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
+import { login, logout, selectUser } from '../redux/store/userSlice';
 
 const LoginScreen = () => {
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
+
+  const handleLogin = () => {
+    console.log("deneme handlelogin")
+    dispatch(login({ name: 'John Doe' }));
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
   // const dispatch = useDispatch();
   useEffect(() => {}, []);
   const navigate = useNavigate();
@@ -33,7 +45,7 @@ const LoginScreen = () => {
               <span className="text-white-dark">Subscribe to weekly newsletter</span>
             </label>
           </div>
-          <button type="submit" className="btn btn-primary w-full">
+          <button type="button" onClick={handleLogin} className="btn btn-primary w-full">
             SIGN IN
           </button>
         </form>
