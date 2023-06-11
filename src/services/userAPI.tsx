@@ -20,3 +20,17 @@ export const TAfindUser = async (data: any) => {
     throw error;
   }
 };
+
+export const TAfindApprovalUser = async () => {
+  try {
+    const response = await apiClient.get(`/getverificationprofiles`);
+
+    if (response.status === 200) {
+      return response;
+    } else {
+      throw new Error('Find User failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};

@@ -8,9 +8,7 @@ import { IRootState } from '../redux/store';
 import { useState, useEffect } from 'react';
 
 const InstagramSharedPosts = () => {
-return (
-<h1></h1>
-);
+  return <h1></h1>;
 };
 
 export default InstagramSharedPosts;

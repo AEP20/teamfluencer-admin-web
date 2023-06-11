@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import { IRootState } from './redux/store/index';
 import { toggleSidebar } from './redux/store/themeConfigSlice';
 import CommonLayout from './components/CommonLayout';
+import WaitingApprovalUser from './screens/WaitingApprovalUser';
 
 function App() {
   const storedUser = useSelector(selectUser); // Redux durumunu al
@@ -57,6 +58,7 @@ function UserLayout() {
       <CommonLayout>
         <Routes>
           <Route path="/find" element={<FindUser />} />
+          <Route path="/find-waiting-approval" element={<WaitingApprovalUser />} />
         </Routes>
       </CommonLayout>
     </>

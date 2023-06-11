@@ -158,7 +158,7 @@ const Sidebar = () => {
                       <NavLink to="/crypto">{t('Kampanya Başvurularını Bul')}</NavLink>
                     </li>
                     <li>
-                      <NavLink to="/crypto">{t('Onay Bekleyen Profiller')}</NavLink>
+                      <NavLink to="/user/find-waiting-approval">{t('Onay Bekleyen Profiller')}</NavLink>
                     </li>
                   </ul>
                 </AnimateHeight>

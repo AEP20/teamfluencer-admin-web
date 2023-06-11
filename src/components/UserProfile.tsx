@@ -9,6 +9,8 @@ import { InstagramData, TiktokData, ProfileData, MoneyData, SharedPostData } fro
 import InstagramSharedPosts from './InstagramSharedPosts';
 import TiktokProfilePicture from './TiktokProfilePicture';
 import InstagramProfilePicture from './InstagramProfilePicture';
+import ReadMore from './ReadMore';
+import './styles/styles.css';
 
 const Profile = (data: ProfileData) => {
   console.log('data', data);
@@ -51,6 +53,7 @@ const Profile = (data: ProfileData) => {
   });
 
   const [sharedPostData, setSharedPostData] = useState<Array<SharedPostData>>([]);
+  console.log('sharedPostData', sharedPostData);
 
   const [job, setJob] = useState('');
   const [country, setCountry] = useState('');
@@ -100,15 +103,20 @@ const Profile = (data: ProfileData) => {
       },
     );
 
-    setSharedPostData(data?.instagram.shared_posts ?? []);
-
     setJob(data?.job ?? '');
     setCountry(data?.country ?? '');
     setCity(data?.city ?? '');
     setGender(data?.gender ?? '');
-  }, [data]);
 
-  console.log('instagramData', instagramData);
+    const validSharedPosts =
+      data?.instagram.shared_posts?.map((post) => {
+        if (post.location === undefined) {
+          return { ...post, location: { name: 'unknown' } }; // Or any other default value
+        }
+        return post;
+      }) ?? [];
+    setSharedPostData(validSharedPosts);
+  }, [data]);
 
   return (
     <>
@@ -186,8 +194,8 @@ const Profile = (data: ProfileData) => {
             <tr>
               <td>Keywords:</td>
               <td>
-                {instagramData.keywords.slice(0, 50).join(', ')}
-                {instagramData.keywords.length > 50 && '...'}
+                {instagramData.keywords && instagramData.keywords.slice(0, 50).join(', ')}
+                {instagramData.keywords && instagramData.keywords.length > 50 && '...'}
               </td>
             </tr>
           </tbody>
@@ -231,15 +239,19 @@ const Profile = (data: ProfileData) => {
           </tbody>
         </table>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
         {sharedPostData.map((post) => (
           <div className="flex flex-col bg-white rounded-lg shadow-md overflow-hidden max-w-xs mx-auto">
             <div className="flex-shrink-0">
-              <img className="h-48 w-full object-cover" src={post.media_url} alt={post.description} />
+              <img className="h-48 w-full object-cover zoom" src={post.media_url} alt={post.description} />
             </div>
             <div className="px-6 py-4">
               <div className="font-bold text-xl mb-2">{post.location.name}</div>
-              <p className="text-gray-700 text-base">{post.description}</p>
+              {post.description && post.description.length > 150 ? (
+                <ReadMore content={post.description} maxCharacterCount={150} />
+              ) : (
+                <p className="text-gray-700 text-base">{post.description}</p>
+              )}
             </div>
             <div className="px-6 pt-4 pb-2">
               <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
