@@ -5,7 +5,7 @@ type ProfileData = {
   phone: string;
   instagram: InstagramData;
   tiktok: TiktokData;
-  money: Money;
+  money: MoneyData;
   job: string;
   country: string;
   city: string;
@@ -19,10 +19,11 @@ type InstagramData = {
   followers: number;
   following: number;
   full_name: string;
-  profile_pic: string;
   post_number: number;
   average_like: number;
-  profile_picture: string;
+  profile_pic: string;
+  keywords: string[];
+  shared_posts: SharedPostData[];
 };
 
 type TiktokData = {
@@ -33,13 +34,29 @@ type TiktokData = {
   tiktok_nickname: string;
   tiktok_average_like: string;
   tiktok_engagement_rate: number;
-  profile_picture: string;
+  profile_pic: string;
+  verified: boolean;
+  privateAccount: boolean;
+  keywords: string[];
 };
 
-type Money = {
-  money: number;
+type MoneyData = {
   current: number;
-  exchange: object;
+  exchanges: {
+    [key: string]: number;
+  };
+  paparaAccountNo: string;
 };
 
-export type { ProfileData, InstagramData, TiktokData };
+type SharedPostData = {
+  comment_count: number;
+  description: string;
+  location: {
+    name: string;
+  };
+  media_url: string;
+  like_count: number;
+  _id: string;
+};
+
+export type { ProfileData, InstagramData, TiktokData, MoneyData, SharedPostData };

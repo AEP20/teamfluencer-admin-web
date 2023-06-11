@@ -5,7 +5,10 @@ import { selectUser } from '../redux/store/userSlice';
 import { IRootState } from '../redux/store/index';
 import { toggleSidebar } from '../redux/store/themeConfigSlice';
 import { TAfindUser } from '../services/userAPI';
-import { InstagramData, TiktokData, ProfileData } from '../types/profileData';
+import { InstagramData, TiktokData, ProfileData, MoneyData, SharedPostData } from '../types/profileData';
+import InstagramSharedPosts from './InstagramSharedPosts';
+import TiktokProfilePicture from './TiktokProfilePicture';
+import InstagramProfilePicture from './InstagramProfilePicture';
 
 const Profile = (data: ProfileData) => {
   console.log('data', data);
@@ -23,7 +26,8 @@ const Profile = (data: ProfileData) => {
     profile_pic: '',
     post_number: 0,
     average_like: 0,
-    profile_picture: '',
+    keywords: [],
+    shared_posts: [],
   });
 
   const [tiktokData, setTiktokData] = useState<TiktokData>({
@@ -34,10 +38,20 @@ const Profile = (data: ProfileData) => {
     tiktok_nickname: '',
     tiktok_average_like: '',
     tiktok_engagement_rate: 0,
-    profile_picture: '',
+    profile_pic: '',
+    verified: false,
+    privateAccount: false,
+    keywords: [],
   });
 
-  const [money, setMoney] = useState(0);
+  const [moneyData, setMoneyData] = useState<MoneyData>({
+    current: 0,
+    exchanges: {},
+    paparaAccountNo: '',
+  });
+
+  const [sharedPostData, setSharedPostData] = useState<Array<SharedPostData>>([]);
+
   const [job, setJob] = useState('');
   const [country, setCountry] = useState('');
   const [city, setCity] = useState('');
@@ -60,6 +74,7 @@ const Profile = (data: ProfileData) => {
         post_number: 0,
         average_like: 0,
         profile_picture: '',
+        keywords: [],
       },
     );
     setTiktokData(
@@ -72,24 +87,48 @@ const Profile = (data: ProfileData) => {
         average_like: '',
         engagement_rate: 0,
         profile_picture: '',
+        verified: false,
+        privateAccount: false,
+        keywords: [],
       },
     );
-    setMoney(data?.money?.current ?? 0);
+    setMoneyData(
+      data?.money ?? {
+        current: 0,
+        exchange: {},
+        paparaAccountNo: '',
+      },
+    );
+
+    setSharedPostData(data?.instagram.shared_posts ?? []);
+
     setJob(data?.job ?? '');
     setCountry(data?.country ?? '');
     setCity(data?.city ?? '');
     setGender(data?.gender ?? '');
   }, [data]);
 
+  console.log('instagramData', instagramData);
+
   return (
-    <div className="profile-container bg-gray-100 p-6 rounded-lg shadow-md w-2/3">
-      <h2 className="profile-title text-3xl font-medium mb-4">{name}</h2>
-      <div className="profile-section bg-white p-4 rounded-lg shadow-sm mb-4 ">
-        <h3 className="section-title text-xl font-semibold mb-3 ">Personal Information</h3>
-        <table className="table-responsive mb-5">
+    <>
+      <div className="profile-container p-4 rounded-lg  w-2/3">
+        <div className="flex items-center mb-20">
+          <div className="flex flex-row items-center mr-16">
+            <InstagramProfilePicture instagramData={instagramData} />
+            <TiktokProfilePicture tiktokData={tiktokData} />
+          </div>
+        </div>
+      </div>
+      <div className="profile-section bg-white p-3 shadow-md mb-3">
+        <h3 className="section-title text-lg font-semibold mb-3">Personal Information</h3>
+        <table className="table-responsive">
           <tbody>
             <tr>
-              <td className="w-1/3">Birthday:</td> <td>{birthday}</td>
+              <td>Name:</td> <td>{name}</td>
+            </tr>
+            <tr>
+              <td>Birthday:</td> <td>{birthday}</td>
             </tr>
             <tr>
               <td>Email:</td> <td>{email}</td>
@@ -110,18 +149,20 @@ const Profile = (data: ProfileData) => {
               <td>Gender:</td> <td>{gender}</td>
             </tr>
             <tr>
-              <td>Money:</td> <td>{money}</td>
+              <td>Money:</td> <td>{moneyData.current}</td>
+            </tr>
+            <tr>
+              <td>Papara Account No:</td> <td>{moneyData.paparaAccountNo}</td>
             </tr>
           </tbody>
         </table>
       </div>
-
-      <div className="profile-section bg-white p-4 rounded-lg shadow-sm mb-4">
-        <h3 className="section-title text-xl font-semibold mb-3">Instagram Data</h3>
-        <table className="table-fixed">
+      <div className="profile-section bg-white p-3  shadow-md mb-3">
+        <h3 className="section-title text-lg font-semibold mb-3">Instagram Data</h3>
+        <table className="table-responsive">
           <tbody>
             <tr>
-              <td className="w-1/3">Username:</td> <td>{instagramData.username}</td>
+              <td>Username:</td> <td>{instagramData.username}</td>
             </tr>
             <tr>
               <td>Followers:</td> <td>{instagramData.followers}</td>
@@ -135,22 +176,30 @@ const Profile = (data: ProfileData) => {
             <tr>
               <td>Full Name:</td> <td>{instagramData.full_name}</td>
             </tr>
+
             <tr>
               <td>Post Number:</td> <td>{instagramData.post_number}</td>
             </tr>
             <tr>
               <td>Average Like:</td> <td>{instagramData.average_like}</td>
             </tr>
+            <tr>
+              <td>Keywords:</td>
+              <td>
+                {instagramData.keywords.slice(0, 50).join(', ')}
+                {instagramData.keywords.length > 50 && '...'}
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
 
-      <div className="profile-section bg-white p-4 rounded-lg shadow-sm mb-4">
-        <h3 className="section-title text-xl font-semibold mb-3">Tiktok Data</h3>
-        <table className="table-fixed">
+      <div className="profile-section bg-white p-3 shadow-md mb-3">
+        <h3 className="section-title text-lg font-semibold mb-3">Tiktok Data</h3>
+        <table className="table-responsive">
           <tbody>
             <tr>
-              <td className="w-1/3">Username:</td> <td>{tiktokData.username}</td>
+              <td>Username:</td> <td>{tiktokData.username}</td>
             </tr>
             <tr>
               <td>Followers:</td> <td>{tiktokData.followers}</td>
@@ -170,10 +219,40 @@ const Profile = (data: ProfileData) => {
             <tr>
               <td>Engagement Rate:</td> <td>{tiktokData.tiktok_engagement_rate}</td>
             </tr>
+            <tr>
+              <td>Verified:</td> <td>{tiktokData.verified ? 'Yes' : 'No'}</td>
+            </tr>
+            <tr>
+              <td>Private Account:</td> <td>{tiktokData.privateAccount ? 'Yes' : 'No'}</td>
+            </tr>
+            <tr>
+              <td>Keywords:</td> <td>{tiktokData.keywords.join(', ')}</td>
+            </tr>
           </tbody>
         </table>
       </div>
-    </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {sharedPostData.map((post) => (
+          <div className="flex flex-col bg-white rounded-lg shadow-md overflow-hidden max-w-xs mx-auto">
+            <div className="flex-shrink-0">
+              <img className="h-48 w-full object-cover" src={post.media_url} alt={post.description} />
+            </div>
+            <div className="px-6 py-4">
+              <div className="font-bold text-xl mb-2">{post.location.name}</div>
+              <p className="text-gray-700 text-base">{post.description}</p>
+            </div>
+            <div className="px-6 pt-4 pb-2">
+              <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                Likes: {post.like_count}
+              </span>
+              <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                Comments: {post.comment_count}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 };
 
