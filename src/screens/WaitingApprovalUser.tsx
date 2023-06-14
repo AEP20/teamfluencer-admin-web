@@ -38,6 +38,17 @@ const tiktokAverageLikeFixer = (tiktokAverageLike: number) => {
   return roundedNumber;
 };
 
+const engagementRateFixer = (engagementRate: number) => {
+  if (!engagementRate) return 0;
+  const roundedNumber = Math.round(engagementRate * 1000) / 1000; // Sayıyı üç basamağa göre yuvarlar
+  return roundedNumber;
+};
+
+const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
+  if (!tiktokEngagementRate) return 0;
+  return tiktokEngagementRate;
+};
+
 console.log('instaAverageLikeFixer(3.45)', instaAverageLikeFixer(3.45));
 
 const fetchData = async () => {
@@ -57,10 +68,10 @@ const fetchData = async () => {
         insta_followers: item.followers,
         insta_post_number: item.post_number,
         insta_average_like: instaAverageLikeFixer(item.average_like),
-        tiktok_followers: item.tiktok_followers,
+        tiktok_followers: tiktokFollowersFixer(item.tiktok_followers),
         tiktok_videos: item.videos,
         tiktok_average_like: tiktokAverageLikeFixer(item.tiktok_average_like),
-        tiktok_engagement_rate: item.tiktok_engagement_rate,
+        tiktok_engagement_rate: engagementRateFixer(item.tiktok_engagement_rate),
       }));
       return data;
     }
@@ -76,7 +87,7 @@ const WaitingApprovalUser = () => {
   });
   const [userData, setUserData] = useState([] as WaitingApprovalUserData[]);
   const [page, setPage] = useState(1);
-  const PAGE_SIZES = [10, 20, 30, 50, 100];
+  const PAGE_SIZES = [10, 20, 30, 50, 100, 500];
   const [pageSize, setPageSize] = useState(PAGE_SIZES[2]);
   const [initialRecords, setInitialRecords] = useState(sortBy(userData, 'id'));
   console.log('initialRecordsssssssss', initialRecords);

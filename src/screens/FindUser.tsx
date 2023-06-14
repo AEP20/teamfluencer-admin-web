@@ -7,8 +7,13 @@ import React from 'react';
 import UserProfile from '../components/UserProfile';
 import { TAfindUser } from '../services/userAPI';
 import { ProfileData } from '../types/profileData';
+import { setPageTitle } from '../redux/store/themeConfigSlice';
 
 const FindUser = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(setPageTitle('Find User'));
+  });
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
