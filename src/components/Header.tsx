@@ -8,8 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { toggleSidebar } from '../redux/store/themeConfigSlice';
 import i18next from 'i18next';
 import Dropdown from './Dropdown';
-
-
+import HealthCheck from './HealthCheck';
 
 function Header() {
   const dispatch = useDispatch();
@@ -162,6 +161,7 @@ function Header() {
                   </svg>
                 </Link>
               </li>
+
               <li>
                 <Link
                   to="/apps/todolist"
@@ -211,8 +211,9 @@ function Header() {
           <div className="sm:flex-1 ltr:sm:ml-0 ltr:ml-auto sm:rtl:mr-0 rtl:mr-auto flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]">
             <div className="sm:ltr:mr-auto sm:rtl:ml-auto">
               <form
-                className={`${search && '!block'
-                  } sm:relative absolute inset-x-0 sm:top-0 top-1/2 sm:translate-y-0 -translate-y-1/2 sm:mx-0 mx-4 z-10 sm:block hidden`}
+                className={`${
+                  search && '!block'
+                } sm:relative absolute inset-x-0 sm:top-0 top-1/2 sm:translate-y-0 -translate-y-1/2 sm:mx-0 mx-4 z-10 sm:block hidden`}
                 onSubmit={() => setSearch(false)}
               >
                 <div className="relative">
@@ -272,12 +273,15 @@ function Header() {
                 </svg>
               </button>
             </div>
+            <HealthCheck />
+
             <div>
               {themeConfig.theme === 'light' ? (
                 <button
-                  className={`${themeConfig.theme === 'light' &&
+                  className={`${
+                    themeConfig.theme === 'light' &&
                     'flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60'
-                    }`}
+                  }`}
                   onClick={() => {
                     setTheme('dark');
                     dispatch(toggleTheme('dark'));
@@ -324,9 +328,10 @@ function Header() {
               )}
               {themeConfig.theme === 'dark' && (
                 <button
-                  className={`${themeConfig.theme === 'dark' &&
+                  className={`${
+                    themeConfig.theme === 'dark' &&
                     'flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60'
-                    }`}
+                  }`}
                   onClick={() => {
                     setTheme('system');
                     dispatch(toggleTheme('system'));
@@ -342,9 +347,10 @@ function Header() {
               )}
               {themeConfig.theme === 'system' && (
                 <button
-                  className={`${themeConfig.theme === 'system' &&
+                  className={`${
+                    themeConfig.theme === 'system' &&
                     'flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60'
-                    }`}
+                  }`}
                   onClick={() => {
                     setTheme('light');
                     dispatch(toggleTheme('light'));
@@ -381,8 +387,9 @@ function Header() {
                       <li key={item.code}>
                         <button
                           type="button"
-                          className={`flex w-full hover:text-primary rounded-lg ${i18next.language === item.code ? 'bg-primary/10 text-primary' : ''
-                            }`}
+                          className={`flex w-full hover:text-primary rounded-lg ${
+                            i18next.language === item.code ? 'bg-primary/10 text-primary' : ''
+                          }`}
                           onClick={() => {
                             i18next.changeLanguage(item.code);
                             setFlag(item.code);
