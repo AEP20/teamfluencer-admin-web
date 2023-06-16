@@ -59,12 +59,14 @@ const Profile = (data: ProfileData) => {
   const [country, setCountry] = useState('');
   const [city, setCity] = useState('');
   const [gender, setGender] = useState('');
+  const [isWaitingVerification, setIsWaitingVerification] = useState(false);
 
   useEffect(() => {
     setBirthday(data?.birthday ?? '');
     setName(data?.name ?? '');
     setEmail(data?.email ?? '');
     setPhone(data?.phone ?? '');
+    setIsWaitingVerification(data?.isWaitingVerification ?? false);
     setInstagramData(
       data?.instagram ?? {
         last_scrape: null,
@@ -161,6 +163,9 @@ const Profile = (data: ProfileData) => {
             </tr>
             <tr>
               <td>Papara Account No:</td> <td>{moneyData.paparaAccountNo}</td>
+            </tr>
+            <tr>
+              <td>Waiting Verification:</td> <td>{isWaitingVerification ? 'Yes' : 'No'}</td>
             </tr>
           </tbody>
         </table>

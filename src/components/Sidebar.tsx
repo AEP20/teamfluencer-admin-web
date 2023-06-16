@@ -182,7 +182,7 @@ const Sidebar = () => {
               <li className="nav-item">
                 <ul>
                   <li className="nav-item">
-                    <NavLink to="/apps/chat" className="group">
+                    <NavLink to="/user/find" className="group">
                       <div className="flex items-center">
                         <svg
                           className="group-hover:!text-primary"
@@ -205,7 +205,7 @@ const Sidebar = () => {
                           />
                         </svg>
                         <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('chat')}
+                          Kullanıcı Bul
                         </span>
                       </div>
                     </NavLink>

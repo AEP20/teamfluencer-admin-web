@@ -38,6 +38,7 @@ const FindUser = () => {
 
     try {
       const response = await TAfindUser(data);
+      console.log("reeee", response)
       const object = {
         username: response.username,
         email: response.email,
@@ -51,6 +52,7 @@ const FindUser = () => {
         country: response.country,
         city: response.city,
         gender: response.gender,
+        isWaitingVerification: response.isWaitingVerification,
       };
       setProfileData(object);
     } catch (error: any) {

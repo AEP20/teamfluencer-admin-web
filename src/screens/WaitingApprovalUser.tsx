@@ -11,23 +11,13 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 
-// const calculateAge = (birthday: string) => {
-//   const dob = new Date(birthday);
-//   const today = new Date();
-//   let age = today.getFullYear() - dob.getFullYear();
-//   const monthDiff = today.getMonth() - dob.getMonth();
-//   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
-//     age--;
-//   }
-//   return age;
-// };
-
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
   return fixedPhoneNumber;
 };
 
 const instaAverageLikeFixer = (instaAverageLike: number) => {
+  if (!instaAverageLike) return 0;
   const roundedNumber = Math.round(instaAverageLike * 10) / 10; // Sayıyı son basamağa göre yuvarlar
   return roundedNumber;
 };
@@ -49,8 +39,6 @@ const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
   return tiktokEngagementRate;
 };
 
-console.log('instaAverageLikeFixer(3.45)', instaAverageLikeFixer(3.45));
-
 const fetchData = async () => {
   try {
     const response = await TAfindApprovalUser();
@@ -67,7 +55,7 @@ const fetchData = async () => {
         profile_complete: item.profile_complete,
         insta_followers: item.followers,
         insta_post_number: item.post_number,
-        insta_average_like: instaAverageLikeFixer(item.average_like),
+        insta_average_like: instaAverageLikeFixer(item.average_likes),
         tiktok_followers: tiktokFollowersFixer(item.tiktok_followers),
         tiktok_videos: item.videos,
         tiktok_average_like: tiktokAverageLikeFixer(item.tiktok_average_like),
@@ -156,6 +144,15 @@ const WaitingApprovalUser = () => {
   const [minAge, setMinAge] = useState<any>('');
   const [maxAge, setMaxAge] = useState<any>('');
 
+  const [minInstaFollowers, setMinInstaFollowers] = useState<any>('');
+  const [maxInstaFollowers, setMaxInstaFollowers] = useState<any>('');
+
+  const [minInstaAverageLike, setMinInstaAverageLike] = useState<any>('');
+  const [maxInstaAverageLike, setMaxInstaAverageLike] = useState<any>('');
+
+  const [minTiktokFollowers, setMinTiktokFollowers] = useState<any>('');
+  const [maxTiktokFollowers, setMaxTiktokFollowers] = useState<any>('');
+
   useEffect(() => {
     let dt = userData;
     if (minAge !== '' && minAge !== null) {
@@ -170,6 +167,48 @@ const WaitingApprovalUser = () => {
     }
   }, [minAge, maxAge]);
 
+  useEffect(() => {
+    let dt = userData;
+    if (minInstaFollowers !== '' && minInstaFollowers !== null) {
+      dt = dt.filter((d) => d.insta_followers >= Number(minInstaFollowers));
+    }
+    if (maxInstaFollowers !== '' && maxInstaFollowers !== null) {
+      dt = dt.filter((d) => d.insta_followers <= Number(maxInstaFollowers));
+    }
+    if (minInstaFollowers || maxInstaFollowers) {
+      setInitialRecords(dt);
+      setTempData(dt);
+    }
+  }, [minInstaFollowers, maxInstaFollowers]);
+
+  useEffect(() => {
+    let dt = userData;
+    if (minInstaAverageLike !== '' && minInstaAverageLike !== null) {
+      dt = dt.filter((d) => d.insta_average_like >= Number(minInstaAverageLike));
+    }
+    if (maxInstaAverageLike !== '' && maxInstaAverageLike !== null) {
+      dt = dt.filter((d) => d.insta_average_like <= Number(maxInstaAverageLike));
+    }
+    if (minInstaAverageLike || maxInstaAverageLike) {
+      setInitialRecords(dt);
+      setTempData(dt);
+    }
+  }, [minInstaAverageLike, maxInstaAverageLike]);
+
+  useEffect(() => {
+    let dt = userData;
+    if (minTiktokFollowers !== '' && minTiktokFollowers !== null) {
+      dt = dt.filter((d) => d.tiktok_followers >= Number(minTiktokFollowers));
+    }
+    if (maxTiktokFollowers !== '' && maxTiktokFollowers !== null) {
+      dt = dt.filter((d) => d.tiktok_followers <= Number(maxTiktokFollowers));
+    }
+    if (minTiktokFollowers || maxTiktokFollowers) {
+      setInitialRecords(dt);
+      setTempData(dt);
+    }
+  }, [minTiktokFollowers, maxTiktokFollowers]);
+
   const formatDate = (date: any) => {
     if (date) {
       const dt = new Date(date);
@@ -180,33 +219,103 @@ const WaitingApprovalUser = () => {
     return '';
   };
 
-  console.log('initialRecords', initialRecords);
-
   return (
     <div className="panel">
       <div className="mb-4.5 flex md:items-center md:flex-row flex-col gap-5">
-        <div className="flex items-center gap-5">
-          <div className="md:flex-auto flex-1">
-            <input
-              type="text"
-              value={minAge}
-              onChange={(e) => {
-                setMinAge(e.target.value);
-              }}
-              className="form-input"
-              placeholder="Minimum age..."
-            />
-          </div>
-          <div className="md:flex-auto flex-1">
-            <input
-              type="text"
-              value={maxAge}
-              onChange={(e) => {
-                setMaxAge(e.target.value);
-              }}
-              className="form-input"
-              placeholder="Maximum age..."
-            />
+        <div className="md:flex md:flex-col w-2/3">
+          <div className="md:flex">
+            <div className="md:flex md:flex-col flex-1 mb-2 mr-2 justify-center items-center text-center">
+              <p>MIN</p>
+              <p>MAX</p>
+            </div>
+
+            <div className="md:flex md:flex-col flex-1 mb-2 mr-2">
+              <input
+                type="text"
+                value={minAge}
+                onChange={(e) => {
+                  setMinAge(e.target.value);
+                }}
+                className="form-input w-full mb-2"
+                placeholder="age"
+              />
+
+              <input
+                type="text"
+                value={maxAge}
+                onChange={(e) => {
+                  setMaxAge(e.target.value);
+                }}
+                className="form-input w-full"
+                placeholder="age"
+              />
+            </div>
+
+            <div className="md:flex md:flex-col flex-1 mb-2 mr-2">
+              <input
+                type="text"
+                value={minInstaFollowers}
+                onChange={(e) => {
+                  setMinInstaFollowers(e.target.value);
+                }}
+                className="form-input w-full mb-2"
+                placeholder="insta followers"
+              />
+
+              <input
+                type="text"
+                value={maxInstaFollowers}
+                onChange={(e) => {
+                  setMaxInstaFollowers(e.target.value);
+                }}
+                className="form-input w-full"
+                placeholder="insta followers"
+              />
+            </div>
+
+            <div className="md:flex md:flex-col flex-1 mb-2 mr-2">
+              <input
+                type="text"
+                value={minInstaAverageLike}
+                onChange={(e) => {
+                  setMinInstaAverageLike(e.target.value);
+                }}
+                className="form-input w-full mb-2"
+                placeholder="insta average likes"
+              />
+
+              <input
+                type="text"
+                value={maxInstaAverageLike}
+                onChange={(e) => {
+                  setMaxInstaAverageLike(e.target.value);
+                }}
+                className="form-input w-full"
+                placeholder="insta average likes"
+              />
+            </div>
+
+            <div className="md:flex md:flex-col flex-1 mb-2 mr-2">
+              <input
+                type="text"
+                value={minTiktokFollowers}
+                onChange={(e) => {
+                  setMinTiktokFollowers(e.target.value);
+                }}
+                className="form-input w-full mb-2"
+                placeholder="tiktok followers"
+              />
+
+              <input
+                type="text"
+                value={maxTiktokFollowers}
+                onChange={(e) => {
+                  setMaxTiktokFollowers(e.target.value);
+                }}
+                className="form-input w-full"
+                placeholder="tiktok followers"
+              />
+            </div>
           </div>
         </div>
         <div className="ltr:ml-auto rtl:mr-auto">

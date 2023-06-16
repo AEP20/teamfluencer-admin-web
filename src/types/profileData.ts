@@ -10,6 +10,7 @@ type ProfileData = {
   country: string;
   city: string;
   gender: string;
+  isWaitingVerification: boolean;
 };
 
 type InstagramData = {
