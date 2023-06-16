@@ -5,15 +5,14 @@ import { selectUser } from '../redux/store/userSlice';
 import { IRootState } from '../redux/store/index';
 import { toggleSidebar } from '../redux/store/themeConfigSlice';
 import { TAfindUser } from '../services/userAPI';
-import { InstagramData, TiktokData, ProfileData, MoneyData, SharedPostData } from '../types/profileData';
+import { InstagramData, TiktokData, ProfileData, MoneyData, SharedPostData, InfoType } from '../types/profileData';
 import InstagramSharedPosts from './InstagramSharedPosts';
 import TiktokProfilePicture from './TiktokProfilePicture';
 import InstagramProfilePicture from './InstagramProfilePicture';
 import ReadMore from './ReadMore';
 import './styles/styles.css';
 
-const Profile = (data: ProfileData) => {
-  console.log('data', data);
+const UserProfile = (data: ProfileData) => {
   const [birthday, setBirthday] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -120,6 +119,47 @@ const Profile = (data: ProfileData) => {
     setSharedPostData(validSharedPosts);
   }, [data]);
 
+  const personalInfo: InfoType[] = [
+    { key: 'Name:', value: name },
+    { key: 'Birthday:', value: birthday },
+    { key: 'Email:', value: email },
+    { key: 'Phone:', value: phone },
+    { key: 'Job:', value: job },
+    { key: 'Country:', value: country },
+    { key: 'City:', value: city },
+    { key: 'Gender', value: gender },
+    { key: 'Papara Account No', value: moneyData.paparaAccountNo },
+    { key: 'Monet', value: moneyData.current },
+    { key: 'Waiting Verification', value: isWaitingVerification },
+  ];
+
+  const instagramInfo: InfoType[] = [
+    { key: 'Username:', value: instagramData.username },
+    { key: 'Full Name:', value: instagramData.full_name },
+    { key: 'Biography:', value: instagramData.biography },
+    { key: 'Followers:', value: instagramData.followers },
+    { key: 'Following:', value: instagramData.following },
+    { key: 'Post Number:', value: instagramData.post_number },
+    { key: 'Average Like:', value: instagramData.average_like },
+    { key: 'Keywords:', value: instagramData.keywords.join(' ') },
+  ];
+
+  console.log('tiktokData', tiktokData);
+  console.log('verified', tiktokData.verified);
+
+  const tiktokInfo: InfoType[] = [
+    { key: 'Username:', value: tiktokData.username },
+    { key: 'Nickname:', value: tiktokData.tiktok_nickname },
+    { key: 'Followers:', value: tiktokData.followers },
+    { key: 'Following:', value: tiktokData.following },
+    { key: 'Hearts:', value: tiktokData.hearts },
+    { key: 'Average Like:', value: tiktokData.tiktok_average_like },
+    { key: 'Engagement Rate:', value: tiktokData.tiktok_engagement_rate },
+    { key: 'Verified:', value: tiktokData.verified },
+    { key: 'Private Account:', value: tiktokData.privateAccount },
+    { key: 'Keywords:', value: tiktokData.keywords.join(' ') },
+  ];
+
   return (
     <>
       <div className="profile-container p-4 rounded-lg  w-2/3">
@@ -134,39 +174,12 @@ const Profile = (data: ProfileData) => {
         <h3 className="section-title text-lg font-semibold mb-3">Personal Information</h3>
         <table className="table-responsive">
           <tbody>
-            <tr>
-              <td>Name:</td> <td>{name}</td>
-            </tr>
-            <tr>
-              <td>Birthday:</td> <td>{birthday}</td>
-            </tr>
-            <tr>
-              <td>Email:</td> <td>{email}</td>
-            </tr>
-            <tr>
-              <td>Phone:</td> <td>{phone}</td>
-            </tr>
-            <tr>
-              <td>Job:</td> <td>{job}</td>
-            </tr>
-            <tr>
-              <td>Country:</td> <td>{country}</td>
-            </tr>
-            <tr>
-              <td>City:</td> <td>{city}</td>
-            </tr>
-            <tr>
-              <td>Gender:</td> <td>{gender}</td>
-            </tr>
-            <tr>
-              <td>Money:</td> <td>{moneyData.current}</td>
-            </tr>
-            <tr>
-              <td>Papara Account No:</td> <td>{moneyData.paparaAccountNo}</td>
-            </tr>
-            <tr>
-              <td>Waiting Verification:</td> <td>{isWaitingVerification ? 'Yes' : 'No'}</td>
-            </tr>
+            {personalInfo.map((info: InfoType) => (
+              <tr>
+                <td>{info.key}</td>
+                <td>{info.value}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -174,35 +187,12 @@ const Profile = (data: ProfileData) => {
         <h3 className="section-title text-lg font-semibold mb-3">Instagram Data</h3>
         <table className="table-responsive">
           <tbody>
-            <tr>
-              <td>Username:</td> <td>{instagramData.username}</td>
-            </tr>
-            <tr>
-              <td>Followers:</td> <td>{instagramData.followers}</td>
-            </tr>
-            <tr>
-              <td>Following:</td> <td>{instagramData.following}</td>
-            </tr>
-            <tr>
-              <td>Biography:</td> <td>{instagramData.biography}</td>
-            </tr>
-            <tr>
-              <td>Full Name:</td> <td>{instagramData.full_name}</td>
-            </tr>
-
-            <tr>
-              <td>Post Number:</td> <td>{instagramData.post_number}</td>
-            </tr>
-            <tr>
-              <td>Average Like:</td> <td>{instagramData.average_like}</td>
-            </tr>
-            <tr>
-              <td>Keywords:</td>
-              <td>
-                {instagramData.keywords && instagramData.keywords.slice(0, 50).join(', ')}
-                {instagramData.keywords && instagramData.keywords.length > 50 && '...'}
-              </td>
-            </tr>
+            {instagramInfo.map((info: InfoType) => (
+              <tr>
+                <td>{info.key}</td>
+                <td>{info.value}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -211,36 +201,12 @@ const Profile = (data: ProfileData) => {
         <h3 className="section-title text-lg font-semibold mb-3">Tiktok Data</h3>
         <table className="table-responsive">
           <tbody>
-            <tr>
-              <td>Username:</td> <td>{tiktokData.username}</td>
-            </tr>
-            <tr>
-              <td>Followers:</td> <td>{tiktokData.followers}</td>
-            </tr>
-            <tr>
-              <td>Following:</td> <td>{tiktokData.following}</td>
-            </tr>
-            <tr>
-              <td>Hearts:</td> <td>{tiktokData.hearts}</td>
-            </tr>
-            <tr>
-              <td>Nickname:</td> <td>{tiktokData.tiktok_nickname}</td>
-            </tr>
-            <tr>
-              <td>Average Like:</td> <td>{tiktokData.tiktok_average_like}</td>
-            </tr>
-            <tr>
-              <td>Engagement Rate:</td> <td>{tiktokData.tiktok_engagement_rate}</td>
-            </tr>
-            <tr>
-              <td>Verified:</td> <td>{tiktokData.verified ? 'Yes' : 'No'}</td>
-            </tr>
-            <tr>
-              <td>Private Account:</td> <td>{tiktokData.privateAccount ? 'Yes' : 'No'}</td>
-            </tr>
-            <tr>
-              <td>Keywords:</td> <td>{tiktokData.keywords.join(', ')}</td>
-            </tr>
+            {tiktokInfo.map((info: InfoType) => (
+              <tr>
+                <td>{info.key}</td>
+                <td>{info.value}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -273,4 +239,4 @@ const Profile = (data: ProfileData) => {
   );
 };
 
-export default Profile;
+export default UserProfile;

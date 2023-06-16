@@ -60,4 +60,9 @@ type SharedPostData = {
   _id: string;
 };
 
-export type { ProfileData, InstagramData, TiktokData, MoneyData, SharedPostData };
+type InfoType = {
+  key: string;
+  value: string | number | boolean | any[];
+};
+
+export type { ProfileData, InstagramData, TiktokData, MoneyData, SharedPostData, InfoType };

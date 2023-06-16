@@ -12,7 +12,7 @@ import { setPageTitle } from '../redux/store/themeConfigSlice';
 const FindUser = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(setPageTitle('Find User'));
+    dispatch(setPageTitle('Kullanıcı Bul'));
   });
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -38,7 +38,6 @@ const FindUser = () => {
 
     try {
       const response = await TAfindUser(data);
-      console.log("reeee", response)
       const object = {
         username: response.username,
         email: response.email,

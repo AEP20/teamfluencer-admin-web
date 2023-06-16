@@ -13,6 +13,7 @@ import { IRootState } from './redux/store/index';
 import { toggleSidebar } from './redux/store/themeConfigSlice';
 import CommonLayout from './components/CommonLayout';
 import WaitingApprovalUser from './screens/WaitingApprovalUser';
+import FindBrand from './screens/FindBrand';
 
 function App() {
   const storedUser = useSelector(selectUser); // Redux durumunu al
@@ -25,6 +26,7 @@ function App() {
         <Route path="/auth/*" element={!user ? <AuthLayout /> : <Navigate to="/" />} />
         <Route path="/*" element={user ? <MainLayout /> : <Navigate to="/auth/login" />} />
         <Route path="/user/*" element={user ? <UserLayout /> : <Navigate to="/auth/login" />} />
+        <Route path="/brands/*" element={user ? <BrandsLayout /> : <Navigate to="/auth/login" />} />
       </Routes>
     </BrowserRouter>
   );
@@ -65,3 +67,14 @@ function UserLayout() {
   );
 }
 
+function BrandsLayout() {
+  return (
+    <>
+      <CommonLayout>
+        <Routes>
+          <Route path="/find" element={<FindBrand />} />
+        </Routes>
+      </CommonLayout>
+    </>
+  );
+}

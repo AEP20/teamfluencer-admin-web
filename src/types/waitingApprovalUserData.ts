@@ -16,4 +16,18 @@ type WaitingApprovalUserData = {
   tiktok_engagement_rate: number;
 };
 
-export type { WaitingApprovalUserData };
+type FilterType = 'min' | 'max';
+
+type Filters = {
+  [K in
+    | 'age'
+    | 'insta_followers'
+    | 'insta_average_like'
+    | 'tiktok_followers'
+    | 'tiktok_average_like'
+    | 'tiktok_engagement_rate']: Record<FilterType, string>;
+};
+
+
+
+export type { WaitingApprovalUserData, FilterType, Filters };

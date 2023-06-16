@@ -10,6 +10,7 @@ import { WaitingApprovalUserData } from '../types/waitingApprovalUserData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
+import { Filters, FilterType } from '../types/waitingApprovalUserData';
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
@@ -78,7 +79,6 @@ const WaitingApprovalUser = () => {
   const PAGE_SIZES = [10, 20, 30, 50, 100, 500];
   const [pageSize, setPageSize] = useState(PAGE_SIZES[2]);
   const [initialRecords, setInitialRecords] = useState(sortBy(userData, 'id'));
-  console.log('initialRecordsssssssss', initialRecords);
   const [recordsData, setRecordsData] = useState(initialRecords);
   const [tempData, setTempData] = useState(initialRecords);
   const [search, setSearch] = useState('');
@@ -94,10 +94,8 @@ const WaitingApprovalUser = () => {
       try {
         const data = await fetchData();
         if (data !== undefined) {
-          console.log('denemedeneme', data);
           setInitialRecords(data);
           setUserData(data);
-          console.log('userDatttttta', userData);
         } else {
           setError('No data found');
         }
@@ -134,22 +132,9 @@ const WaitingApprovalUser = () => {
 
   useEffect(() => {
     const data = sortBy(initialRecords, sortStatus.columnAccessor);
-    console.log('dataaaa', data);
     setInitialRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
     setPage(1);
   }, [sortStatus]);
-
-  type FilterType = 'min' | 'max';
-
-  type Filters = {
-    [K in
-      | 'age'
-      | 'insta_followers'
-      | 'insta_average_like'
-      | 'tiktok_followers'
-      | 'tiktok_average_like'
-      | 'tiktok_engagement_rate']: Record<FilterType, string>;
-  };
 
   const defaultState: Filters = {
     age: { min: '', max: '' },
@@ -260,7 +245,6 @@ const WaitingApprovalUser = () => {
               sortable: true,
               render: ({ name }) => <div>{name}</div>,
             },
-            // { accessor: 'phone', title: 'Phone No.', sortable: true },
             { accessor: 'email', title: 'Email', sortable: true },
             { accessor: 'age', title: 'Age', sortable: true },
             { accessor: 'insta_followers', title: 'Insta Followers', sortable: true },
