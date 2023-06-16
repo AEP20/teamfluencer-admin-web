@@ -58,7 +58,7 @@ const fetchData = async () => {
         insta_average_like: instaAverageLikeFixer(item.average_likes),
         tiktok_followers: tiktokFollowersFixer(item.tiktok_followers),
         tiktok_videos: item.videos,
-        tiktok_average_like: tiktokAverageLikeFixer(item.tiktok_average_like),
+        tiktok_average_like: tiktokAverageLikeFixer(item.tiktok_average_likes),
         tiktok_engagement_rate: engagementRateFixer(item.tiktok_engagement_rate),
       }));
       return data;
@@ -130,7 +130,6 @@ const WaitingApprovalUser = () => {
         );
       });
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
   useEffect(() => {
@@ -138,76 +137,53 @@ const WaitingApprovalUser = () => {
     console.log('dataaaa', data);
     setInitialRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
     setPage(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortStatus]);
 
-  const [minAge, setMinAge] = useState<any>('');
-  const [maxAge, setMaxAge] = useState<any>('');
+  type FilterType = 'min' | 'max';
 
-  const [minInstaFollowers, setMinInstaFollowers] = useState<any>('');
-  const [maxInstaFollowers, setMaxInstaFollowers] = useState<any>('');
+  type Filters = {
+    [K in
+      | 'age'
+      | 'insta_followers'
+      | 'insta_average_like'
+      | 'tiktok_followers'
+      | 'tiktok_average_like'
+      | 'tiktok_engagement_rate']: Record<FilterType, string>;
+  };
 
-  const [minInstaAverageLike, setMinInstaAverageLike] = useState<any>('');
-  const [maxInstaAverageLike, setMaxInstaAverageLike] = useState<any>('');
+  const defaultState: Filters = {
+    age: { min: '', max: '' },
+    insta_followers: { min: '', max: '' },
+    insta_average_like: { min: '', max: '' },
+    tiktok_followers: { min: '', max: '' },
+    tiktok_average_like: { min: '', max: '' },
+    tiktok_engagement_rate: { min: '', max: '' },
+  };
 
-  const [minTiktokFollowers, setMinTiktokFollowers] = useState<any>('');
-  const [maxTiktokFollowers, setMaxTiktokFollowers] = useState<any>('');
+  const [filters, setFilters] = useState<Filters>(defaultState);
 
-  useEffect(() => {
-    let dt = userData;
-    if (minAge !== '' && minAge !== null) {
-      dt = dt.filter((d) => d.age >= Number(minAge));
-    }
-    if (maxAge !== '' && maxAge !== null) {
-      dt = dt.filter((d) => d.age <= Number(maxAge));
-    }
-    if (minAge || maxAge) {
-      setInitialRecords(dt);
-      setTempData(dt);
-    }
-  }, [minAge, maxAge]);
-
-  useEffect(() => {
-    let dt = userData;
-    if (minInstaFollowers !== '' && minInstaFollowers !== null) {
-      dt = dt.filter((d) => d.insta_followers >= Number(minInstaFollowers));
-    }
-    if (maxInstaFollowers !== '' && maxInstaFollowers !== null) {
-      dt = dt.filter((d) => d.insta_followers <= Number(maxInstaFollowers));
-    }
-    if (minInstaFollowers || maxInstaFollowers) {
-      setInitialRecords(dt);
-      setTempData(dt);
-    }
-  }, [minInstaFollowers, maxInstaFollowers]);
+  const setFilter = (key: keyof Filters, type: FilterType, value: string) => {
+    setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value } }));
+  };
 
   useEffect(() => {
     let dt = userData;
-    if (minInstaAverageLike !== '' && minInstaAverageLike !== null) {
-      dt = dt.filter((d) => d.insta_average_like >= Number(minInstaAverageLike));
-    }
-    if (maxInstaAverageLike !== '' && maxInstaAverageLike !== null) {
-      dt = dt.filter((d) => d.insta_average_like <= Number(maxInstaAverageLike));
-    }
-    if (minInstaAverageLike || maxInstaAverageLike) {
-      setInitialRecords(dt);
-      setTempData(dt);
-    }
-  }, [minInstaAverageLike, maxInstaAverageLike]);
 
-  useEffect(() => {
-    let dt = userData;
-    if (minTiktokFollowers !== '' && minTiktokFollowers !== null) {
-      dt = dt.filter((d) => d.tiktok_followers >= Number(minTiktokFollowers));
-    }
-    if (maxTiktokFollowers !== '' && maxTiktokFollowers !== null) {
-      dt = dt.filter((d) => d.tiktok_followers <= Number(maxTiktokFollowers));
-    }
-    if (minTiktokFollowers || maxTiktokFollowers) {
-      setInitialRecords(dt);
-      setTempData(dt);
-    }
-  }, [minTiktokFollowers, maxTiktokFollowers]);
+    Object.entries(filters).forEach(([key, value]) => {
+      const { min, max } = value;
+
+      if (min !== '' && min !== null) {
+        dt = dt.filter((d) => Number(d[key as keyof typeof d]) >= Number(min));
+      }
+
+      if (max !== '' && max !== null) {
+        dt = dt.filter((d) => Number(d[key as keyof typeof d]) <= Number(max));
+      }
+    });
+
+    setInitialRecords(dt);
+    setTempData(dt);
+  }, [filters]);
 
   const formatDate = (date: any) => {
     if (date) {
@@ -219,105 +195,48 @@ const WaitingApprovalUser = () => {
     return '';
   };
 
+  const filterKeys: (keyof Filters)[] = [
+    'age',
+    'insta_followers',
+    'insta_average_like',
+    'tiktok_followers',
+    'tiktok_average_like',
+    'tiktok_engagement_rate',
+  ];
+
   return (
     <div className="panel">
       <div className="mb-4.5 flex md:items-center md:flex-row flex-col gap-5">
-        <div className="md:flex md:flex-col w-2/3">
-          <div className="md:flex">
-            <div className="md:flex md:flex-col flex-1 mb-2 mr-2 justify-center items-center text-center">
-              <p>MIN</p>
-              <p>MAX</p>
-            </div>
-
-            <div className="md:flex md:flex-col flex-1 mb-2 mr-2">
-              <input
-                type="text"
-                value={minAge}
-                onChange={(e) => {
-                  setMinAge(e.target.value);
-                }}
-                className="form-input w-full mb-2"
-                placeholder="age"
-              />
-
-              <input
-                type="text"
-                value={maxAge}
-                onChange={(e) => {
-                  setMaxAge(e.target.value);
-                }}
-                className="form-input w-full"
-                placeholder="age"
-              />
-            </div>
-
-            <div className="md:flex md:flex-col flex-1 mb-2 mr-2">
-              <input
-                type="text"
-                value={minInstaFollowers}
-                onChange={(e) => {
-                  setMinInstaFollowers(e.target.value);
-                }}
-                className="form-input w-full mb-2"
-                placeholder="insta followers"
-              />
-
-              <input
-                type="text"
-                value={maxInstaFollowers}
-                onChange={(e) => {
-                  setMaxInstaFollowers(e.target.value);
-                }}
-                className="form-input w-full"
-                placeholder="insta followers"
-              />
-            </div>
-
-            <div className="md:flex md:flex-col flex-1 mb-2 mr-2">
-              <input
-                type="text"
-                value={minInstaAverageLike}
-                onChange={(e) => {
-                  setMinInstaAverageLike(e.target.value);
-                }}
-                className="form-input w-full mb-2"
-                placeholder="insta average likes"
-              />
-
-              <input
-                type="text"
-                value={maxInstaAverageLike}
-                onChange={(e) => {
-                  setMaxInstaAverageLike(e.target.value);
-                }}
-                className="form-input w-full"
-                placeholder="insta average likes"
-              />
-            </div>
-
-            <div className="md:flex md:flex-col flex-1 mb-2 mr-2">
-              <input
-                type="text"
-                value={minTiktokFollowers}
-                onChange={(e) => {
-                  setMinTiktokFollowers(e.target.value);
-                }}
-                className="form-input w-full mb-2"
-                placeholder="tiktok followers"
-              />
-
-              <input
-                type="text"
-                value={maxTiktokFollowers}
-                onChange={(e) => {
-                  setMaxTiktokFollowers(e.target.value);
-                }}
-                className="form-input w-full"
-                placeholder="tiktok followers"
-              />
-            </div>
-          </div>
+        <div className="flex flex-col justify-center text-center">
+          <p className="mb-7 font-bold">MIN :</p>
+          <p className="mb-2 font-bold">MAX :</p>
         </div>
+        <div className="md:flex md:flex-row w-3/4">
+          {filterKeys.map((key) => (
+            <div key={key} className="md:flex md:flex-col flex-1 mb-2 mr-2">
+              <input
+                type="text"
+                value={filters[key].min}
+                onChange={(e) => {
+                  setFilter(key, 'min', e.target.value);
+                }}
+                className="form-input w-full mb-2"
+                placeholder={`${key} min`}
+              />
+
+              <input
+                type="text"
+                value={filters[key].max}
+                onChange={(e) => {
+                  setFilter(key, 'max', e.target.value);
+                }}
+                className="form-input w-full"
+                placeholder={`${key} max`}
+              />
+            </div>
+          ))}
+        </div>
+
         <div className="ltr:ml-auto rtl:mr-auto">
           <input
             type="text"
