@@ -37,4 +37,13 @@ type InfoType = {
   value: string | number | boolean | any[];
 };
 
-export type { BillingAddress, MoneyExchanges, BrandType, InfoType };
+type AllBrandType = {
+  id: number;
+  brand_name: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+};
+
+export type { BillingAddress, MoneyExchanges, BrandType, InfoType, AllBrandType };

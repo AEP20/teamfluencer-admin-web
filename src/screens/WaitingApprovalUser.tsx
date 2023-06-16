@@ -19,19 +19,19 @@ const phoneNumberFixer = (phoneNumber: string) => {
 
 const instaAverageLikeFixer = (instaAverageLike: number) => {
   if (!instaAverageLike) return 0;
-  const roundedNumber = Math.round(instaAverageLike * 10) / 10; // Sayıyı son basamağa göre yuvarlar
+  const roundedNumber = Math.round(instaAverageLike * 10) / 10;
   return roundedNumber;
 };
 
 const tiktokAverageLikeFixer = (tiktokAverageLike: number) => {
   if (!tiktokAverageLike) return 0;
-  const roundedNumber = Math.round(tiktokAverageLike * 10) / 10; // Sayıyı son basamağa göre yuvarlar
+  const roundedNumber = Math.round(tiktokAverageLike * 10) / 10;
   return roundedNumber;
 };
 
 const engagementRateFixer = (engagementRate: number) => {
   if (!engagementRate) return 0;
-  const roundedNumber = Math.round(engagementRate * 1000) / 1000; // Sayıyı üç basamağa göre yuvarlar
+  const roundedNumber = Math.round(engagementRate * 1000) / 1000;
   return roundedNumber;
 };
 
@@ -43,6 +43,7 @@ const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
 const fetchData = async () => {
   try {
     const response = await TAfindApprovalUser();
+    console.log('response.data', response.data)
     if (response.data && Array.isArray(response.data)) {
       const data = response.data.map((item, index) => ({
         id: index + 1,

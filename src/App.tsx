@@ -14,6 +14,7 @@ import { toggleSidebar } from './redux/store/themeConfigSlice';
 import CommonLayout from './components/CommonLayout';
 import WaitingApprovalUser from './screens/WaitingApprovalUser';
 import FindBrand from './screens/FindBrand';
+import AllBrands from './screens/AllBrands';
 
 function App() {
   const storedUser = useSelector(selectUser); // Redux durumunu al
@@ -73,6 +74,7 @@ function BrandsLayout() {
       <CommonLayout>
         <Routes>
           <Route path="/find" element={<FindBrand />} />
+          <Route path="/find-all" element={<AllBrands />} />
         </Routes>
       </CommonLayout>
     </>

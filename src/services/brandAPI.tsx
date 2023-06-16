@@ -28,3 +28,17 @@ export const TafindBrand = async (data: any) => {
     throw error;
   }
 };
+
+export const TAfindAllBrands = async () => {
+  try {
+    const response = await apiClient.get(`/getall`);
+
+    if (response.status === 200) {
+      return response;
+    } else {
+      throw new Error('Find User failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};

@@ -22,6 +22,7 @@ export const TAfindUser = async (data: any) => {
 };
 
 export const TAfindApprovalUser = async () => {
+  console.log('TAfindApprovalUser')
   try {
     const response = await apiClient.get(`/getverificationprofiles`);
 

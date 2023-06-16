@@ -246,7 +246,7 @@ const Sidebar = () => {
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/apps/todolist" className="group">
+                    <NavLink to="/user/find-waiting-approval" className="group">
                       <div className="flex items-center">
                         <svg
                           className="group-hover:!text-primary"
@@ -269,13 +269,13 @@ const Sidebar = () => {
                           />
                         </svg>
                         <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('todo_list')}
+                          Onay Bekleyen Profiller
                         </span>
                       </div>
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/apps/notes" className="group">
+                    <NavLink to="/brands/find-all" className="group">
                       <div className="flex items-center">
                         <svg
                           className="group-hover:!text-primary"
@@ -310,7 +310,7 @@ const Sidebar = () => {
                           />
                         </svg>
                         <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('notes')}
+                          Tüm Markalar
                         </span>
                       </div>
                     </NavLink>
