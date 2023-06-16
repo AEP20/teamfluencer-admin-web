@@ -17,16 +17,19 @@ type BrandType = {
 type BillingAddress = {
   type: string;
   firm_name: string;
+  contactName: string;
   id: string;
   city: string;
   country: string;
   address: string;
-  zip_code: string;
+  zipCode: string;
 };
 
 type MoneyExchanges = {
   operation: string;
   amount: number;
+  application_id: string;
+  action_time: string;
 };
 
 type InfoType = {

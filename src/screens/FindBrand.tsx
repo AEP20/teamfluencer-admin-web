@@ -6,7 +6,7 @@ import { TAlogin, TAsignup } from '../services/authAPI';
 import React from 'react';
 import UserProfile from '../components/UserProfile';
 import { TafindBrand } from '../services/brandAPI';
-import { BrandType } from '../types/brandData';
+import { BrandType, MoneyExchanges } from '../types/brandData';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import BrandProfile from '../components/BrandProfile';
 
@@ -41,6 +41,7 @@ const FindBrand = () => {
     }
 
     try {
+      console.log('data', data);
       const response = await TafindBrand(data);
       console.log('reeeeewe', response);
       const object: BrandType = {
@@ -54,20 +55,32 @@ const FindBrand = () => {
         currency: response.currency,
         language: response.language,
         brand_logo: response.brand_logo,
-        job_title: '',
+        job_title: response.job_title,
         billing_address: {
-          type: '',
-          firm_name: '',
-          id: '',
-          city: '',
-          country: '',
-          address: '',
-          zip_code: '',
+          type: response.billing_address?.type ?? '',
+          firm_name: response.billing_address?.firm_name ?? '',
+          contactName: response.billing_address?.contactName ?? '',
+          id: response.billing_address?.id ?? '',
+          city: response.billing_address?.city ?? '',
+          country: response.billing_address?.country ?? '',
+          address: response.billing_address?.address ?? '',
+          zipCode: response.billing_address?.zipCode ?? '',
         },
-        money_exchanges: [],
+
+        money_exchanges: Array.isArray(response.money_exchanges)
+          ? response.money_exchanges.map((exchange: MoneyExchanges) => ({
+              operation: exchange?.operation ?? '',
+              amount: exchange?.amount ?? 0,
+              application_id: exchange?.application_id ?? '',
+              action_time: exchange?.action_time ?? '',
+            }))
+          : [],
       };
       setbrandData(object);
-    } catch (error: any) {}
+    } catch (error: any) {
+      setError(error.response.data.message);
+      console.log('error', error);
+    }
   };
 
   return (

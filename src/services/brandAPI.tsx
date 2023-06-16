@@ -11,11 +11,11 @@ export const TafindBrand = async (data: any) => {
   try {
     let query = '';
     if (data.email) {
-      query = `?_email=${data.email}`;
+      query = `?email=${data.email}`;
     } else if (data.phone) {
-      query = `?_phone=${data.phone}`;
+      query = `?phone=${data.phone}`;
     } else if (data.brandname) {
-      query = `?_brandname=${data.brandname}`;
+      query = `?brandname=${data.brandname}`;
     }
 
     const response = await apiClient.get(`/get${query}`);

@@ -13,6 +13,9 @@ import { MoneyExchanges, BillingAddress, BrandType, InfoType } from '../types/br
 import './styles/styles.css';
 
 const BrandProfile = (data: BrandType) => {
+  console.log('denemdnemenddmeneme');
+  console.log('balibali', data);
+  console.log('bali');
   const [balance, setBalance] = useState(0);
   const [email, setEmail] = useState('');
   const [brandName, setBrandName] = useState('');
@@ -24,15 +27,17 @@ const BrandProfile = (data: BrandType) => {
   const [language, setLanguage] = useState('');
   const [brandLogo, setBrandLogo] = useState('');
   const [jobTitle, setJobTitle] = useState('');
+  const [moneyExchanges, setMoneyExchanges] = useState<MoneyExchanges[]>([]);
 
   const [billingAddress, setBillingAddress] = useState<BillingAddress>({
     type: '',
     firm_name: '',
+    contactName: '',
     id: '',
     city: '',
     country: '',
     address: '',
-    zip_code: '',
+    zipCode: '',
   });
 
   useEffect(() => {
@@ -51,11 +56,20 @@ const BrandProfile = (data: BrandType) => {
       data?.billing_address ?? {
         type: '',
         firm_name: '',
+        contact_name: '',
         id: '',
         city: '',
         country: '',
         address: '',
         zip_code: '',
+      },
+    );
+    setMoneyExchanges(
+      data?.money_exchanges ?? {
+        operation: '',
+        amount: 0,
+        application_id: '',
+        action_time: '',
       },
     );
   }, [data]);
@@ -73,12 +87,30 @@ const BrandProfile = (data: BrandType) => {
     { key: 'Balance:', value: balance },
   ];
 
+  const brandMoneyExchanges: InfoType[] = [
+    { key: 'type', value: billingAddress.type },
+    { key: 'firm_name', value: billingAddress.firm_name },
+    { key: 'contact_name', value: billingAddress.contactName },
+    { key: 'id', value: billingAddress.id },
+    { key: 'city', value: billingAddress.city },
+    { key: 'country', value: billingAddress.country },
+    { key: 'address', value: billingAddress.address },
+    { key: 'zip_code', value: billingAddress.zipCode },
+  ];
+
+  console.log('brandMoneyExchanges', brandMoneyExchanges);
+  console.log('brandInfo', brandInfo);
+
   return (
     <>
       <div className="profile-container p-4 rounded-lg  w-2/3">
         <div className="flex items-center mb-20">
           <div className="flex flex-row items-center mr-16">
-            <img src={brandLogo} alt="brand_logo" className="rounded-full w-32 h-32 mr-3" />
+            {brandLogo ? (
+              <img src={brandLogo} alt="brand_logo" className="rounded-full w-32 h-32 mr-3" />
+            ) : (
+              <p className="text-3xl font-bold text-black text-center mb-24">No Image</p>
+            )}
           </div>
         </div>
       </div>
@@ -94,6 +126,45 @@ const BrandProfile = (data: BrandType) => {
             ))}
           </tbody>
         </table>
+
+        {brandMoneyExchanges.length > 0 && (
+          <>
+            <h3 className="section-title text-lg font-semibold mb-3 mt-5">Billing Information</h3>
+            <table className="table-auto w-full">
+              <tbody>
+                {brandMoneyExchanges.map((info: InfoType, index: number) => (
+                  <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                    <td className="px-4 py-2 text-sm text-gray-600">{info.key}</td>
+                    <td className="px-4 py-2 text-sm">{info.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        )}
+
+        {moneyExchanges.length > 0 && (
+          <table className="table-auto w-full">
+            <thead>
+              <tr>
+                <th className="px-4 py-2 text-xs text-gray-500">Operation</th>
+                <th className="px-4 py-2 text-xs text-gray-500">Amount</th>
+                <th className="px-4 py-2 text-xs text-gray-500">Application ID</th>
+                <th className="px-4 py-2 text-xs text-gray-500">Action Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {moneyExchanges.map((exchange: MoneyExchanges, index: number) => (
+                <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                  <td className="px-4 py-2 text-sm">{exchange.operation}</td>
+                  <td className="px-4 py-2 text-sm">{exchange.amount}</td>
+                  <td className="px-4 py-2 text-sm">{exchange.application_id}</td>
+                  <td className="px-4 py-2 text-sm">{new Date(exchange.action_time).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </>
   );
