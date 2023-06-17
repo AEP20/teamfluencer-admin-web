@@ -11,6 +11,8 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { Filters, FilterType } from '../types/waitingApprovalUserData';
+import DownloadPdfButton from '../components/DownloadPdfButton';
+import DownloadCSVButton from '../components/DownloadCSVButton';
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
@@ -43,7 +45,7 @@ const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
 const fetchData = async () => {
   try {
     const response = await TAfindApprovalUser();
-    console.log('response.data', response.data)
+    console.log('response.data', response.data);
     if (response.data && Array.isArray(response.data)) {
       const data = response.data.map((item, index) => ({
         id: index + 1,
@@ -171,16 +173,6 @@ const WaitingApprovalUser = () => {
     setTempData(dt);
   }, [filters]);
 
-  const formatDate = (date: any) => {
-    if (date) {
-      const dt = new Date(date);
-      const month = dt.getMonth() + 1 < 10 ? '0' + (dt.getMonth() + 1) : dt.getMonth() + 1;
-      const day = dt.getDate() < 10 ? '0' + dt.getDate() : dt.getDate();
-      return day + '/' + month + '/' + dt.getFullYear();
-    }
-    return '';
-  };
-
   const filterKeys: (keyof Filters)[] = [
     'age',
     'insta_followers',
@@ -199,7 +191,7 @@ const WaitingApprovalUser = () => {
         </div>
         <div className="md:flex md:flex-row w-3/4">
           {filterKeys.map((key) => (
-            <div key={key} className="md:flex md:flex-col flex-1 mb-2 mr-2">
+            <div key={key} className="md:flex md:flex-col flex-1 mb-1 mr-2">
               <input
                 type="text"
                 value={filters[key].min}
@@ -231,6 +223,16 @@ const WaitingApprovalUser = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <div className="flex flex-row justify-between text-center">
+            <DownloadPdfButton
+              className="btn inline-flex items-center justify-center px-2 py-2 mt-3 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 "
+              userData={initialRecords}
+            />
+            <DownloadCSVButton
+              className="btn inline-flex items-center justify-center px-2 py-2 mt-3 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 "
+              userData={initialRecords}
+            />
+          </div>
         </div>
       </div>
       <div className="datatables">
