@@ -62,28 +62,26 @@ const DoApprovalScreen: React.FC = () => {
     setCurrentIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : prevIndex));
   };
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="flex flex-col lg:flex-row">
       <div className="w-full lg:w-1/3">
         <div className="flex flex-row justify-between">
-          <div className="flex flex-col sm:flex-row">
+          <div>
             <button
               onClick={() => handleApprove(data[currentIndex].id, false)}
-              className={`mt-2 mr-2 py-2 px-6 rounded-md bg-red-500 text-white hover:bg-red-600 ${
-                isLoading ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-              disabled={isLoading}
+              className="mt-2 mr-2 py-2 px-6 rounded-md bg-red-500 text-white hover:bg-red-600"
             >
-              {isLoading ? 'Loading...' : 'Red'}
+              Red
             </button>
             <button
               onClick={() => handleApprove(data[currentIndex].id, true)}
-              className={`mt-2 mr-2 py-2 px-6 rounded-md bg-green-500 text-white hover:bg-green-600 ${
-                isLoading ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-              disabled={isLoading}
+              className="mt-2 mr-2 py-2 px-6 rounded-md bg-green-500 text-white hover:bg-green-600"
             >
-              {isLoading ? 'Loading...' : 'Onay'}
+              Onay
             </button>
           </div>
 
