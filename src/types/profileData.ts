@@ -65,4 +65,19 @@ type InfoType = {
   value: string | number | boolean | any[];
 };
 
-export type { ProfileData, InstagramData, TiktokData, MoneyData, SharedPostData, InfoType };
+type VideosData = {
+  comment_count: number;
+  cover: string;
+  description: string;
+  download_count: number;
+  dynamicCover: string;
+  like_count: number;
+  media_url: string;
+  music: string;
+  play_count: number;
+  region: string;
+  share_count: number;
+  _id: string;
+};
+
+export type { ProfileData, InstagramData, TiktokData, MoneyData, SharedPostData, InfoType, VideosData };
