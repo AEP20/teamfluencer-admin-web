@@ -9,10 +9,10 @@ type WaitingApprovalUserData = {
   gender: string;
   insta_followers: number;
   insta_post_number: number;
-  insta_average_like: number;
+  insta_average_likes: number;
   tiktok_followers: number;
   tiktok_videos: number;
-  tiktok_average_like: number;
+  tiktok_average_likes: number;
   tiktok_engagement_rate: number;
 };
 
@@ -30,9 +30,9 @@ type CountryFilterValue = {
 type Filters = {
   age: FilterValue;
   insta_followers: FilterValue;
-  insta_average_like: FilterValue;
+  insta_average_likes: FilterValue;
   tiktok_followers: FilterValue;
-  tiktok_average_like: FilterValue;
+  tiktok_average_likes: FilterValue;
   tiktok_engagement_rate: FilterValue;
   country: CountryFilterValue;
 };

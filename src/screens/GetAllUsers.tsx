@@ -58,7 +58,7 @@ const fetchData = async (query: any) => {
         profile_complete: item.profile_complete,
         insta_followers: item.followers,
         insta_post_number: item.post_number,
-        insta_average_like: instaAverageLikeFixer(item.average_likes),
+        insta_average_likes: instaAverageLikeFixer(item.average_likes),
         tiktok_followers: tiktokFollowersFixer(item.tiktok_followers),
         tiktok_videos: item.videos,
         tiktok_average_like: tiktokAverageLikeFixer(item.tiktok_average_likes),
@@ -106,9 +106,9 @@ const GetAllUsers = () => {
   const defaultState: Filters = {
     age: { min: '', max: '' },
     insta_followers: { min: '', max: '' },
-    insta_average_like: { min: '', max: '' },
+    insta_average_likes: { min: '', max: '' },
     tiktok_followers: { min: '', max: '' },
-    tiktok_average_like: { min: '', max: '' },
+    tiktok_average_likes: { min: '', max: '' },
     tiktok_engagement_rate: { min: '', max: '' },
     country: { value: '' },
   };
@@ -193,9 +193,9 @@ const GetAllUsers = () => {
   const filterKeys: (keyof Filters)[] = [
     'age',
     'insta_followers',
-    'insta_average_like',
+    'insta_average_likes',
     'tiktok_followers',
-    'tiktok_average_like',
+    'tiktok_average_likes',
     'tiktok_engagement_rate',
     'country',
   ];
@@ -305,7 +305,7 @@ const GetAllUsers = () => {
             { accessor: 'country', title: 'Country', sortable: true },
             { accessor: 'insta_followers', title: 'Insta Followers', sortable: true },
             { accessor: 'insta_post_number', title: 'Insta Post Number', sortable: true },
-            { accessor: 'insta_average_like', title: 'Insta Average Like', sortable: true },
+            { accessor: 'insta_average_likes', title: 'Insta Average Like', sortable: true },
             { accessor: 'tiktok_followers', title: 'Tiktok Followers', sortable: true },
             { accessor: 'tiktok_videos', title: 'Tiktok Videos', sortable: true },
             { accessor: 'tiktok_average_like', title: 'Tiktok Average Like', sortable: true },
