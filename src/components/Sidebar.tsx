@@ -91,7 +91,7 @@ const Sidebar = () => {
           </div>
           <PerfectScrollbar className="h-[calc(100vh-80px)] relative">
             <ul className="relative font-semibold space-y-0.5 p-4 py-0">
-              <li className="menu nav-item">
+              {/* <li className="menu nav-item">
                 <button
                   type="button"
                   className={`${currentMenu === 'dashboard' ? 'active' : ''} nav-link group w-full`}
@@ -159,7 +159,7 @@ const Sidebar = () => {
                     </li>
                   </ul>
                 </AnimateHeight>
-              </li>
+              </li> */}
 
               <h2 className="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">
                 <svg
@@ -173,7 +173,7 @@ const Sidebar = () => {
                 >
                   <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
-                <span>{t('apps')}</span>
+                <span>ADMIN</span>
               </h2>
 
               <li className="nav-item">
@@ -369,18 +369,14 @@ const Sidebar = () => {
                           />
                         </svg>
                         <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('contacts')}
+                          Kullanıcıları Listele
                         </span>
                       </div>
                     </NavLink>
                   </li>
 
                   <li className="menu nav-item">
-                    <button
-                      type="button"
-                      className={`${currentMenu === 'invoice' ? 'active' : ''} nav-link group w-full`}
-                      onClick={() => toggleMenu('invoice')}
-                    >
+                    <NavLink to="/api-docs" className="group">
                       <div className="flex items-center">
                         <svg
                           className="group-hover:!text-primary"
@@ -405,22 +401,10 @@ const Sidebar = () => {
                           />
                         </svg>
                         <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('invoice')}
+                          API Dökümantasyonu
                         </span>
                       </div>
-
-                      <div className={currentMenu === 'invoice' ? '!rotate-90' : 'rtl:rotate-180'}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path
-                            d="M9 5L15 12L9 19"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </div>
-                    </button>
+                    </NavLink>
 
                     <AnimateHeight duration={300} height={currentMenu === 'invoice' ? 'auto' : 0}>
                       <ul className="sub-menu text-gray-500">

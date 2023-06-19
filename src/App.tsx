@@ -16,6 +16,7 @@ import WaitingApprovalUser from './screens/WaitingApprovalUser';
 import FindBrand from './screens/FindBrand';
 import AllBrands from './screens/AllBrands';
 import DoApprovalScreen from './screens/DoApprovalScreen';
+import APIdocsScreen from './screens/APIdocsScreen';
 
 function App() {
   const storedUser = useSelector(selectUser); // Redux durumunu al
@@ -48,10 +49,12 @@ function AuthLayout() {
 function MainLayout() {
   return (
     <>
-      <CommonLayout />
-      <Routes>
-        <Route path="/" element={<Index />} />
-      </Routes>
+      <CommonLayout>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/api-docs" element={<APIdocsScreen />} />
+        </Routes>
+      </CommonLayout>
     </>
   );
 }

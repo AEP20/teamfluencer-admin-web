@@ -51,7 +51,9 @@ export const TAfindAllApprovalUser = async () => {
 
 export const TAverifyUser = async (id: any, isVerified: boolean) => {
   try {
+    console.log('/verificateuser/${id}/${isVerified}', `/verificateuser/${id}/${isVerified}`);
     const response = await apiClient.put(`/verificateuser/${id}/${isVerified}`);
+    console.log('response', response);
     if (response.status === 200) {
       return response;
     }

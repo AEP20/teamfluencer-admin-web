@@ -15,7 +15,7 @@ export const TafindBrand = async (data: any) => {
     } else if (data.phone) {
       query = `?phone=${data.phone}`;
     } else if (data.brandname) {
-      query = `?brandname=${data.brandname}`;
+      query = `?brand_name=${data.brandname}`;
     }
 
     const response = await apiClient.get(`/get${query}`);
