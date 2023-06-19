@@ -117,7 +117,7 @@ const GetAllUsers = () => {
 
   const flattenFilters = Object.entries(filters).reduce((acc, [key, filter]) => {
     Object.entries(filter).forEach(([subKey, subValue]) => {
-      acc[`${key}.${subKey}`] = subValue;
+      acc[`${subKey}_${key}`] = subValue;
     });
     return acc;
   }, {} as { [key: string]: string });
@@ -147,27 +147,27 @@ const GetAllUsers = () => {
 
   useEffect(() => {
     let dt = userData;
+    console.log("aynen")
 
     Object.entries(filters).forEach(([key, value]) => {
-      if (key === 'country') {
+      if (key.endsWith('country')) {
         const countryValue = value as CountryFilterValue;
-        if (countryValue.value === 'TR') {
-          dt = dt.filter((d) => d[key as keyof typeof d] === 'TR');
-        } else if (countryValue.value === 'Other') {
-          dt = dt.filter((d) => d[key as keyof typeof d] !== 'TR');
-        } else {
-          // any other country
-          dt = dt.filter((d) => d[key as keyof typeof d] === countryValue.value);
+        console.log("countryValue", countryValue.value)
+        if (countryValue.value) {
+          if (countryValue.value === 'TR') {
+            dt = dt.filter((d) => d[key as keyof typeof d] === 'TR');
+          } else if (countryValue.value === 'Other') {
+            dt = dt.filter((d) => d[key as keyof typeof d] !== 'TR');
+          } else {
+            dt = dt.filter((d) => d[key as keyof typeof d] === countryValue.value);
+          }
         }
       } else {
-        const { min, max } = value as FilterValue;
-
-        if (min !== '' && min !== null) {
-          dt = dt.filter((d) => Number(d[key as keyof typeof d]) >= Number(min));
-        }
-
-        if (max !== '' && max !== null) {
-          dt = dt.filter((d) => Number(d[key as keyof typeof d]) <= Number(max));
+        const actualKey = key.replace('min_', '').replace('max_', '');
+        if (key.startsWith('min')) {
+          dt = dt.filter((d) => Number(d[actualKey as keyof typeof d]) >= Number(value));
+        } else if (key.startsWith('max')) {
+          dt = dt.filter((d) => Number(d[actualKey as keyof typeof d]) <= Number(value));
         }
       }
     });

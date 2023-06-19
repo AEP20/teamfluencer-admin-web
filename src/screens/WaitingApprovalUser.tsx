@@ -160,13 +160,15 @@ const WaitingApprovalUser = () => {
     Object.entries(filters).forEach(([key, value]) => {
       if (key === 'country') {
         const countryValue = value as CountryFilterValue;
-        if (countryValue.value === 'TR') {
-          dt = dt.filter((d) => d[key as keyof typeof d] === 'TR');
-        } else if (countryValue.value === 'Other') {
-          dt = dt.filter((d) => d[key as keyof typeof d] !== 'TR');
-        } else {
-          // any other country
-          dt = dt.filter((d) => d[key as keyof typeof d] === countryValue.value);
+        if (countryValue.value) {
+          if (countryValue.value === 'TR') {
+            dt = dt.filter((d) => d[key as keyof typeof d] === 'TR');
+          } else if (countryValue.value === 'Other') {
+            dt = dt.filter((d) => d[key as keyof typeof d] !== 'TR');
+          } else {
+            // any other country
+            dt = dt.filter((d) => d[key as keyof typeof d] === countryValue.value);
+          }
         }
       } else {
         const { min, max } = value as FilterValue;

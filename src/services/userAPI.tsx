@@ -23,8 +23,9 @@ export const TAfindUser = async (data: any) => {
 };
 
 export const TAfindAllUser = async (params: any) => {
+  console.log('/getall?' + params);
   try {
-    const response = await apiClient.get(`/getalluser?${params}`);
+    const response = await apiClient.get(`/getall?${params}`);
     if (response.status === 200) {
       return response.data;
     } else {
@@ -38,6 +39,7 @@ export const TAfindAllUser = async (params: any) => {
 export const TAfindApprovalUser = async () => {
   try {
     const response = await apiClient.get(`/getverificationprofiles`);
+    console.log('response', response);
     if (response.status === 200) {
       return response;
     } else {

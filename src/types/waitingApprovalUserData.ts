@@ -24,7 +24,7 @@ type FilterValue = {
 };
 
 type CountryFilterValue = {
-  value: 'TR' | 'Other' | '';
+  value: 'TR' | 'Other' | '' | 'All';
 };
 
 type Filters = {
