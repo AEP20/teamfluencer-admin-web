@@ -16,18 +16,25 @@ type WaitingApprovalUserData = {
   tiktok_engagement_rate: number;
 };
 
-type FilterType = 'min' | 'max';
+type FilterType = 'min' | 'max' | 'value';
 
-type Filters = {
-  [K in
-    | 'age'
-    | 'insta_followers'
-    | 'insta_average_like'
-    | 'tiktok_followers'
-    | 'tiktok_average_like'
-    | 'tiktok_engagement_rate']: Record<FilterType, string>;
+type FilterValue = {
+  min: string;
+  max: string;
 };
 
+type CountryFilterValue = {
+  value: 'TR' | 'Other' | '';
+};
 
+type Filters = {
+  age: FilterValue;
+  insta_followers: FilterValue;
+  insta_average_like: FilterValue;
+  tiktok_followers: FilterValue;
+  tiktok_average_like: FilterValue;
+  tiktok_engagement_rate: FilterValue;
+  country: CountryFilterValue;
+};
 
-export type { WaitingApprovalUserData, FilterType, Filters };
+export type { WaitingApprovalUserData, FilterValue, Filters, FilterType, CountryFilterValue };

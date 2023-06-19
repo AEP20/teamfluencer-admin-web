@@ -346,7 +346,7 @@ const Sidebar = () => {
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/apps/contacts" className="group">
+                    <NavLink to="/user/getall" className="group">
                       <div className="flex items-center">
                         <svg
                           className="group-hover:!text-primary"

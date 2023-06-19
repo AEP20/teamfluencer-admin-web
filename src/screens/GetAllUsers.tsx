@@ -5,7 +5,7 @@ import { login, logout, selectUser } from '../redux/store/userSlice';
 import { TAlogin, TAsignup } from '../services/authAPI';
 import React from 'react';
 import UserProfile from '../components/UserProfile';
-import { TAfindUser, TAfindApprovalUser } from '../services/userAPI';
+import { TAfindUser, TAfindApprovalUser, TAfindAllUser } from '../services/userAPI';
 import { WaitingApprovalUserData } from '../types/waitingApprovalUserData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
@@ -42,12 +42,12 @@ const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
   return tiktokEngagementRate;
 };
 
-const fetchData = async () => {
+const fetchData = async (query: any) => {
   try {
-    const response = await TAfindApprovalUser();
+    const response = await TAfindAllUser(query);
     console.log('response.data', response.data);
     if (response.data && Array.isArray(response.data)) {
-      const data = response.data.map((item, index) => ({
+      const data = response.data.map((item: any, index: any) => ({
         id: index + 1,
         name: item.name,
         email: item.email,
@@ -72,7 +72,7 @@ const fetchData = async () => {
   }
 };
 
-const WaitingApprovalUser = () => {
+const GetAllUsers = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setPageTitle('Range Search Table'));
@@ -84,7 +84,7 @@ const WaitingApprovalUser = () => {
   const [initialRecords, setInitialRecords] = useState(sortBy(userData, 'id'));
   const [recordsData, setRecordsData] = useState(initialRecords);
   const [tempData, setTempData] = useState(initialRecords);
-  const [search, setSearch] = useState('');
+  const [keyword, setKeyword] = useState('');
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [error, setError] = useState<string | null>(null);
 
@@ -93,45 +93,10 @@ const WaitingApprovalUser = () => {
   }, [pageSize]);
 
   useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const data = await fetchData();
-        if (data !== undefined) {
-          setInitialRecords(data);
-          setUserData(data);
-        } else {
-          setError('No data found');
-        }
-      } catch (error) {
-        setError('No data found');
-      }
-    };
-    getUserData();
-  }, []);
-
-  useEffect(() => {
     const from = (page - 1) * pageSize;
     const to = from + pageSize;
     setRecordsData([...initialRecords.slice(from, to)]);
   }, [page, pageSize, initialRecords]);
-
-  useEffect(() => {
-    setInitialRecords(() => {
-      return tempData.filter((item) => {
-        return (
-          //   item.id.toString().includes(search.toLowerCase()) ||
-          //   item.firstName.toLowerCase().includes(search.toLowerCase()) ||
-          item.name.toLowerCase().includes(search.toLowerCase()) ||
-          //   item.company.toLowerCase().includes(search.toLowerCase()) ||
-          item.email.toLowerCase().includes(search.toLowerCase()) ||
-          item.age.toString().toLowerCase().includes(search.toLowerCase()) ||
-          //   item.dob.toLowerCase().includes(search.toLowerCase()) ||
-          item.phone.toLowerCase().includes(search.toLowerCase())
-          //   item.profile_complete.toLowerCase().includes(search.toLowerCase())
-        );
-      });
-    });
-  }, [search]);
 
   useEffect(() => {
     const data = sortBy(initialRecords, sortStatus.columnAccessor);
@@ -150,10 +115,37 @@ const WaitingApprovalUser = () => {
   };
 
   const [filters, setFilters] = useState<Filters>(defaultState);
+  console.log('filters', filters);
+
+  const flattenFilters = Object.entries(filters).reduce((acc, [key, filter]) => {
+    Object.entries(filter).forEach(([subKey, subValue]) => {
+      acc[`${key}.${subKey}`] = subValue;
+    });
+    return acc;
+  }, {} as { [key: string]: string });
+
+  const params = new URLSearchParams(flattenFilters);
 
   const setFilter = (key: keyof Filters, type: FilterType, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value } }));
   };
+
+  // useEffect(() => {
+  //   const getUserData = async () => {
+  //     try {
+  //       const data = await fetchData(params);
+  //       if (data !== undefined) {
+  //         setInitialRecords(data);
+  //         setUserData(data);
+  //       } else {
+  //         setError('No data found');
+  //       }
+  //     } catch (error) {
+  //       setError('No data found');
+  //     }
+  //   };
+  //   getUserData();
+  // }, []);
 
   useEffect(() => {
     let dt = userData;
@@ -186,6 +178,20 @@ const WaitingApprovalUser = () => {
     setTempData(dt);
   }, [filters]);
 
+  const handleFetchData = async () => {
+    try {
+      const data = await fetchData(params);
+      if (data !== undefined) {
+        setInitialRecords(data);
+        setUserData(data);
+      } else {
+        setError('No data found');
+      }
+    } catch (error) {
+      setError('No data found');
+    }
+  };
+
   const filterKeys: (keyof Filters)[] = [
     'age',
     'insta_followers',
@@ -198,7 +204,7 @@ const WaitingApprovalUser = () => {
 
   return (
     <div className="panel">
-      <div className=" flex md:items-center md:flex-row flex-col gap-5">
+      <div className="flex md:items-center md:flex-row flex-col gap-5">
         <div className="flex flex-col justify-center text-center">
           <p className="mb-7 font-bold">MIN</p>
           <p className="mb-2 font-bold">MAX</p>
@@ -240,8 +246,8 @@ const WaitingApprovalUser = () => {
               type="text"
               className="form-input w-auto"
               placeholder="Keywords"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
             />
           </div>
           <div className="md:flex md:flex-row w-3/4">
@@ -266,6 +272,12 @@ const WaitingApprovalUser = () => {
         </div>
 
         <div className="flex flex-row justify-end text-center w-1/3 mb-4 mr-2">
+          <button
+            className=" inline-flex items-center justify-center mr-2 px-2 py-2 mt-3 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 "
+            onClick={handleFetchData}
+          >
+            Fetch Data
+          </button>
           <DownloadPdfButton
             className=" inline-flex items-center justify-center px-2 py-2 mt-3 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 "
             userData={initialRecords}
@@ -276,6 +288,7 @@ const WaitingApprovalUser = () => {
           />
         </div>
       </div>
+
       <div className="datatables">
         <DataTable
           highlightOnHover
@@ -316,4 +329,4 @@ const WaitingApprovalUser = () => {
   );
 };
 
-export default WaitingApprovalUser;
+export default GetAllUsers;

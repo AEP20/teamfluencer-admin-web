@@ -17,6 +17,7 @@ import FindBrand from './screens/FindBrand';
 import AllBrands from './screens/AllBrands';
 import DoApprovalScreen from './screens/DoApprovalScreen';
 import APIdocsScreen from './screens/APIdocsScreen';
+import GetAllUsers from './screens/GetAllUsers';
 
 function App() {
   const storedUser = useSelector(selectUser); // Redux durumunu al
@@ -67,6 +68,7 @@ function UserLayout() {
           <Route path="/find" element={<FindUser />} />
           <Route path="/find-waiting-approval" element={<WaitingApprovalUser />} />
           <Route path="/do-approval" element={<DoApprovalScreen />} />
+          <Route path="/getall" element={<GetAllUsers />} />
         </Routes>
       </CommonLayout>
     </>

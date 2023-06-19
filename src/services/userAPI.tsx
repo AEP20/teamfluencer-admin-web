@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { url } from 'inspector';
 
 const AUTH_API_URL = 'http://localhost:3000/user';
 
@@ -11,6 +12,22 @@ export const TAfindUser = async (data: any) => {
   try {
     const response = await apiClient.get(`/getuser${data.email ? `?_email=${data.email}` : `?_phone=${data.phone} `}`);
 
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Find User failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAfindAllUser = async (params: any) => {
+  console.log('params', params)
+  console.log("/getalluser?${params}", `/getalluser?${params}`);
+
+  try {
+    const response = await apiClient.get(`/getalluser?${params}`);
     if (response.status === 200) {
       return response.data;
     } else {

@@ -2,6 +2,7 @@ import React from 'react';
 
 function APIdocsScreen() {
   const rows = [
+    //her endpoint için bir satır ekle
     { path: '/campaigns', get: true, post: false, delete: false, put: false, summary: 'List all campaigns' },
     {
       path: '/campaigns/:brandId',
@@ -16,7 +17,14 @@ function APIdocsScreen() {
     { path: '/signin', get: false, post: true, delete: false, put: false, summary: 'Admin user sign in' },
     { path: '/signup', get: false, post: true, delete: false, put: false, summary: 'Admin user sign up' },
     { path: '/users/:id', get: true, post: false, delete: false, put: false, summary: 'Get a specific user with id' },
-    { path: '/users', get: true, post: false, delete: false, put: false, summary: 'Get a specific user with email and phone' },
+    {
+      path: '/users',
+      get: true,
+      post: false,
+      delete: false,
+      put: false,
+      summary: 'Get a specific user with email and phone',
+    },
     {
       path: '/verification-profiles',
       get: true,
