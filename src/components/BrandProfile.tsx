@@ -13,9 +13,6 @@ import { MoneyExchanges, BillingAddress, BrandType, InfoType } from '../types/br
 import './styles/styles.css';
 
 const BrandProfile = (data: BrandType) => {
-  console.log('denemdnemenddmeneme');
-  console.log('balibali', data);
-  console.log('bali');
   const [balance, setBalance] = useState(0);
   const [email, setEmail] = useState('');
   const [brandName, setBrandName] = useState('');
@@ -97,9 +94,6 @@ const BrandProfile = (data: BrandType) => {
     { key: 'address', value: billingAddress.address },
     { key: 'zip_code', value: billingAddress.zipCode },
   ];
-
-  console.log('brandMoneyExchanges', brandMoneyExchanges);
-  console.log('brandInfo', brandInfo);
 
   return (
     <>

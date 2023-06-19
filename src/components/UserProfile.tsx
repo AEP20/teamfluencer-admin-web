@@ -52,8 +52,6 @@ const UserProfile = (data: ProfileData) => {
   });
 
   const [sharedPostData, setSharedPostData] = useState<Array<SharedPostData>>([]);
-  console.log('sharedPostData', sharedPostData);
-
   const [job, setJob] = useState('');
   const [country, setCountry] = useState('');
   const [city, setCity] = useState('');
@@ -143,9 +141,6 @@ const UserProfile = (data: ProfileData) => {
     { key: 'Average Like:', value: instagramData.average_like },
     { key: 'Keywords:', value: instagramData.keywords.join(' ') },
   ];
-
-  console.log('tiktokData', tiktokData);
-  console.log('verified', tiktokData.verified);
 
   const tiktokInfo: InfoType[] = [
     { key: 'Username:', value: tiktokData.username },

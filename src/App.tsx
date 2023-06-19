@@ -22,7 +22,6 @@ import GetAllUsers from './screens/GetAllUsers';
 function App() {
   const storedUser = useSelector(selectUser); // Redux durumunu al
   const user = localStorage.getItem('user') || storedUser; // LocalStorage'dan kullanıcıyı al
-  console.log('user', user);
 
   return (
     <BrowserRouter>

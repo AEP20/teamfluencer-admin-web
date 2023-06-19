@@ -10,7 +10,6 @@ import React from 'react';
 import { InstagramData, TiktokData, ProfileData, MoneyData, SharedPostData } from '../types/profileData';
 
 const InstagramProfilePicture = ({ instagramData }: { instagramData: InstagramData }) => {
-  console.log('instagramData', instagramData);
   return (
     <>
       <div className="flex-column items-center mr-10">

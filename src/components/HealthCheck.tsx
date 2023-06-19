@@ -8,7 +8,6 @@ const HealthCheck = () => {
     const checkHealth = async () => {
       try {
         const response = await TAhealth();
-        console.log('response', response);
         setIsHealthy(response.status === 'UP');
       } catch (error) {
         setIsHealthy(false);

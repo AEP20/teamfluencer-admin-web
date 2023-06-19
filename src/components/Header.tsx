@@ -38,7 +38,6 @@ function Header() {
   }, [location]);
 
   const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
-  console.log('isRtl', isRtl);
 
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);
   const [, setTheme] = useState<any>();

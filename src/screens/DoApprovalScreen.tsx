@@ -34,7 +34,6 @@ const DoApprovalScreen: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await TAfindAllApprovalUser();
-      console.log('response', response);
       if (response.data && Array.isArray(response.data)) {
         setData(response.data);
         setIsLoading(false);
@@ -46,7 +45,6 @@ const DoApprovalScreen: React.FC = () => {
   const handleApprove = async (id: any, isVerified: boolean) => {
     setIsLoading(true);
     const response = await TAverifyUser(id, isVerified);
-    console.log('response', response);
     if (!response) {
       return;
     }
@@ -95,22 +93,24 @@ const DoApprovalScreen: React.FC = () => {
           </div>
         </div>
         {data.length > 0 && (
-          <div className="w-full max-w-xl p-2 m-2 mt-8 bg-white rounded-md shadow-sm">
-            <table className="table-auto w-full text-sm">
-              <tbody>
-                {Object.entries(data[currentIndex]).map(([key, value]) => {
-                  if (key !== 'id' && key !== 'shared_posts' && key !== 'videos' && key !== 'money') {
-                    return (
-                      <tr key={key}>
-                        <td className="font-medium pr-2 p-0">{key.charAt(0).toUpperCase() + key.slice(1)}:</td>
-                        <td className="text-gray-700 p-0">{String(value)}</td>
-                      </tr>
-                    );
-                  }
-                  return null;
-                })}
-              </tbody>
-            </table>
+          <div className="datatables">
+            <div className="w-full max-w-xl mt-4 rounded-md shadow-sm ">
+              <table className="table-auto w-full text-sm">
+                <tbody>
+                  {Object.entries(data[currentIndex]).map(([key, value]) => {
+                    if (key !== 'id' && key !== 'shared_posts' && key !== 'videos' && key !== 'money') {
+                      return (
+                        <tr key={key}>
+                          <td className="font-medium pr-2 p-0">{key.charAt(0).toUpperCase() + key.slice(1)}:</td>
+                          <td className="text-gray-700 p-0">{String(value)}</td>
+                        </tr>
+                      );
+                    }
+                    return null;
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

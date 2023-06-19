@@ -41,9 +41,7 @@ const FindBrand = () => {
     }
 
     try {
-      console.log('data', data);
       const response = await TafindBrand(data);
-      console.log('reeeeewe', response);
       const object: BrandType = {
         balance: response.balance,
         email: response.email,
@@ -79,7 +77,6 @@ const FindBrand = () => {
       setbrandData(object);
     } catch (error: any) {
       setError(error.response.data.message);
-      console.log('error', error);
     }
   };
 

@@ -45,7 +45,6 @@ const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
 const fetchData = async (query: any) => {
   try {
     const response = await TAfindAllUser(query);
-    console.log('response.data', response.data);
     if (response.data && Array.isArray(response.data)) {
       const data = response.data.map((item: any, index: any) => ({
         id: index + 1,
@@ -115,7 +114,6 @@ const GetAllUsers = () => {
   };
 
   const [filters, setFilters] = useState<Filters>(defaultState);
-  console.log('filters', filters);
 
   const flattenFilters = Object.entries(filters).reduce((acc, [key, filter]) => {
     Object.entries(filter).forEach(([subKey, subValue]) => {

@@ -26,7 +26,6 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     try {
       const response = await TAlogin(email, password);
-      console.log('response', response);
       dispatch(login(response));
     } catch (error: any) {
       if (error.response) {
