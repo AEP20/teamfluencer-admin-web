@@ -87,6 +87,8 @@ const GetAllUsers = () => {
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [error, setError] = useState<string | null>(null);
 
+  //getall
+
   useEffect(() => {
     setPage(1);
   }, [pageSize]);
