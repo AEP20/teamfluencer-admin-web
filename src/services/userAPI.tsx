@@ -27,7 +27,7 @@ export const TAfindAllUser = async (params: any) => {
   try {
     const response = await apiClient.get(`/getall?${params}`);
     if (response.status === 200) {
-      return response.data;
+      return response;
     } else {
       throw new Error('Find User failed');
     }

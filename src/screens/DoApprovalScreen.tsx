@@ -16,10 +16,9 @@ interface User {
   followers: number;
   profile_complete: boolean;
   post_number: string;
-  insta_followers: string;
   average_likes: number;
   tiktok_followers: string;
-  tiktok_average_likes: string;
+  tiktok_average_like: string;
   tiktok_engagement_rate: string;
   shared_posts: SharedPostData[];
   videos: VideosData[];

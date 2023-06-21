@@ -154,10 +154,10 @@ const ItemsTable = ({ data }: any) => {
           <Text style={styles.row4}>{row.gender}</Text>
           <Text style={styles.row5}>{row.country}</Text>
           <Text style={styles.row6}>{row.city}</Text>
-          <Text style={styles.row8}>{row.insta_followers}</Text>
-          <Text style={styles.row9}>{row.insta_average_like}</Text>
+          <Text style={styles.row8}>{row.followers}</Text>
+          <Text style={styles.row9}>{row.average_like}</Text>
           <Text style={styles.row10}>{row.tiktok_followers}</Text>
-          <Text style={styles.row11}>{row.tiktok_average_likes}</Text>
+          <Text style={styles.row11}>{row.tiktok_average_like}</Text>
           <Text style={styles.row12}>{row.tiktok_engagement_rate}</Text>
         </View>
       ))}
