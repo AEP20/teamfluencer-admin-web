@@ -42,8 +42,6 @@ function Header() {
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);
   const [, setTheme] = useState<any>();
 
-  const [search, setSearch] = useState(false);
-
   const [flag, setFlag] = useState(themeConfig.locale);
 
   const { t } = useTranslation();

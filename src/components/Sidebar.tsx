@@ -1,25 +1,15 @@
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useLocation } from 'react-router-dom';
 import { toggleSidebar } from '../redux/store/themeConfigSlice';
-import AnimateHeight from 'react-animate-height';
 import { IRootState } from '../redux/store';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 const Sidebar = () => {
-  const [currentMenu, setCurrentMenu] = useState<string>('');
-  const [errorSubMenu, setErrorSubMenu] = useState(false);
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);
   const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
   const location = useLocation();
   const dispatch = useDispatch();
-  const { t } = useTranslation();
-  const toggleMenu = (value: string) => {
-    setCurrentMenu((oldValue) => {
-      return oldValue === value ? '' : value;
-    });
-  };
 
   useEffect(() => {
     const selector = document.querySelector('.sidebar ul a[href="' + window.location.pathname + '"]');
@@ -406,7 +396,7 @@ const Sidebar = () => {
                       </div>
                     </NavLink>
 
-                    <AnimateHeight duration={300} height={currentMenu === 'invoice' ? 'auto' : 0}>
+                    {/* <AnimateHeight duration={300} height={currentMenu === 'invoice' ? 'auto' : 0}>
                       <ul className="sub-menu text-gray-500">
                         <li>
                           <NavLink to="/apps/invoice/list">{t('list')}</NavLink>
@@ -421,7 +411,7 @@ const Sidebar = () => {
                           <NavLink to="/apps/invoice/edit">{t('edit')}</NavLink>
                         </li>
                       </ul>
-                    </AnimateHeight>
+                    </AnimateHeight> */}
                   </li>
 
                 </ul>
