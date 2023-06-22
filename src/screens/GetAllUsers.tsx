@@ -10,7 +10,7 @@ import { WaitingApprovalUserData } from '../types/waitingApprovalUserData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
-import { Filters, FilterValue, FilterType, CountryFilterValue } from '../types/waitingApprovalUserData';
+import { Filters, FilterValue, FilterType, CountryFilterValue } from '../types/getAllUsersData';
 import DownloadPdfButton from '../components/DownloadPdfButton';
 import DownloadCSVButton from '../components/DownloadCSVButton';
 
@@ -45,7 +45,7 @@ const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
 const fetchData = async (query: any) => {
   try {
     const response = await TAfindAllUser(query);
-    console.log(response.data)
+    console.log(response.data);
     if (response.data && Array.isArray(response.data)) {
       const data = response.data.map((item: any, index: any) => ({
         id: index + 1,
@@ -64,6 +64,7 @@ const fetchData = async (query: any) => {
         tiktok_videos: item.videos,
         tiktok_average_like: tiktokAverageLikeFixer(item.tiktok.tiktok_average_like),
         tiktok_engagement_rate: engagementRateFixer(item.tiktok.tiktok_engagement_rate),
+        keywords: item.insta.keywords,
       }));
       return data;
     }
@@ -84,7 +85,7 @@ const GetAllUsers = () => {
   const [initialRecords, setInitialRecords] = useState(sortBy(userData, 'id'));
   const [recordsData, setRecordsData] = useState(initialRecords);
   const [tempData, setTempData] = useState(initialRecords);
-  const [keyword, setKeyword] = useState('');
+  const [keywords, setKeywords] = useState('');
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [error, setError] = useState<string | null>(null);
 
@@ -112,72 +113,46 @@ const GetAllUsers = () => {
     tiktok_average_like: { min: '', max: '' },
     tiktok_engagement_rate: { min: '', max: '' },
     country: { value: '' },
+    keywords: [],
   };
-
   const [filters, setFilters] = useState<Filters>(defaultState);
 
-  const flattenFilters = Object.entries(filters).reduce((acc, [key, filter]) => {
-    Object.entries(filter).forEach(([subKey, subValue]) => {
-      acc[`${subKey}_${key}`] = subValue;
-    });
-    return acc;
-  }, {} as { [key: string]: string });
+  console.log('konusma', filters);
 
-  const params = new URLSearchParams(flattenFilters);
-
-  const setFilter = (key: keyof Filters, type: FilterType, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value } }));
+  const setFilter = (key: keyof Filters, type: FilterType, value: string | string[]) => {
+    if (key === 'keywords') {
+      setFilters((prev) => ({ ...prev, [key]: value as string[] }));
+    } else {
+      setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
+    }
   };
 
-  // useEffect(() => {
-  //   const getUserData = async () => {
-  //     try {
-  //       const data = await fetchData(params);
-  //       if (data !== undefined) {
-  //         setInitialRecords(data);
-  //         setUserData(data);
-  //       } else {
-  //         setError('No data found');
-  //       }
-  //     } catch (error) {
-  //       setError('No data found');
-  //     }
-  //   };
-  //   getUserData();
-  // }, []);
-
-  useEffect(() => {
-    let dt = userData;
-    console.log("aynen")
-
-    Object.entries(filters).forEach(([key, value]) => {
-      if (key.endsWith('country')) {
-        const countryValue = value as CountryFilterValue;
-        console.log("countryValue", countryValue.value)
-        if (countryValue.value) {
-          if (countryValue.value === 'TR') {
-            dt = dt.filter((d) => d[key as keyof typeof d] === 'TR');
-          } else if (countryValue.value === 'Other') {
-            dt = dt.filter((d) => d[key as keyof typeof d] !== 'TR');
-          } else {
-            dt = dt.filter((d) => d[key as keyof typeof d] === countryValue.value);
-          }
-        }
+  const handleFetchData = async () => {
+    // Let's first flatten the filters
+    const flattenFilters = Object.entries(filters).reduce((acc, [key, filter]) => {
+      if (key === 'keywords') {
+        // Don't add keywords here, we'll handle it separately
+      } else if (key === 'country') {
+        acc[key] = (filter as CountryFilterValue).value; // country value
       } else {
-        const actualKey = key.replace('min_', '').replace('max_', '');
-        if (key.startsWith('min')) {
-          dt = dt.filter((d) => Number(d[actualKey as keyof typeof d]) >= Number(value));
-        } else if (key.startsWith('max')) {
-          dt = dt.filter((d) => Number(d[actualKey as keyof typeof d]) <= Number(value));
-        }
+        const { min, max } = filter as FilterValue;
+        if (min) acc[`min_${key}`] = min;
+        if (max) acc[`max_${key}`] = max;
       }
+
+      return acc;
+    }, {} as { [key: string]: string });
+
+    // Create URLSearchParams from the flattened filters
+    const params = new URLSearchParams(flattenFilters);
+
+    // Add keywords separately
+    const keywords = filters.keywords as string[];
+    keywords.forEach((keywords) => {
+      params.append('keywords', keywords);
     });
 
-    setInitialRecords(dt);
-    setTempData(dt);
-  }, [filters]);
-
-  const handleFetchData = async () => {
+    // Here we fetch the data
     try {
       const data = await fetchData(params);
       if (data !== undefined) {
@@ -199,6 +174,7 @@ const GetAllUsers = () => {
     'tiktok_average_like',
     'tiktok_engagement_rate',
     'country',
+    'keywords',
   ];
 
   return (
@@ -210,12 +186,12 @@ const GetAllUsers = () => {
         </div>
         <div className="md:flex md:flex-row w-full">
           {filterKeys.map((key) => {
-            if (key !== 'country') {
+            if (key !== 'country' && key !== 'keywords') {
               return (
                 <div key={key} className="md:flex md:flex-col flex-1 mb-1 mr-2">
                   <input
                     type="text"
-                    value={filters[key].min}
+                    value={(filters[key] as FilterValue).min}
                     onChange={(e) => {
                       setFilter(key, 'min', e.target.value);
                     }}
@@ -225,12 +201,26 @@ const GetAllUsers = () => {
 
                   <input
                     type="text"
-                    value={filters[key].max}
+                    value={(filters[key] as FilterValue).max}
                     onChange={(e) => {
                       setFilter(key, 'max', e.target.value);
                     }}
                     className="form-input w-full"
                     placeholder={`${key} max`}
+                  />
+                </div>
+              );
+            } else if (key === 'keywords') {
+              return (
+                <div key={key} className="md:flex md:flex-col flex-1 mb-1 mr-2">
+                  <input
+                    type="text"
+                    value={filters[key].join(',')}
+                    onChange={(e) => {
+                      setFilter(key, 'value', e.target.value.split(','));
+                    }}
+                    className="form-input w-full"
+                    placeholder={`keywords`}
                   />
                 </div>
               );
@@ -245,8 +235,8 @@ const GetAllUsers = () => {
               type="text"
               className="form-input w-auto"
               placeholder="Keywords"
-              value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
+              value={keywords}
+              onChange={(e) => setKeywords(e.target.value)}
             />
           </div>
           <div className="md:flex md:flex-row w-3/4">
