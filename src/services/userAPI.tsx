@@ -50,9 +50,13 @@ export const TAfindApprovalUser = async () => {
   }
 };
 
-export const TAfindAllApprovalUser = async () => {
+export const TAfindAllApprovalUser = async (token: string) => {
   try {
-    const response = await apiClient.get(`/getallverificationprofiles`);
+    const response = await apiClient.get(`/getallverificationprofiles`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     if (response.status === 200) {
       return response;
     } else {
@@ -63,9 +67,13 @@ export const TAfindAllApprovalUser = async () => {
   }
 };
 
-export const TAverifyUser = async (id: any, isVerified: boolean) => {
+export const TAverifyUser = async (id: any, isVerified: boolean, token: string) => {
   try {
-    const response = await apiClient.put(`/verificateuser/${id}/${isVerified}`);
+    const response = await apiClient.put(`/verificateuser/${id}/${isVerified}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     if (response.status === 200) {
       return response;
     }

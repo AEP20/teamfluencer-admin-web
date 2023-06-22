@@ -3,24 +3,27 @@ import React from 'react';
 import { TAfindApprovalCampaign, TAverifyCampaign } from '../services/campaigns';
 import ReadMore from '../components/ReadMore';
 import { Campaign, Limitations, Statistic, Details, ApplicationCounts } from '../types/campaignsData';
+import { selectToken } from '../redux/store/userSlice';
+import { useSelector } from 'react-redux';
 
 const DoApprovalCampaigns: React.FC = () => {
+  const token = useSelector(selectToken);
   const [data, setData] = useState<Campaign[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [refreshData, setRefreshData] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null); // hata durumu için yeni state
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await TAfindApprovalCampaign();
+        const response = await TAfindApprovalCampaign(token);
         if (response.data && Array.isArray(response.data)) {
           setData(response.data);
           setIsLoading(false);
         }
       } catch (err: any) {
-        setError(err.message || 'Bir hata oluştu'); // hata durumunda error state'ini güncelle
+        setError(err.message || 'Bir hata oluştu');
         setIsLoading(false);
       }
     };

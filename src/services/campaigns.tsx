@@ -1,15 +1,19 @@
 import axios from 'axios';
 
-const AUTH_API_URL = 'http://localhost:3000/brand';
+const AUTH_API_URL = 'http://localhost:3000/campaign';
 
 const apiClient = axios.create({
   baseURL: AUTH_API_URL,
   timeout: 5000,
 });
 
-export const TAfindApprovalCampaign = async () => {
+export const TAfindApprovalCampaign = async (token: string) => {
   try {
-    const response = await apiClient.get(`/getallverificationcampaigns`);
+    const response = await apiClient.get(`/getverificationcampaign`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     if (response.status === 200) {
       return response;
     } else {

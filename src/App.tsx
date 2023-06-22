@@ -2,15 +2,10 @@ import { BrowserRouter as Router, Route, BrowserRouter, Routes, Navigate } from 
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import Index from './screens/Index';
-import { login, logout, selectUser } from './redux/store/userSlice';
+import { login } from './redux/store/userSlice';
 import { useSelector, useDispatch } from 'react-redux';
-import Setting from './components/Setting';
-import Header from './components/Header';
-import Sidebar from './components/Sidebar';
 import FindUser from './screens/FindUser';
-import { useEffect, useState } from 'react';
-import { IRootState } from './redux/store/index';
-import { toggleSidebar } from './redux/store/themeConfigSlice';
+import { useEffect } from 'react';
 import CommonLayout from './components/CommonLayout';
 import WaitingApprovalUser from './screens/WaitingApprovalUser';
 import FindBrand from './screens/FindBrand';
@@ -19,19 +14,30 @@ import DoApprovalScreen from './screens/DoApprovalScreen';
 import APIdocsScreen from './screens/APIdocsScreen';
 import GetAllUsers from './screens/GetAllUsers';
 import DoApprovalCampaigns from './screens/DoApprovalCampaigns';
+import { selectToken } from './redux/store/userSlice';
 
 function App() {
-  const storedUser = useSelector(selectUser); // Redux durumunu al
-  const user = localStorage.getItem('user') || storedUser; // LocalStorage'dan kullanıcıyı al
+  const token = "useSelector(selectToken);"
+  const dispatch = useDispatch();
+
+  // useEffect(() => {
+  //   const userString = localStorage.getItem('user');
+  //   const tokenString = localStorage.getItem('token');
+
+  //   if (tokenString && userString && !token) {
+  //     const user = JSON.parse(userString);
+  //     dispatch(login({ user, token: tokenString }));
+  //   }
+  // }, [dispatch, token]);
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/auth/*" element={!user ? <AuthLayout /> : <Navigate to="/" />} />
-        <Route path="/*" element={user ? <MainLayout /> : <Navigate to="/auth/login" />} />
-        <Route path="/user/*" element={user ? <UserLayout /> : <Navigate to="/auth/login" />} />
-        <Route path="/brands/*" element={user ? <BrandsLayout /> : <Navigate to="/auth/login" />} />
-        <Route path="/campaigns/*" element={user ? <CampaignsLayout /> : <Navigate to="/auth/login" />} />
+        <Route path="/auth/*" element={!token ? <AuthLayout /> : <Navigate to="/" />} />
+        <Route path="/*" element={token ? <MainLayout /> : <Navigate to="/auth/login" />} />
+        <Route path="/user/*" element={token ? <UserLayout /> : <Navigate to="/auth/login" />} />
+        <Route path="/brands/*" element={token ? <BrandsLayout /> : <Navigate to="/auth/login" />} />
+        <Route path="/campaigns/*" element={token ? <CampaignsLayout /> : <Navigate to="/auth/login" />} />
       </Routes>
     </BrowserRouter>
   );

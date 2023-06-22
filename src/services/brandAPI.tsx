@@ -7,7 +7,7 @@ const apiClient = axios.create({
   timeout: 5000,
 });
 
-export const TafindBrand = async (data: any) => {
+export const TafindBrand = async (data: any, token: string) => {
   try {
     let query = '';
     if (data.email) {
@@ -18,7 +18,11 @@ export const TafindBrand = async (data: any) => {
       query = `?brand_name=${data.brandname}`;
     }
 
-    const response = await apiClient.get(`/get${query}`);
+    const response = await apiClient.get(`/get${query}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     if (response.status === 200) {
       return response.data;
     } else {
@@ -29,9 +33,13 @@ export const TafindBrand = async (data: any) => {
   }
 };
 
-export const TAfindAllBrands = async () => {
+export const TAfindAllBrands = async (token: string) => {
   try {
-    const response = await apiClient.get(`/getall`);
+    const response = await apiClient.get(`/getall`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (response.status === 200) {
       return response;

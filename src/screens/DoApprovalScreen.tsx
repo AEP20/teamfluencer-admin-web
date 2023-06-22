@@ -3,6 +3,8 @@ import React from 'react';
 import { TAfindAllApprovalUser, TAverifyUser } from '../services/userAPI';
 import { InstagramData, TiktokData, ProfileData, MoneyData, SharedPostData, VideosData } from '../types/profileData';
 import ReadMore from '../components/ReadMore';
+import { selectToken } from '../redux/store/userSlice';
+import { useSelector } from 'react-redux';
 
 interface User {
   id: number;
@@ -25,6 +27,7 @@ interface User {
 }
 
 const DoApprovalScreen: React.FC = () => {
+  const token = useSelector(selectToken);
   const [data, setData] = useState<User[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -34,14 +37,14 @@ const DoApprovalScreen: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await TAfindAllApprovalUser();
+        const response = await TAfindAllApprovalUser(token);
         if (response.data && Array.isArray(response.data)) {
           setData(response.data);
           setIsLoading(false);
         }
       } catch (error: any) {
         setIsLoading(false);
-        setError(error.message); // hata durumunda setError ile hatayı durumda saklayın.
+        setError(error.message);
       }
     };
     fetchData();
@@ -49,7 +52,7 @@ const DoApprovalScreen: React.FC = () => {
 
   const handleApprove = async (id: any, isVerified: boolean) => {
     setIsLoading(true);
-    const response = await TAverifyUser(id, isVerified);
+    const response = await TAverifyUser(id, isVerified, token);
     if (!response) {
       return;
     }

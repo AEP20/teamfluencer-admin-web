@@ -14,8 +14,8 @@ export const TAlogin = async (email: string, password: string) => {
       password,
     });
 
-    if (response.status === 201) {
-      return response.data.session;
+    if (response.status === 200) {
+      return response;
     } else {
       throw new Error('Login failed');
     }
@@ -32,7 +32,7 @@ export const TAsignup = async (email: string, password: string) => {
     });
 
     if (response.status === 200) {
-      return response.data;
+      return response;
     } else {
       throw new Error('Signup failed');
     }
