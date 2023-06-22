@@ -29,13 +29,19 @@ const DoApprovalScreen: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [refreshData, setRefreshData] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await TAfindAllApprovalUser();
-      if (response.data && Array.isArray(response.data)) {
-        setData(response.data);
+      try {
+        const response = await TAfindAllApprovalUser();
+        if (response.data && Array.isArray(response.data)) {
+          setData(response.data);
+          setIsLoading(false);
+        }
+      } catch (error: any) {
         setIsLoading(false);
+        setError(error.message); // hata durumunda setError ile hatayı durumda saklayın.
       }
     };
     fetchData();
@@ -59,9 +65,8 @@ const DoApprovalScreen: React.FC = () => {
     setCurrentIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : prevIndex));
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  if (isLoading) return <p>Yükleniyor...</p>;
+  if (error) return <p>Hata: {error}</p>;
 
   return (
     <div className="flex flex-col lg:flex-row">

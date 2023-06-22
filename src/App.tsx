@@ -18,6 +18,7 @@ import AllBrands from './screens/AllBrands';
 import DoApprovalScreen from './screens/DoApprovalScreen';
 import APIdocsScreen from './screens/APIdocsScreen';
 import GetAllUsers from './screens/GetAllUsers';
+import DoApprovalCampaigns from './screens/DoApprovalCampaigns';
 
 function App() {
   const storedUser = useSelector(selectUser); // Redux durumunu al
@@ -30,6 +31,7 @@ function App() {
         <Route path="/*" element={user ? <MainLayout /> : <Navigate to="/auth/login" />} />
         <Route path="/user/*" element={user ? <UserLayout /> : <Navigate to="/auth/login" />} />
         <Route path="/brands/*" element={user ? <BrandsLayout /> : <Navigate to="/auth/login" />} />
+        <Route path="/campaigns/*" element={user ? <CampaignsLayout /> : <Navigate to="/auth/login" />} />
       </Routes>
     </BrowserRouter>
   );
@@ -81,6 +83,20 @@ function BrandsLayout() {
         <Routes>
           <Route path="/find" element={<FindBrand />} />
           <Route path="/find-all" element={<AllBrands />} />
+        </Routes>
+      </CommonLayout>
+    </>
+  );
+}
+
+function CampaignsLayout() {
+  return (
+    <>
+      <CommonLayout>
+        <Routes>
+          <Route path="/find" element={<FindBrand />} />
+          <Route path="/find-all" element={<AllBrands />} />
+          <Route path="/do-approval" element={<DoApprovalCampaigns />} />
         </Routes>
       </CommonLayout>
     </>
