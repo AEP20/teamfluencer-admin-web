@@ -124,79 +124,15 @@ function Header() {
             </ul>
           </div>
           <div className="sm:flex-1 ltr:sm:ml-0 ltr:ml-auto sm:rtl:mr-0 rtl:mr-auto flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]">
-            <div className="sm:ltr:mr-auto sm:rtl:ml-auto">
-              <form
-                className={`${
-                  search && '!block'
-                } sm:relative absolute inset-x-0 sm:top-0 top-1/2 sm:translate-y-0 -translate-y-1/2 sm:mx-0 mx-4 z-10 sm:block hidden`}
-                onSubmit={() => setSearch(false)}
-              >
-                <div className="relative">
-                  <input
-                    type="text"
-                    className="form-input ltr:pl-9 rtl:pr-9 ltr:sm:pr-4 rtl:sm:pl-4 ltr:pr-9 rtl:pl-9 peer sm:bg-transparent bg-gray-100 placeholder:tracking-widest"
-                    placeholder="Search..."
-                  />
-                  <button
-                    type="button"
-                    className="absolute w-9 h-9 inset-0 ltr:right-auto rtl:left-auto appearance-none peer-focus:text-primary"
-                  >
-                    <svg
-                      className="mx-auto"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <circle cx="11.5" cy="11.5" r="9.5" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
-                      <path d="M18.5 18.5L22 22" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
-                  </button>
-                  <button
-                    type="button"
-                    className="hover:opacity-80 sm:hidden block absolute top-1/2 -translate-y-1/2 ltr:right-2 rtl:left-2"
-                    onClick={() => setSearch(false)}
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <circle opacity="0.5" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
-                      <path
-                        d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </form>
-              <button
-                type="button"
-                onClick={() => setSearch(!search)}
-                className="search_btn sm:hidden p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:bg-white-light/90 dark:hover:bg-dark/60"
-              >
-                <svg
-                  className="w-4.5 h-4.5 mx-auto dark:text-[#d0d2d6]"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle cx="11.5" cy="11.5" r="9.5" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
-                  <path d="M18.5 18.5L22 22" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-              </button>
+            <div className='sm:ltr:ml-auto sm:rtl:mr-auto'>
+              <HealthCheck />
             </div>
-            <HealthCheck />
-
             <div>
               {themeConfig.theme === 'light' ? (
                 <button
-                  className={`${
-                    themeConfig.theme === 'light' &&
+                  className={`${themeConfig.theme === 'light' &&
                     'flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60'
-                  }`}
+                    }`}
                   onClick={() => {
                     setTheme('dark');
                     dispatch(toggleTheme('dark'));
@@ -243,10 +179,9 @@ function Header() {
               )}
               {themeConfig.theme === 'dark' && (
                 <button
-                  className={`${
-                    themeConfig.theme === 'dark' &&
+                  className={`${themeConfig.theme === 'dark' &&
                     'flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60'
-                  }`}
+                    }`}
                   onClick={() => {
                     setTheme('system');
                     dispatch(toggleTheme('system'));
@@ -262,10 +197,9 @@ function Header() {
               )}
               {themeConfig.theme === 'system' && (
                 <button
-                  className={`${
-                    themeConfig.theme === 'system' &&
+                  className={`${themeConfig.theme === 'system' &&
                     'flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60'
-                  }`}
+                    }`}
                   onClick={() => {
                     setTheme('light');
                     dispatch(toggleTheme('light'));
@@ -302,9 +236,8 @@ function Header() {
                       <li key={item.code}>
                         <button
                           type="button"
-                          className={`flex w-full hover:text-primary rounded-lg ${
-                            i18next.language === item.code ? 'bg-primary/10 text-primary' : ''
-                          }`}
+                          className={`flex w-full hover:text-primary rounded-lg ${i18next.language === item.code ? 'bg-primary/10 text-primary' : ''
+                            }`}
                           onClick={() => {
                             i18next.changeLanguage(item.code);
                             setFlag(item.code);
