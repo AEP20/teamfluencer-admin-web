@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Route, BrowserRouter, Routes, Navigate } from 
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import Index from './screens/Index';
-import { login } from './redux/store/userSlice';
+import { login, logout } from './redux/store/userSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import FindUser from './screens/FindUser';
 import { useEffect, startTransition, Suspense } from 'react';
@@ -22,10 +22,12 @@ function App() {
 
   useEffect(() => {
     const tokenString = localStorage.getItem('token');
-    console.log('TOKENNNNNN');
-    console.log(localStorage.getItem('token'));
     if (tokenString && !token) {
+      console.log('TOKENNNN', token);
       dispatch(login({ token: tokenString }));
+    }
+    if (token === null) {
+      dispatch(logout());
     }
   }, [dispatch, token]);
 
