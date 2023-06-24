@@ -26,9 +26,6 @@ function App() {
       console.log('TOKENNNN', token);
       dispatch(login({ token: tokenString }));
     }
-    if (token === null) {
-      dispatch(logout());
-    }
   }, [dispatch, token]);
 
   // useEffect(() => {
