@@ -5,7 +5,7 @@ import Index from './screens/Index';
 import { login } from './redux/store/userSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import FindUser from './screens/FindUser';
-import { useEffect } from 'react';
+import { useEffect, startTransition, Suspense } from 'react';
 import CommonLayout from './components/CommonLayout';
 import WaitingApprovalUser from './screens/WaitingApprovalUser';
 import FindBrand from './screens/FindBrand';
@@ -17,8 +17,17 @@ import DoApprovalCampaigns from './screens/DoApprovalCampaigns';
 import { selectToken } from './redux/store/userSlice';
 
 function App() {
-  const token = "useSelector(selectToken);"
+  const token = useSelector(selectToken);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const tokenString = localStorage.getItem('token');
+    console.log('TOKENNNNNN');
+    console.log(localStorage.getItem('token'));
+    if (tokenString && !token) {
+      dispatch(login({ token: tokenString }));
+    }
+  }, [dispatch, token]);
 
   // useEffect(() => {
   //   const userString = localStorage.getItem('user');
@@ -57,12 +66,14 @@ function AuthLayout() {
 function MainLayout() {
   return (
     <>
-      <CommonLayout>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/api-docs" element={<APIdocsScreen />} />
-        </Routes>
-      </CommonLayout>
+      <Suspense fallback={<div>Loading...</div>}>
+        <CommonLayout>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/api-docs" element={<APIdocsScreen />} />
+          </Routes>
+        </CommonLayout>
+      </Suspense>
     </>
   );
 }
@@ -70,14 +81,16 @@ function MainLayout() {
 function UserLayout() {
   return (
     <>
-      <CommonLayout>
-        <Routes>
-          <Route path="/find" element={<FindUser />} />
-          <Route path="/find-waiting-approval" element={<WaitingApprovalUser />} />
-          <Route path="/do-approval" element={<DoApprovalScreen />} />
-          <Route path="/getall" element={<GetAllUsers />} />
-        </Routes>
-      </CommonLayout>
+      <Suspense fallback={<div>Loading...</div>}>
+        <CommonLayout>
+          <Routes>
+            <Route path="/find" element={<FindUser />} />
+            <Route path="/find-waiting-approval" element={<WaitingApprovalUser />} />
+            <Route path="/do-approval" element={<DoApprovalScreen />} />
+            <Route path="/getall" element={<GetAllUsers />} />
+          </Routes>
+        </CommonLayout>
+      </Suspense>
     </>
   );
 }
@@ -85,12 +98,14 @@ function UserLayout() {
 function BrandsLayout() {
   return (
     <>
-      <CommonLayout>
-        <Routes>
-          <Route path="/find" element={<FindBrand />} />
-          <Route path="/find-all" element={<AllBrands />} />
-        </Routes>
-      </CommonLayout>
+      <Suspense fallback={<div>Loading...</div>}>
+        <CommonLayout>
+          <Routes>
+            <Route path="/find" element={<FindBrand />} />
+            <Route path="/find-all" element={<AllBrands />} />
+          </Routes>
+        </CommonLayout>
+      </Suspense>
     </>
   );
 }
@@ -98,13 +113,15 @@ function BrandsLayout() {
 function CampaignsLayout() {
   return (
     <>
-      <CommonLayout>
-        <Routes>
-          <Route path="/find" element={<FindBrand />} />
-          <Route path="/find-all" element={<AllBrands />} />
-          <Route path="/do-approval" element={<DoApprovalCampaigns />} />
-        </Routes>
-      </CommonLayout>
+      <Suspense fallback={<div>Loading...</div>}>
+        <CommonLayout>
+          <Routes>
+            <Route path="/find" element={<FindBrand />} />
+            <Route path="/find-all" element={<AllBrands />} />
+            <Route path="/do-approval" element={<DoApprovalCampaigns />} />
+          </Routes>
+        </CommonLayout>
+      </Suspense>
     </>
   );
 }
