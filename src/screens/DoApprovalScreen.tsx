@@ -38,6 +38,7 @@ const DoApprovalScreen: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await TAfindAllApprovalUser(token);
+        console.log('modexl', response.data);
         if (response.data && Array.isArray(response.data)) {
           setData(response.data);
           setIsLoading(false);

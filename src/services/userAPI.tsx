@@ -40,9 +40,13 @@ export const TAfindAllUser = async (params: any) => {
   }
 };
 
-export const TAfindApprovalUser = async () => {
+export const TAfindApprovalUser = async (token: string) => {
   try {
-    const response = await apiClient.get(`/getverificationprofiles`);
+    const response = await apiClient.get(`/getverificationprofiles`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     console.log('response', response);
     if (response.status === 200) {
       return response;

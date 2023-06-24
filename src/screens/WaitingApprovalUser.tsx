@@ -13,6 +13,7 @@ import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { Filters, FilterValue, FilterType, CountryFilterValue } from '../types/waitingApprovalUserData';
 import DownloadPdfButton from '../components/DownloadPdfButton';
 import DownloadCSVButton from '../components/DownloadCSVButton';
+import { selectToken } from '../redux/store/userSlice';
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
@@ -42,9 +43,9 @@ const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
   return tiktokEngagementRate;
 };
 
-const fetchData = async () => {
+const fetchData = async (token: string) => {
   try {
-    const response = await TAfindApprovalUser();
+    const response = await TAfindApprovalUser(token);
     if (response.data && Array.isArray(response.data)) {
       const data = response.data.map((item, index) => ({
         id: index + 1,
@@ -72,6 +73,7 @@ const fetchData = async () => {
 };
 
 const WaitingApprovalUser = () => {
+  const token = useSelector(selectToken);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setPageTitle('Range Search Table'));
@@ -94,7 +96,7 @@ const WaitingApprovalUser = () => {
   useEffect(() => {
     const getUserData = async () => {
       try {
-        const data = await fetchData();
+        const data = await fetchData(token);
         if (data !== undefined) {
           setInitialRecords(data);
           setUserData(data);
