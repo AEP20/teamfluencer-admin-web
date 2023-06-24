@@ -5,7 +5,7 @@ import { login, logout, selectUser } from '../redux/store/userSlice';
 import { TAlogin, TAsignup } from '../services/authAPI';
 import React from 'react';
 import UserProfile from '../components/UserProfile';
-import { TafindBrand } from '../services/brandAPI';
+import { TAfindBrand } from '../services/brandAPI';
 import { BrandType, MoneyExchanges } from '../types/brandData';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import BrandProfile from '../components/BrandProfile';
@@ -43,7 +43,7 @@ const FindBrand = () => {
     }
 
     try {
-      const response = await TafindBrand(data, token);
+      const response = await TAfindBrand(data, token);
       const object: BrandType = {
         balance: response.balance,
         email: response.email,

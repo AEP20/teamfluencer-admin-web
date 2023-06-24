@@ -8,9 +8,12 @@ import UserProfile from '../components/UserProfile';
 import { TAfindUser } from '../services/userAPI';
 import { ProfileData } from '../types/profileData';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
+import { selectToken } from '../redux/store/userSlice';
 
 const FindUser = () => {
   const dispatch = useDispatch();
+  const token = useSelector(selectToken);
+
   useEffect(() => {
     dispatch(setPageTitle('Kullanıcı Bul'));
   });
@@ -37,7 +40,8 @@ const FindUser = () => {
     }
 
     try {
-      const response = await TAfindUser(data);
+      console.log('token', token);
+      const response = await TAfindUser(data, token);
       const object = {
         username: response.username,
         email: response.email,

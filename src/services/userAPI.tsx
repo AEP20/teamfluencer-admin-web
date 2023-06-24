@@ -8,9 +8,13 @@ const apiClient = axios.create({
   timeout: 5000,
 });
 
-export const TAfindUser = async (data: any) => {
+export const TAfindUser = async (data: any, token: string) => {
   try {
-    const response = await apiClient.get(`/getuser${data.email ? `?_email=${data.email}` : `?_phone=${data.phone} `}`);
+    const response = await apiClient.get(`/getuser${data.email ? `?_email=${data.email}` : `?_phone=${data.phone} `}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (response.status === 200) {
       return response.data;

@@ -7,7 +7,7 @@ const apiClient = axios.create({
   timeout: 5000,
 });
 
-export const TafindBrand = async (data: any, token: string) => {
+export const TAfindBrand = async (data: any, token: string) => {
   try {
     let query = '';
     if (data.email) {
