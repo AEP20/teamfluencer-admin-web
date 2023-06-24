@@ -38,7 +38,7 @@ type ApplicationCounts = {
 };
 
 type Campaign = {
-  id: string; // Brand's ObjectId
+  _id: string; // Brand's ObjectId
   created_at: Date;
   currency: string;
   country: string;

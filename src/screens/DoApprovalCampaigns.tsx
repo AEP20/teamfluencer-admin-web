@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import React from 'react';
-import { TAfindApprovalCampaign, TAverifyCampaign } from '../services/campaigns';
+import { TAfindApprovalCampaign, TAdoApprovalCampaign } from '../services/campaigns';
 import ReadMore from '../components/ReadMore';
 import { Campaign, Limitations, Statistic, Details, ApplicationCounts } from '../types/campaignsData';
 import { selectToken } from '../redux/store/userSlice';
@@ -13,6 +13,7 @@ const DoApprovalCampaigns: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [refreshData, setRefreshData] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [rejectedReason, setRejectedReason] = useState<string>('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,15 +31,18 @@ const DoApprovalCampaigns: React.FC = () => {
     };
     fetchData();
   }, [refreshData]);
+  console.log('token', token);
 
-  const handleApprove = async (id: any, isVerified: boolean) => {
-    //   setIsLoading(true);
-    //   const response = await TAverifyUser(id, isVerified);
-    //   if (!response) {
-    //     return;
-    //   }
-    //   setRefreshData((prev) => !prev);
-    //   setIsLoading(false);
+  const handleApprove = async (status: string, rejected_reason: string, id: string, token: string) => {
+    setIsLoading(true);
+    console.log('status', status, 'rejectReason', rejected_reason, 'id', id, 'anasısikik', token);
+    const response = await TAdoApprovalCampaign(status, rejected_reason, id, token);
+    if (!response) {
+      return;
+    }
+    setRefreshData((prev) => !prev);
+    setIsLoading(false);
+    setRejectedReason('');
   };
 
   const handleNext = () => {
@@ -51,6 +55,7 @@ const DoApprovalCampaigns: React.FC = () => {
 
   if (isLoading) return <p>Yükleniyor...</p>;
   if (error) return <p>Hata: {error}</p>;
+  if (data.length === 0) return <p>Onay bekleyen kampanya bulunamadı</p>;
 
   return (
     <div className="flex flex-col lg:flex-row p-4 space-y-4 lg:space-y-0 lg:space-x-4">
@@ -58,14 +63,16 @@ const DoApprovalCampaigns: React.FC = () => {
         <table className="table-auto w-full text-sm">
           <div className="flex flex-row justify-between">
             <div>
+              {/* const response = await TAdoApprovalCampaign(status, rejectReason, id, token); */}
+
               <button
-                onClick={() => handleApprove(data[currentIndex].id, false)}
+                onClick={() => handleApprove('denied', rejectedReason, data[currentIndex]._id, token)}
                 className="mt-2 mr-2 py-2 px-6 rounded-md bg-red-500 text-white hover:bg-red-600"
               >
                 Red
               </button>
               <button
-                onClick={() => handleApprove(data[currentIndex].id, true)}
+                onClick={() => handleApprove('verified', rejectedReason, data[currentIndex]._id, token)}
                 className="mt-2 mr-2 py-2 px-6 rounded-md bg-green-500 text-white hover:bg-green-600"
               >
                 Onay
@@ -82,13 +89,19 @@ const DoApprovalCampaigns: React.FC = () => {
             </div>
           </div>
           <div className="w-full px-2 mt-4 mb-2">
-            <input type="text" className="w-full p-2 rounded-md border-2 border-gray-300" placeholder="reject reason" />
+            <input
+              type="text"
+              className="w-full p-2 rounded-md border-2 border-gray-300"
+              placeholder="reject reason"
+              value={rejectedReason}
+              onChange={(event) => setRejectedReason(event.target.value)}
+            />
           </div>
 
           <tbody>
             <tr>
               <td>
-                <h2 className="text-2xl font-semibold mb-4 text-center">{data[currentIndex].name}</h2>
+                <h2 className="text-2xl font-semibold mb-4 text-center">{data[currentIndex]?.name || 'None'}</h2>
                 <img
                   className="w-full h-64 object-cover mb-4 rounded-md zoom"
                   src={data[currentIndex].cover_photo}

@@ -24,4 +24,25 @@ export const TAfindApprovalCampaign = async (token: string) => {
   }
 };
 
-export const TAverifyCampaign = async () => {};
+export const TAdoApprovalCampaign = async (status: string, rejected_reason: string, id: string, token: string) => {
+  console.log('heeeeee', token);
+  const query = new URLSearchParams({
+    id,
+    status,
+    rejected_reason,
+  });
+
+  try {
+    console.log('url', `/verificate?${query}`);
+    const response = await apiClient.put(`/verificate?${query}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (response.status === 200) {
+      return response;
+    }
+  } catch (error) {
+    throw error;
+  }
+};
