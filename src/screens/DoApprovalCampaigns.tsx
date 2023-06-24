@@ -59,12 +59,10 @@ const DoApprovalCampaigns: React.FC = () => {
 
   return (
     <div className="flex flex-col lg:flex-row p-4 space-y-4 lg:space-y-0 lg:space-x-4">
-      <div className="w-full lg:w-1/2 bg-white p-4 rounded-md shadow-sm">
+      <div className="w-full lg:w-2/5 bg-white p-4 rounded-md shadow-sm">
         <table className="table-auto w-full text-sm">
           <div className="flex flex-row justify-between">
             <div>
-              {/* const response = await TAdoApprovalCampaign(status, rejectReason, id, token); */}
-
               <button
                 onClick={() => handleApprove('denied', rejectedReason, data[currentIndex]._id, token)}
                 className="mt-2 mr-2 py-2 px-6 rounded-md bg-red-500 text-white hover:bg-red-600"
@@ -157,7 +155,7 @@ const DoApprovalCampaigns: React.FC = () => {
         </table>
       </div>
 
-      <div className="w-1/2 bg-white p-4 rounded-md shadow-sm">
+      <div className="w-2/5 bg-white p-4 rounded-md shadow-sm">
         <table className="table-auto w-full">
           <thead>
             <tr>
@@ -259,15 +257,15 @@ const DoApprovalCampaigns: React.FC = () => {
       </div>
 
       {data[currentIndex].statistics.length > 0 && (
-        <div className="w-full lg:w-1/2 bg-white p-4 rounded-md shadow-sm">
+        <div className="w-full lg:w-1/5 bg-white p-4 rounded-md shadow-sm">
           <table className="table-auto w-full text-sm">
             <tbody>
               <tr>
                 <td>
-                  <h3 className="text-2xl font-semibold mb-4">Statistics</h3>
+                  <h3 className="text-xl font-semibold mb-4">Statistics</h3>
                   {data[currentIndex].statistics.map((statistic, index) => (
                     <div key={index} className="mb-4">
-                      <h3 className="font-semibold text-lg mb-2">{statistic.date}</h3>
+                      <h3 className="font-bold text-md mb-2">{statistic.date}</h3>
                       <p>Views: {statistic.views}</p>
                       <p>Shared: {statistic.shared}</p>
                       <p>Likes: {statistic.likes}</p>
