@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const AUTH_API_URL = 'https://api.teamfluencer.co/admin';
-
 const apiClient = axios.create({
-  baseURL: AUTH_API_URL,
+  baseURL: process.env.REACT_APP_AUTH_API_URL,
   timeout: 5000,
 });
+
+console.log('falan', process.env.REACT_APP_AUTH_API_URL);
 
 export const TAlogin = async (email: string, password: string) => {
   try {

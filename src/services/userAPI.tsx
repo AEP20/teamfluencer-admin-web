@@ -1,10 +1,7 @@
 import axios from 'axios';
-import { url } from 'inspector';
-
-const AUTH_API_URL = 'https://api.teamfluencer.co/user';
 
 const apiClient = axios.create({
-  baseURL: AUTH_API_URL,
+  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/user`,
   timeout: 5000,
 });
 

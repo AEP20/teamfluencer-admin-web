@@ -1,9 +1,7 @@
 import axios from 'axios';
 
-const AUTH_API_URL = 'https://api.teamfluencer.co/campaign';
-
 const apiClient = axios.create({
-  baseURL: AUTH_API_URL,
+  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/campaign`,
   timeout: 5000,
 });
 
