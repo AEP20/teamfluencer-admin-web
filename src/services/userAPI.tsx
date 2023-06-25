@@ -29,7 +29,7 @@ export const TAfindUser = async (data: any, token: string) => {
 export const TAfindAllUser = async (params: any, token: string) => {
   console.log('/getall?' + params);
   try {
-    const response = await apiClient.get(`/getall?${params}`,{
+    const response = await apiClient.get(`/getall?${params}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -88,6 +88,23 @@ export const TAverifyUser = async (id: any, isVerified: boolean, token: string) 
     });
     if (response.status === 200) {
       return response;
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAapprovedUser = async (token: string) => {
+  try {
+    const response = await apiClient.get(`/getverifiedprofiles`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (response.status === 200) {
+      return response;
+    } else {
+      throw new Error('Find Approved User failed');
     }
   } catch (error) {
     throw error;
