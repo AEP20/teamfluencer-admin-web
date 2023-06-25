@@ -78,6 +78,7 @@ function UserLayout() {
             <Route path="/do-approval" element={<DoApprovalScreen />} />
             <Route path="/getall" element={<GetAllUsers />} />
             <Route path="/find-approved-users" element={<ApprovedUsers />} />
+            <Route path="/find/:id" element={<FindUser />} />
           </Routes>
         </CommonLayout>
       </Suspense>

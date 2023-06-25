@@ -110,3 +110,20 @@ export const TAapprovedUser = async (token: string) => {
     throw error;
   }
 };
+
+export const TAfindUserById = async (id: any, token: string) => {
+  try {
+    const response = await apiClient.get(`/getuser/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (response.status === 200) {
+      return response;
+    } else {
+      throw new Error('Find User failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};

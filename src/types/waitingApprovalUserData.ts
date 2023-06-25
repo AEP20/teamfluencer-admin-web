@@ -14,6 +14,7 @@ type WaitingApprovalUserData = {
   tiktok_videos: number;
   tiktok_average_like: number;
   tiktok_engagement_rate: number;
+  _id: string;
 };
 
 type FilterType = 'min' | 'max' | 'value';

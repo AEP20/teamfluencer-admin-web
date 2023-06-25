@@ -1,18 +1,37 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { login, logout, selectUser } from '../redux/store/userSlice';
 import { TAlogin, TAsignup } from '../services/authAPI';
 import React from 'react';
 import UserProfile from '../components/UserProfile';
-import { TAfindUser } from '../services/userAPI';
+import { TAfindUser, TAfindUserById } from '../services/userAPI';
 import { ProfileData } from '../types/profileData';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { selectToken } from '../redux/store/userSlice';
 
 const FindUser = () => {
+  const { id } = useParams<{ id: string }>();
+  console.log('hooooo', id);
   const dispatch = useDispatch();
   const token = useSelector(selectToken);
+
+  useEffect(() => {
+    if (id) {
+      // Bu id değerine göre arama yapabilir ve kullanıcıyı otomatik olarak yükleyebilirsiniz.
+      const fetchData = async () => {
+        try {
+          // Eksik olan kısım: id'ye göre arama yapmak için API çağrısı
+          const response = await TAfindUserById(id, token);
+          // Do something with the response
+          setProfileData(response.data);
+        } catch (error) {
+          // Handle error
+        }
+      };
+      fetchData();
+    }
+  }, [id]);
 
   useEffect(() => {
     dispatch(setPageTitle('Kullanıcı Bul'));

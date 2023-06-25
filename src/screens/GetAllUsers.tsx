@@ -66,6 +66,7 @@ const fetchData = async (query: any, token: string) => {
         tiktok_average_like: tiktokAverageLikeFixer(item.tiktok.tiktok_average_like),
         tiktok_engagement_rate: engagementRateFixer(item.tiktok.tiktok_engagement_rate),
         keywords: item.insta.keywords,
+        _id: item.id,
       }));
       return data;
     }

@@ -46,7 +46,7 @@ const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
 const fetchData = async (token: string) => {
   try {
     const response = await TAapprovedUser(token);
-    console.log("ennnn", response.data)
+    console.log('ennnn', response.data);
     if (response.data && Array.isArray(response.data)) {
       const data = response.data.map((item, index) => ({
         id: index + 1,
@@ -65,6 +65,7 @@ const fetchData = async (token: string) => {
         tiktok_videos: item.videos,
         tiktok_average_like: tiktokAverageLikeFixer(item.tiktok_average_like),
         tiktok_engagement_rate: engagementRateFixer(item.tiktok_engagement_rate),
+        _id: item._id,
       }));
       return data;
     }
@@ -75,6 +76,7 @@ const fetchData = async (token: string) => {
 
 const ApprovedUsers = () => {
   const token = useSelector(selectToken);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setPageTitle('Range Search Table'));
@@ -200,6 +202,11 @@ const ApprovedUsers = () => {
     'country',
   ];
 
+  const handleClick = (id: string) => {
+    console.log('amkkkkkk', id);
+    navigate(`/user/find/${id}`);
+  };
+
   return (
     <div className="panel">
       <div className=" flex md:items-center md:flex-row flex-col gap-5">
@@ -305,6 +312,9 @@ const ApprovedUsers = () => {
           onSortStatusChange={setSortStatus}
           minHeight={200}
           paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+          onRowClick={(row) => {
+            handleClick(row._id);
+          }}
         />
       </div>
     </div>
