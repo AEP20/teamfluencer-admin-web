@@ -59,6 +59,14 @@ function APIdocsScreen() {
       put: true,
       summary: 'Verificate profile awaiting approval',
     },
+    {
+      path: '/user/getverifiedprofiles',
+      get: true,
+      post: false,
+      delete: false,
+      put: false,
+      summary: 'Get all verified profiles',
+    },
   ];
 
   return (
