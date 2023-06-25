@@ -18,15 +18,12 @@ const FindUser = () => {
 
   useEffect(() => {
     if (id) {
-      // Bu id değerine göre arama yapabilir ve kullanıcıyı otomatik olarak yükleyebilirsiniz.
       const fetchData = async () => {
         try {
-          // Eksik olan kısım: id'ye göre arama yapmak için API çağrısı
           const response = await TAfindUserById(id, token);
-          // Do something with the response
           setProfileData(response.data);
         } catch (error) {
-          // Handle error
+          console.log(error);
         }
       };
       fetchData();

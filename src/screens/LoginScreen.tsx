@@ -43,11 +43,6 @@ const LoginScreen = () => {
     }
   };
 
-  // const dispatch = useDispatch();
-  useEffect(() => {}, []);
-  // const isDark =
-  // useSelector(state => state.themeConfig.theme) === 'dark' ? true : false;
-
   return (
     <div className="flex justify-center items-center min-h-screen bg-cover bg-center bg-[url('./assets/images/map.svg')] dark:bg-[url('./assets/images/map-dark.svg')]">
       <div className="panel sm:w-[480px] m-6 max-w-lg w-full">

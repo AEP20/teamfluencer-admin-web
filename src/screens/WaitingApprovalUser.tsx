@@ -171,7 +171,6 @@ const WaitingApprovalUser = () => {
           } else if (countryValue.value === 'Other') {
             dt = dt.filter((d) => d[key as keyof typeof d] !== 'TR');
           } else {
-            // any other country
             dt = dt.filter((d) => d[key as keyof typeof d] === countryValue.value);
           }
         }

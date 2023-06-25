@@ -131,12 +131,10 @@ const GetAllUsers = () => {
   };
 
   const handleFetchData = async () => {
-    // Let's first flatten the filters
     const flattenFilters = Object.entries(filters).reduce((acc, [key, filter]) => {
       if (key === 'keywords') {
-        // Don't add keywords here, we'll handle it separately
       } else if (key === 'country') {
-        acc[key] = (filter as CountryFilterValue).value; // country value
+        acc[key] = (filter as CountryFilterValue).value;
       } else {
         const { min, max } = filter as FilterValue;
         if (min) acc[`min_${key}`] = min;
@@ -146,16 +144,13 @@ const GetAllUsers = () => {
       return acc;
     }, {} as { [key: string]: string });
 
-    // Create URLSearchParams from the flattened filters
     const params = new URLSearchParams(flattenFilters);
 
-    // Add keywords separately
     const keywords = filters.keywords as string[];
     keywords.forEach((keywords) => {
       params.append('keywords', keywords);
     });
 
-    // Here we fetch the data
     try {
       const data = await fetchData(params, token);
       if (data !== undefined) {
