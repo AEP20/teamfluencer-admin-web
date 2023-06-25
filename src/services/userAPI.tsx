@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { url } from 'inspector';
 
-const AUTH_API_URL = 'http://localhost:3000/user';
+const AUTH_API_URL = 'https://api.teamfluencer.co/user';
 
 const apiClient = axios.create({
   baseURL: AUTH_API_URL,

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const AUTH_API_URL = 'http://localhost:3000/campaign';
+const AUTH_API_URL = 'https://api.teamfluencer.co/campaign';
 
 const apiClient = axios.create({
   baseURL: AUTH_API_URL,
