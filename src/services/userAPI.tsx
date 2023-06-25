@@ -26,10 +26,14 @@ export const TAfindUser = async (data: any, token: string) => {
   }
 };
 
-export const TAfindAllUser = async (params: any) => {
+export const TAfindAllUser = async (params: any, token: string) => {
   console.log('/getall?' + params);
   try {
-    const response = await apiClient.get(`/getall?${params}`);
+    const response = await apiClient.get(`/getall?${params}`,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     if (response.status === 200) {
       return response;
     } else {

@@ -3,7 +3,7 @@ import React from 'react';
 function APIdocsScreen() {
   const rows = [
     { path: '/health', get: true, post: false, delete: false, put: false, summary: 'Check server health' },
-    { path: '/campaign/getall', get: true, post: false, delete: false, put: false, summary: 'List all campaigns' },
+    { path: '/campaign/getall', get: true, post: false, delete: false, put: false, summary: 'Get all campaigns' },
     {
       path: '/campaign/get/:brand_id',
       get: true,
@@ -12,7 +12,9 @@ function APIdocsScreen() {
       put: false,
       summary: 'Get a specific campaign with id',
     },
-    { path: '/brand/getall', get: true, post: false, delete: false, put: false, summary: 'List all brands' },
+    { path: '/campaign/getverificationcampaign', get: true, post: false, delete: false, put: false, summary: 'Get all campaigns awaiting approval' },
+    { path: '/campaign/verificate', get: false, post: false, delete: false, put: true, summary: 'Verificate campaigns' },
+    { path: '/brand/getall', get: true, post: false, delete: false, put: false, summary: 'Get all brands' },
     {
       path: '/brand/get',
       get: true,

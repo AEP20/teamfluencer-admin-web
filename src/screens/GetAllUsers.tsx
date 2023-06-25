@@ -11,6 +11,7 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { Filters, FilterValue, FilterType, CountryFilterValue } from '../types/getAllUsersData';
+import { selectToken } from '../redux/store/userSlice';
 import DownloadPdfButton from '../components/DownloadPdfButton';
 import DownloadCSVButton from '../components/DownloadCSVButton';
 
@@ -42,9 +43,9 @@ const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
   return tiktokEngagementRate;
 };
 
-const fetchData = async (query: any) => {
+const fetchData = async (query: any, token: string) => {
   try {
-    const response = await TAfindAllUser(query);
+    const response = await TAfindAllUser(query, token);
     console.log(response.data);
     if (response.data && Array.isArray(response.data)) {
       const data = response.data.map((item: any, index: any) => ({
@@ -74,6 +75,7 @@ const fetchData = async (query: any) => {
 };
 
 const GetAllUsers = () => {
+  const token = useSelector(selectToken);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setPageTitle('Range Search Table'));
@@ -154,7 +156,7 @@ const GetAllUsers = () => {
 
     // Here we fetch the data
     try {
-      const data = await fetchData(params);
+      const data = await fetchData(params, token);
       if (data !== undefined) {
         setInitialRecords(data);
         setUserData(data);
