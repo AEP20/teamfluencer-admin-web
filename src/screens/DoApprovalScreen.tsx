@@ -3,6 +3,8 @@ import React from 'react';
 import { TAfindAllApprovalUser, TAverifyUser } from '../services/userAPI';
 import { InstagramData, TiktokData, ProfileData, MoneyData, SharedPostData, VideosData } from '../types/profileData';
 import ReadMore from '../components/ReadMore';
+import { selectToken } from '../redux/store/userSlice';
+import { useSelector } from 'react-redux';
 
 interface User {
   id: number;
@@ -16,27 +18,34 @@ interface User {
   followers: number;
   profile_complete: boolean;
   post_number: string;
-  insta_followers: string;
   average_likes: number;
   tiktok_followers: string;
-  tiktok_average_likes: string;
+  tiktok_average_like: string;
   tiktok_engagement_rate: string;
   shared_posts: SharedPostData[];
   videos: VideosData[];
 }
 
 const DoApprovalScreen: React.FC = () => {
+  const token = useSelector(selectToken);
   const [data, setData] = useState<User[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [refreshData, setRefreshData] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await TAfindAllApprovalUser();
-      if (response.data && Array.isArray(response.data)) {
-        setData(response.data);
+      try {
+        const response = await TAfindAllApprovalUser(token);
+        console.log('modexl', response.data);
+        if (response.data && Array.isArray(response.data)) {
+          setData(response.data);
+          setIsLoading(false);
+        }
+      } catch (error: any) {
         setIsLoading(false);
+        setError(error.message);
       }
     };
     fetchData();
@@ -44,7 +53,7 @@ const DoApprovalScreen: React.FC = () => {
 
   const handleApprove = async (id: any, isVerified: boolean) => {
     setIsLoading(true);
-    const response = await TAverifyUser(id, isVerified);
+    const response = await TAverifyUser(id, isVerified, token);
     if (!response) {
       return;
     }
@@ -60,9 +69,8 @@ const DoApprovalScreen: React.FC = () => {
     setCurrentIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : prevIndex));
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  if (isLoading) return <p>Yükleniyor...</p>;
+  if (error) return <p>Hata: {error}</p>;
 
   return (
     <div className="flex flex-col lg:flex-row">

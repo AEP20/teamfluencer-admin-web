@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const AUTH_API_URL = 'http://localhost:3000/admin';
-
 const apiClient = axios.create({
-  baseURL: AUTH_API_URL,
+  baseURL: process.env.REACT_APP_AUTH_API_URL,
   timeout: 5000,
 });
+
+console.log('falan', process.env.REACT_APP_AUTH_API_URL);
 
 export const TAlogin = async (email: string, password: string) => {
   try {
@@ -14,8 +14,8 @@ export const TAlogin = async (email: string, password: string) => {
       password,
     });
 
-    if (response.status === 201) {
-      return response.data.session;
+    if (response.status === 200) {
+      return response;
     } else {
       throw new Error('Login failed');
     }
@@ -32,7 +32,7 @@ export const TAsignup = async (email: string, password: string) => {
     });
 
     if (response.status === 200) {
-      return response.data;
+      return response;
     } else {
       throw new Error('Signup failed');
     }

@@ -68,9 +68,9 @@ interface User {
   country: string;
   city: string;
   gender: string;
-  insta_followers: number;
+  followers: number;
   insta_post_number: number;
-  insta_average_like: number;
+  average_like: number;
   tiktok_followers: number;
   tiktok_videos: number;
   tiktok_average_like: number;

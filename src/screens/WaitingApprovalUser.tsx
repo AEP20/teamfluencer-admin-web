@@ -13,6 +13,7 @@ import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { Filters, FilterValue, FilterType, CountryFilterValue } from '../types/waitingApprovalUserData';
 import DownloadPdfButton from '../components/DownloadPdfButton';
 import DownloadCSVButton from '../components/DownloadCSVButton';
+import { selectToken } from '../redux/store/userSlice';
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
@@ -42,12 +43,14 @@ const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
   return tiktokEngagementRate;
 };
 
-const fetchData = async () => {
+const fetchData = async (token: string) => {
   try {
-    const response = await TAfindApprovalUser();
+    const response = await TAfindApprovalUser(token);
+    console.log('responseasdasdas', response);
     if (response.data && Array.isArray(response.data)) {
       const data = response.data.map((item, index) => ({
         id: index + 1,
+        _id: item.id,
         name: item.name,
         email: item.email,
         age: item.age,
@@ -56,12 +59,12 @@ const fetchData = async () => {
         phone: phoneNumberFixer(item.phone),
         gender: item.gender,
         profile_complete: item.profile_complete,
-        insta_followers: item.followers,
+        followers: item.followers,
         insta_post_number: item.post_number,
-        insta_average_likes: instaAverageLikeFixer(item.average_likes),
+        average_like: instaAverageLikeFixer(item.average_likes),
         tiktok_followers: tiktokFollowersFixer(item.tiktok_followers),
         tiktok_videos: item.videos,
-        tiktok_average_likes: tiktokAverageLikeFixer(item.tiktok_average_likes),
+        tiktok_average_like: tiktokAverageLikeFixer(item.tiktok_average_like),
         tiktok_engagement_rate: engagementRateFixer(item.tiktok_engagement_rate),
       }));
       return data;
@@ -72,6 +75,8 @@ const fetchData = async () => {
 };
 
 const WaitingApprovalUser = () => {
+  const token = useSelector(selectToken);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setPageTitle('Range Search Table'));
@@ -94,7 +99,7 @@ const WaitingApprovalUser = () => {
   useEffect(() => {
     const getUserData = async () => {
       try {
-        const data = await fetchData();
+        const data = await fetchData(token);
         if (data !== undefined) {
           setInitialRecords(data);
           setUserData(data);
@@ -140,10 +145,10 @@ const WaitingApprovalUser = () => {
 
   const defaultState: Filters = {
     age: { min: '', max: '' },
-    insta_followers: { min: '', max: '' },
-    insta_average_likes: { min: '', max: '' },
+    followers: { min: '', max: '' },
+    average_like: { min: '', max: '' },
     tiktok_followers: { min: '', max: '' },
-    tiktok_average_likes: { min: '', max: '' },
+    tiktok_average_like: { min: '', max: '' },
     tiktok_engagement_rate: { min: '', max: '' },
     country: { value: '' },
   };
@@ -166,7 +171,6 @@ const WaitingApprovalUser = () => {
           } else if (countryValue.value === 'Other') {
             dt = dt.filter((d) => d[key as keyof typeof d] !== 'TR');
           } else {
-            // any other country
             dt = dt.filter((d) => d[key as keyof typeof d] === countryValue.value);
           }
         }
@@ -189,13 +193,18 @@ const WaitingApprovalUser = () => {
 
   const filterKeys: (keyof Filters)[] = [
     'age',
-    'insta_followers',
-    'insta_average_likes',
+    'followers',
+    'average_like',
     'tiktok_followers',
-    'tiktok_average_likes',
+    'tiktok_average_like',
     'tiktok_engagement_rate',
     'country',
   ];
+
+  const handleClick = (id: string) => {
+    console.log('id', id);
+    navigate(`/user/find/${id}`);
+  };
 
   return (
     <div className="panel">
@@ -293,12 +302,12 @@ const WaitingApprovalUser = () => {
             { accessor: 'email', title: 'Email', sortable: true },
             { accessor: 'age', title: 'Age', sortable: true },
             { accessor: 'country', title: 'Country', sortable: true },
-            { accessor: 'insta_followers', title: 'Insta Followers', sortable: true },
+            { accessor: 'followers', title: 'Insta Followers', sortable: true },
             { accessor: 'insta_post_number', title: 'Insta Post Number', sortable: true },
-            { accessor: 'insta_average_likes', title: 'Insta Average Like', sortable: true },
+            { accessor: 'average_like', title: 'Insta Average Like', sortable: true },
             { accessor: 'tiktok_followers', title: 'Tiktok Followers', sortable: true },
             { accessor: 'tiktok_videos', title: 'Tiktok Videos', sortable: true },
-            { accessor: 'tiktok_average_likes', title: 'Tiktok Average Like', sortable: true },
+            { accessor: 'tiktok_average_like', title: 'Tiktok Average Like', sortable: true },
             { accessor: 'tiktok_engagement_rate', title: 'Tiktok Engagement Rate', sortable: true },
           ]}
           totalRecords={initialRecords.length}
@@ -311,6 +320,9 @@ const WaitingApprovalUser = () => {
           onSortStatusChange={setSortStatus}
           minHeight={200}
           paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+          onRowClick={(row) => {
+            handleClick(row._id);
+          }}
         />
       </div>
     </div>

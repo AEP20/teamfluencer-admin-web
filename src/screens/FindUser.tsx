@@ -1,16 +1,35 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { login, logout, selectUser } from '../redux/store/userSlice';
 import { TAlogin, TAsignup } from '../services/authAPI';
 import React from 'react';
 import UserProfile from '../components/UserProfile';
-import { TAfindUser } from '../services/userAPI';
+import { TAfindUser, TAfindUserById } from '../services/userAPI';
 import { ProfileData } from '../types/profileData';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
+import { selectToken } from '../redux/store/userSlice';
 
 const FindUser = () => {
+  const { id } = useParams<{ id: string }>();
+  console.log('hooooo', id);
   const dispatch = useDispatch();
+  const token = useSelector(selectToken);
+
+  useEffect(() => {
+    if (id) {
+      const fetchData = async () => {
+        try {
+          const response = await TAfindUserById(id, token);
+          setProfileData(response.data);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      fetchData();
+    }
+  }, [id]);
+
   useEffect(() => {
     dispatch(setPageTitle('Kullanıcı Bul'));
   });
@@ -37,7 +56,8 @@ const FindUser = () => {
     }
 
     try {
-      const response = await TAfindUser(data);
+      console.log('token', token);
+      const response = await TAfindUser(data, token);
       const object = {
         username: response.username,
         email: response.email,

@@ -12,10 +12,11 @@ import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { Filters, FilterType } from '../types/waitingApprovalUserData';
 import { AllBrandType } from '../types/brandData';
+import { selectToken } from '../redux/store/userSlice';
 
-const fetchData = async () => {
+const fetchData = async (token: string) => {
   try {
-    const response = await TAfindAllBrands();
+    const response = await TAfindAllBrands(token);
     if (response && Array.isArray(response.data.brands)) {
       const totalLength = response.data.brands.length;
       const data = response.data.brands
@@ -37,6 +38,7 @@ const fetchData = async () => {
 
 const AllBrands = () => {
   const dispatch = useDispatch();
+  const token = useSelector(selectToken);
   useEffect(() => {
     dispatch(setPageTitle('Range Search Table'));
   });
@@ -58,7 +60,7 @@ const AllBrands = () => {
   useEffect(() => {
     const getUserData = async () => {
       try {
-        const data = await fetchData();
+        const data = await fetchData(token);
         if (data !== undefined) {
           setInitialRecords(data);
           setUserData(data);

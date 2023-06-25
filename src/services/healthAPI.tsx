@@ -1,9 +1,7 @@
 import axios from 'axios';
 
-const AUTH_API_URL = 'http://localhost:3000';
-
 const apiClient = axios.create({
-  baseURL: AUTH_API_URL,
+  baseURL: `${process.env.REACT_APP_AUTH_API_URL}`,
   timeout: 5000,
 });
 

@@ -33,7 +33,7 @@ type TiktokData = {
   following: number;
   hearts: number;
   tiktok_nickname: string;
-  tiktok_average_likes: string;
+  tiktok_average_like: string;
   tiktok_engagement_rate: number;
   profile_pic: string;
   verified: boolean;
