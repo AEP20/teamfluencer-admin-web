@@ -379,7 +379,7 @@ function Header() {
                     </Link>
                   </li>
                   <li className="border-t border-white-light dark:border-white-light/10">
-                    <Link to="/auth/boxed-signin" onClick={handleLogout} className="text-danger !py-3">
+                    <Link to="/admin/auth/boxed-signin" onClick={handleLogout} className="text-danger !py-3">
                       <svg
                         className="ltr:mr-2 rtl:ml-2 rotate-90"
                         width="18"
