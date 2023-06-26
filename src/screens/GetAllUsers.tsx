@@ -11,6 +11,8 @@ import { selectToken } from '../redux/store/userSlice';
 import DownloadPdfButton from '../components/DownloadPdfButton';
 import DownloadCSVButton from '../components/DownloadCSVButton';
 import KeywordData from '../JSON/KEYWORDS.json';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faVenus, faMars } from '@fortawesome/free-solid-svg-icons';
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
@@ -83,7 +85,7 @@ const GetAllUsers = () => {
     dispatch(setPageTitle('Range Search Table'));
   });
   const [userData, setUserData] = useState([] as WaitingApprovalUserData[]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(3);
   const PAGE_SIZES = [10, 20, 30, 50, 100, 500];
   const [pageSize, setPageSize] = useState(PAGE_SIZES[2]);
   const [initialRecords, setInitialRecords] = useState(sortBy(userData, 'id'));
@@ -119,14 +121,17 @@ const GetAllUsers = () => {
     tiktok_engagement_rate: { min: '', max: '' },
     country: { value: '' },
     keywords: [],
+    gender: '',
   };
   const [filters, setFilters] = useState<Filters>(defaultState);
 
   console.log('konusma', filters);
 
-  const setFilter = (key: keyof Filters, type: FilterType, value: string | string[]) => {
+  const setFilter = (key: keyof Filters, type: FilterType, value: string | string[] | ('male' | 'female' | '')) => {
     if (key === 'keywords') {
       setFilters((prev) => ({ ...prev, [key]: value as string[] }));
+    } else if (key === 'gender') {
+      setFilters((prev) => ({ ...prev, [key]: value as 'male' | 'female' | '' }));
     } else {
       setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
     }
@@ -135,6 +140,8 @@ const GetAllUsers = () => {
   const handleFetchData = async () => {
     const flattenFilters = Object.entries(filters).reduce((acc, [key, filter]) => {
       if (key === 'keywords') {
+      } else if (key === 'gender' && typeof filter === 'string') {
+        acc[key] = filter;
       } else if (key === 'country') {
         acc[key] = (filter as CountryFilterValue).value;
       } else {
@@ -177,6 +184,7 @@ const GetAllUsers = () => {
     'tiktok_engagement_rate',
     'country',
     'keywords',
+    'gender',
   ];
 
   const handleClick = (id: string) => {
@@ -227,7 +235,48 @@ const GetAllUsers = () => {
         </div>
         <div className="md:flex md:flex-row w-full">
           {filterKeys.map((key) => {
-            if (key !== 'country' && key !== 'keywords') {
+            if (key === 'gender') {
+              return (
+                <div key={key} className="md:flex md:flex-col flex-1 mb-1 mr-2 ml-10">
+                  <label>
+                    <input
+                      type="radio"
+                      value="male"
+                      checked={filters[key] === 'male'}
+                      onChange={(e) => {
+                        setFilter(key, 'value', e.target.value);
+                      }}
+                      className="mr-2"
+                    />
+                    Male
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      value="female"
+                      checked={filters[key] === 'female'}
+                      onChange={(e) => {
+                        setFilter(key, 'value', e.target.value);
+                      }}
+                      className="mr-2"
+                    />
+                    Female
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      value=""
+                      checked={filters[key] === ''}
+                      onChange={(e) => {
+                        setFilter(key, 'value', e.target.value);
+                      }}
+                      className="mr-2"
+                    />
+                    Any
+                  </label>
+                </div>
+              );
+            } else if (key !== 'country' && key !== 'keywords') {
               return (
                 <div key={key} className="md:flex md:flex-col flex-1 mb-1 mr-2">
                   <input
@@ -340,12 +389,24 @@ const GetAllUsers = () => {
             // { accessor: 'email', title: 'Email', sortable: true },
             { accessor: 'phone', title: 'Phone', sortable: true },
             { accessor: 'age', title: 'Age', sortable: true },
+            {
+              accessor: 'gender',
+              title: 'Gender',
+              sortable: false,
+              render: ({ gender }) => (
+                <div className="text-center items-center">
+                  {gender === 'male' ? (
+                    <FontAwesomeIcon icon={faMars} style={{ color: '#005eff' }} />
+                  ) : (
+                    <FontAwesomeIcon icon={faVenus} style={{ color: '#ff00dd' }} />
+                  )}
+                </div>
+              ),
+            },
             { accessor: 'country', title: 'Country', sortable: true },
             { accessor: 'followers', title: 'Insta Followers', sortable: true },
-            { accessor: 'insta_post_number', title: 'Insta Post Number', sortable: true },
             { accessor: 'average_like', title: 'Insta Average Like', sortable: true },
             { accessor: 'tiktok_followers', title: 'Tiktok Followers', sortable: true },
-            { accessor: 'tiktok_videos', title: 'Tiktok Videos', sortable: true },
             { accessor: 'tiktok_average_like', title: 'Tiktok Average Like', sortable: true },
             { accessor: 'tiktok_engagement_rate', title: 'Tiktok Engagement Rate', sortable: true },
           ]}

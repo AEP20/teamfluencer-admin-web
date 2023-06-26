@@ -5,6 +5,8 @@ import { InstagramData, TiktokData, ProfileData, MoneyData, SharedPostData, Vide
 import ReadMore from '../components/ReadMore';
 import { selectToken } from '../redux/store/userSlice';
 import { useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faVenus, faMars } from '@fortawesome/free-solid-svg-icons';
 
 interface User {
   id: number;
@@ -28,6 +30,7 @@ interface User {
 
 const DoApprovalScreen: React.FC = () => {
   const token = useSelector(selectToken);
+  console.log('token', token);
   const [data, setData] = useState<User[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -53,12 +56,19 @@ const DoApprovalScreen: React.FC = () => {
 
   const handleApprove = async (id: any, isVerified: boolean) => {
     setIsLoading(true);
-    const response = await TAverifyUser(id, isVerified, token);
-    if (!response) {
-      return;
+    try {
+      console.log('buraaaaa', token);
+      const response = await TAverifyUser(id, isVerified, token);
+      if (!response) {
+        setError('Response is null');
+        return;
+      }
+      setRefreshData((prev) => !prev);
+      setIsLoading(false);
+    } catch (error: any) {
+      setError(error.message);
+      setIsLoading(false);
     }
-    setRefreshData((prev) => !prev);
-    setIsLoading(false);
   };
 
   const handleNext = () => {
@@ -67,6 +77,17 @@ const DoApprovalScreen: React.FC = () => {
 
   const handlePrevious = () => {
     setCurrentIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : prevIndex));
+  };
+
+  const genderIcon = (gender: string) => {
+    switch (gender) {
+      case 'male':
+        return <FontAwesomeIcon icon={faMars} style={{ color: '#0000ff' }} />;
+      case 'female':
+        return <FontAwesomeIcon icon={faVenus} style={{ color: '#ff00dd' }} />;
+      default:
+        return null;
+    }
   };
 
   if (isLoading) return <p>Yükleniyor...</p>;
@@ -110,7 +131,9 @@ const DoApprovalScreen: React.FC = () => {
                       return (
                         <tr key={key}>
                           <td className="font-medium pr-2 p-0">{key.charAt(0).toUpperCase() + key.slice(1)}:</td>
-                          <td className="text-gray-700 p-0">{String(value)}</td>
+                          <td className="text-gray-700 p-0">
+                            {key === 'gender' ? genderIcon(value as string) : String(value)}
+                          </td>
                         </tr>
                       );
                     }

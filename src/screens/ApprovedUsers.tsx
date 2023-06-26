@@ -14,6 +14,8 @@ import { Filters, FilterValue, FilterType, CountryFilterValue } from '../types/w
 import DownloadPdfButton from '../components/DownloadPdfButton';
 import DownloadCSVButton from '../components/DownloadCSVButton';
 import { selectToken } from '../redux/store/userSlice';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faVenus, faMars } from '@fortawesome/free-solid-svg-icons';
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
@@ -292,6 +294,20 @@ const ApprovedUsers = () => {
             },
             { accessor: 'email', title: 'Email', sortable: true },
             { accessor: 'age', title: 'Age', sortable: true },
+            {
+              accessor: 'gender',
+              title: 'Gender',
+              sortable: false,
+              render: ({ gender }) => (
+                <div className="text-center items-center">
+                  {gender === 'male' ? (
+                    <FontAwesomeIcon icon={faMars} style={{ color: '#005eff' }} />
+                  ) : (
+                    <FontAwesomeIcon icon={faVenus} style={{ color: '#ff00dd' }} />
+                  )}
+                </div>
+              ),
+            },
             { accessor: 'country', title: 'Country', sortable: true },
             { accessor: 'followers', title: 'Insta Followers', sortable: true },
             { accessor: 'insta_post_number', title: 'Insta Post Number', sortable: true },

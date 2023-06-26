@@ -80,11 +80,15 @@ export const TAfindAllApprovalUser = async (token: string) => {
 
 export const TAverifyUser = async (id: any, isVerified: boolean, token: string) => {
   try {
-    const response = await apiClient.put(`/verificateuser/${id}/${isVerified}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await apiClient.put(
+      `/verificateuser/${id}/${isVerified}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
     if (response.status === 200) {
       return response;
     }
