@@ -2,10 +2,8 @@ import axios from 'axios';
 
 const apiClient = axios.create({
   baseURL: `${process.env.REACT_APP_AUTH_API_URL}/auth`,
-  timeout: 5000,
+  timeout: 10000,
 });
-
-console.log('falan', process.env.REACT_APP_AUTH_API_URL);
 
 export const TAlogin = async (email: string, password: string) => {
   try {

@@ -85,7 +85,7 @@ const GetAllUsers = () => {
     dispatch(setPageTitle('Range Search Table'));
   });
   const [userData, setUserData] = useState([] as WaitingApprovalUserData[]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(3);
   const PAGE_SIZES = [10, 20, 30, 50, 100, 500];
   const [pageSize, setPageSize] = useState(PAGE_SIZES[2]);
   const [initialRecords, setInitialRecords] = useState(sortBy(userData, 'id'));
@@ -140,6 +140,8 @@ const GetAllUsers = () => {
   const handleFetchData = async () => {
     const flattenFilters = Object.entries(filters).reduce((acc, [key, filter]) => {
       if (key === 'keywords') {
+      } else if (key === 'gender' && typeof filter === 'string') {
+        acc[key] = filter;
       } else if (key === 'country') {
         acc[key] = (filter as CountryFilterValue).value;
       } else {
@@ -235,7 +237,7 @@ const GetAllUsers = () => {
           {filterKeys.map((key) => {
             if (key === 'gender') {
               return (
-                <div key={key} className="md:flex md:flex-col flex-1 mb-1 mr-2">
+                <div key={key} className="md:flex md:flex-col flex-1 mb-1 mr-2 ml-10">
                   <label>
                     <input
                       type="radio"
@@ -392,7 +394,7 @@ const GetAllUsers = () => {
               title: 'Gender',
               sortable: false,
               render: ({ gender }) => (
-                <div>
+                <div className="text-center items-center">
                   {gender === 'male' ? (
                     <FontAwesomeIcon icon={faMars} style={{ color: '#005eff' }} />
                   ) : (
@@ -403,10 +405,8 @@ const GetAllUsers = () => {
             },
             { accessor: 'country', title: 'Country', sortable: true },
             { accessor: 'followers', title: 'Insta Followers', sortable: true },
-            { accessor: 'insta_post_number', title: 'Insta Post Number', sortable: true },
             { accessor: 'average_like', title: 'Insta Average Like', sortable: true },
             { accessor: 'tiktok_followers', title: 'Tiktok Followers', sortable: true },
-            { accessor: 'tiktok_videos', title: 'Tiktok Videos', sortable: true },
             { accessor: 'tiktok_average_like', title: 'Tiktok Average Like', sortable: true },
             { accessor: 'tiktok_engagement_rate', title: 'Tiktok Engagement Rate', sortable: true },
           ]}
