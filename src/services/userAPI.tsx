@@ -32,11 +32,13 @@ export const TAfindAllUser = async (params: any, token: string) => {
       },
     });
     if (response.status === 200) {
+      console.log('response', response);
       return response;
     } else {
       throw new Error('Find User failed');
     }
   } catch (error) {
+    console.log('error', error);
     throw error;
   }
 };

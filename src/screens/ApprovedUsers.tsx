@@ -203,7 +203,6 @@ const ApprovedUsers = () => {
   ];
 
   const handleClick = (id: string) => {
-    console.log('amkkkkkk', id);
     navigate(`/user/find/${id}`);
   };
 
