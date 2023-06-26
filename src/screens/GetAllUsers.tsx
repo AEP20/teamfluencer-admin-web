@@ -12,7 +12,7 @@ import DownloadPdfButton from '../components/DownloadPdfButton';
 import DownloadCSVButton from '../components/DownloadCSVButton';
 import KeywordData from '../JSON/KEYWORDS.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faVenus, faMars, faEye } from '@fortawesome/free-solid-svg-icons';
+import { faVenus, faMars, faEye, faStar } from '@fortawesome/free-solid-svg-icons';
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
@@ -66,6 +66,7 @@ const fetchData = async (query: any, token: string) => {
         tiktok_engagement_rate: engagementRateFixer(item.tiktok.tiktok_engagement_rate),
         keywords: item.insta.keywords,
         _id: item._id,
+        verification: item.verification,
       }));
       return data;
     }
@@ -122,14 +123,21 @@ const GetAllUsers = () => {
     country: { value: '' },
     keywords: [],
     gender: '',
+    verification: '',
   };
   const [filters, setFilters] = useState<Filters>(defaultState);
 
   console.log('konusma', filters);
 
-  const setFilter = (key: keyof Filters, type: FilterType, value: string | string[] | ('male' | 'female' | '')) => {
+  const setFilter = (
+    key: keyof Filters,
+    type: FilterType,
+    value: string | string[] | ('male' | 'female' | '' | 'true' | 'false'),
+  ) => {
     if (key === 'keywords') {
       setFilters((prev) => ({ ...prev, [key]: value as string[] }));
+    } else if (key === 'verification') {
+      setFilters((prev) => ({ ...prev, [key]: value as 'true' | 'false' | '' }));
     } else if (key === 'gender') {
       setFilters((prev) => ({ ...prev, [key]: value as 'male' | 'female' | '' }));
     } else {
@@ -141,6 +149,8 @@ const GetAllUsers = () => {
     const flattenFilters = Object.entries(filters).reduce((acc, [key, filter]) => {
       if (key === 'keywords') {
       } else if (key === 'gender' && typeof filter === 'string') {
+        acc[key] = filter;
+      } else if (key === 'verification' && typeof filter === 'string') {
         acc[key] = filter;
       } else if (key === 'country') {
         acc[key] = (filter as CountryFilterValue).value;
@@ -185,6 +195,7 @@ const GetAllUsers = () => {
     'country',
     'keywords',
     'gender',
+    'verification',
   ];
 
   const handleInputChange = (e: any) => {
@@ -224,21 +235,19 @@ const GetAllUsers = () => {
 
   return (
     <div className="panel">
-      <div className="flex md:items-center md:flex-row flex-col gap-5">
-        <div className="flex flex-col justify-center text-center">
-          <p className="mb-7 font-bold">MIN</p>
-          <p className="mb-2 font-bold">MAX</p>
-        </div>
+      <div className="flex md:items-center md:flex-row flex-col">
+        <div className="flex flex-col justify-center text-center"></div>
         <div className="md:flex md:flex-row w-full">
           {filterKeys.map((key) => {
             if (key === 'gender') {
               return (
-                <div key={key} className="md:flex md:flex-col flex-1 mb-1 mr-2 ml-10">
+                <div key={key} className="md:flex md:flex-col mr-2 ml-2">
+                  <h2 className="text-sm font-bold mb-2">Gender</h2>
                   <label>
                     <input
                       type="radio"
                       value="male"
-                      checked={filters[key] === 'male'}
+                      checked={filters.gender === 'male'}
                       onChange={(e) => {
                         setFilter(key, 'value', e.target.value);
                       }}
@@ -250,7 +259,7 @@ const GetAllUsers = () => {
                     <input
                       type="radio"
                       value="female"
-                      checked={filters[key] === 'female'}
+                      checked={filters.gender === 'female'}
                       onChange={(e) => {
                         setFilter(key, 'value', e.target.value);
                       }}
@@ -262,7 +271,49 @@ const GetAllUsers = () => {
                     <input
                       type="radio"
                       value=""
-                      checked={filters[key] === ''}
+                      checked={filters.gender === ''}
+                      onChange={(e) => {
+                        setFilter(key, 'value', e.target.value);
+                      }}
+                      className="mr-2"
+                    />
+                    Any
+                  </label>
+                </div>
+              );
+            } else if (key === 'verification') {
+              return (
+                <div key={key} className="md:flex md:flex-col mr-2 ml-2">
+                  <h2 className="text-sm font-bold mb-2">Verification</h2>
+                  <label>
+                    <input
+                      type="radio"
+                      value="true"
+                      checked={filters.verification === 'true'}
+                      onChange={(e) => {
+                        setFilter(key, 'value', e.target.value);
+                      }}
+                      className="mr-2"
+                    />
+                    True
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      value="false"
+                      checked={filters.verification === 'false'}
+                      onChange={(e) => {
+                        setFilter(key, 'value', e.target.value);
+                      }}
+                      className="mr-2"
+                    />
+                    False
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      value=""
+                      checked={filters.verification === ''}
                       onChange={(e) => {
                         setFilter(key, 'value', e.target.value);
                       }}
@@ -274,7 +325,7 @@ const GetAllUsers = () => {
               );
             } else if (key !== 'country' && key !== 'keywords') {
               return (
-                <div key={key} className="md:flex md:flex-col flex-1 mb-1 mr-2">
+                <div key={key} className="md:flex md:flex-col flex-1 mr-2">
                   <input
                     type="text"
                     value={(filters[key] as FilterValue).min}
@@ -306,7 +357,7 @@ const GetAllUsers = () => {
             {filterKeys.map((key) => {
               if (key === 'country') {
                 return (
-                  <div key={key} className="md:flex md:flex-col flex-1 ml-12 pl-1">
+                  <div key={key} className="md:flex md:flex-col flex-1 pl-1">
                     <input
                       type="text"
                       value={filters[key].value}
@@ -375,6 +426,16 @@ const GetAllUsers = () => {
           className="whitespace-nowrap table-hover"
           records={recordsData}
           columns={[
+            {
+              accessor: 'verification',
+              title: 'Verified',
+              sortable: false,
+              render: ({ verification }: any) => (
+                <div className="text-center items-center">
+                  {verification ? <FontAwesomeIcon icon={faStar} style={{ color: '#ffba00' }} /> : null}
+                </div>
+              ),
+            },
             {
               accessor: 'details',
               title: 'Details',

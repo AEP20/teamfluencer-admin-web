@@ -38,6 +38,7 @@ type Filters = {
   country: CountryFilterValue;
   keywords: string[];
   gender: 'male' | 'female' | '';
+  verification: 'true' | 'false' | '';
 };
 
 export type { WaitingApprovalUserData, FilterValue, Filters, FilterType, CountryFilterValue };
