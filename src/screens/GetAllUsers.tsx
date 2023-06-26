@@ -14,6 +14,7 @@ import { Filters, FilterValue, FilterType, CountryFilterValue } from '../types/g
 import { selectToken } from '../redux/store/userSlice';
 import DownloadPdfButton from '../components/DownloadPdfButton';
 import DownloadCSVButton from '../components/DownloadCSVButton';
+import KeywordData from '../JSON/KEYWORDS.json';
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
@@ -74,6 +75,9 @@ const fetchData = async (query: any, token: string) => {
     throw new Error(error);
   }
 };
+interface AppProps {
+  keywords: string[];
+}
 
 const GetAllUsers = () => {
   const token = useSelector(selectToken);
@@ -88,9 +92,10 @@ const GetAllUsers = () => {
   const [initialRecords, setInitialRecords] = useState(sortBy(userData, 'id'));
   const [recordsData, setRecordsData] = useState(initialRecords);
   const [tempData, setTempData] = useState(initialRecords);
-  const [keywords, setKeywords] = useState('');
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [error, setError] = useState<string | null>(null);
+  const [keywords, setKeywords] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     setPage(1);
@@ -174,6 +179,29 @@ const GetAllUsers = () => {
     'country',
     'keywords',
   ];
+  const handleInputChange = (e: any) => {
+    const inputKeywords = e.target.value;
+    setKeywords(inputKeywords);
+
+    if (inputKeywords.length === 0) {
+      setIsDropdownOpen(false);
+    } else {
+      setIsDropdownOpen(true);
+    }
+  };
+
+  const autoCompleteKeywords = keywords.split(',').map((keyword) => keyword.trim());
+
+  const filteredKeywords = KeywordData.keywords
+    .filter((keyword: string) => {
+      const lowercaseKeyword = keyword.toLowerCase();
+      return autoCompleteKeywords.every((autoCompleteKeyword) =>
+        lowercaseKeyword.includes(autoCompleteKeyword.toLowerCase()),
+      );
+    })
+    .slice(0, 5);
+
+  const autoCompleteKeyword: string[] = autoCompleteKeywords.length === 0 ? [] : filteredKeywords;
 
   return (
     <div className="panel">
@@ -216,10 +244,21 @@ const GetAllUsers = () => {
                     value={filters[key].join(',')}
                     onChange={(e) => {
                       setFilter(key, 'value', e.target.value.split(','));
+                      setKeywords(e.target.value);
+                      handleInputChange(e);
                     }}
                     className="form-input w-full"
                     placeholder={`keywords`}
                   />
+                  {isDropdownOpen && keywords.length > 0 && (
+                    <div className="dropdown pt-10" style={{ position: 'fixed', zIndex: '999' }}>
+                      <ul>
+                        {autoCompleteKeyword.map((keyword, index) => (
+                          <li key={index}>{keyword}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               );
             }
