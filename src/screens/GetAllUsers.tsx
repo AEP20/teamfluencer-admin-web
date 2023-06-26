@@ -217,8 +217,9 @@ const GetAllUsers = () => {
 
   const lastKeyword = autoCompleteKeywords[autoCompleteKeywords.length - 1];
 
-  const filteredKeywords = KeywordData.keywords
-    .filter((keyword: string) => keyword.toLowerCase().includes(lastKeyword.toLowerCase()))
+  const uniqueKeywords = [...new Set(KeywordData.keywords)];
+  const filteredKeywords = uniqueKeywords
+    .filter((keyword: string) => keyword.toLowerCase().startsWith(lastKeyword.toLowerCase()))
     .slice(0, 4);
 
   const autoCompleteKeyword: string[] = autoCompleteKeywords.length === 0 ? [] : filteredKeywords;
