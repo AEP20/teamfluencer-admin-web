@@ -1,11 +1,7 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { login, logout, selectUser } from '../redux/store/userSlice';
-import { TAlogin, TAsignup } from '../services/authAPI';
-import React from 'react';
-import UserProfile from '../components/UserProfile';
-import { TAfindUser, TAfindApprovalUser, TAfindAllUser } from '../services/userAPI';
+import { TAfindAllUser } from '../services/userAPI';
 import { WaitingApprovalUserData } from '../types/waitingApprovalUserData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
@@ -47,7 +43,7 @@ const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
 const fetchData = async (query: any, token: string) => {
   try {
     const response = await TAfindAllUser(query, token);
-    console.log(response.data);
+    console.log('cevappp', response.data);
     if (response.data && Array.isArray(response.data)) {
       const data = response.data.map((item: any, index: any) => ({
         id: index + 1,
@@ -67,7 +63,7 @@ const fetchData = async (query: any, token: string) => {
         tiktok_average_like: tiktokAverageLikeFixer(item.tiktok.tiktok_average_like),
         tiktok_engagement_rate: engagementRateFixer(item.tiktok.tiktok_engagement_rate),
         keywords: item.insta.keywords,
-        _id: item.id,
+        _id: item._id,
       }));
       return data;
     }
@@ -81,6 +77,7 @@ interface AppProps {
 
 const GetAllUsers = () => {
   const token = useSelector(selectToken);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setPageTitle('Range Search Table'));
@@ -151,7 +148,9 @@ const GetAllUsers = () => {
 
     const params = new URLSearchParams(flattenFilters);
 
-    const keywords = filters.keywords as string[];
+    const keywords = (filters.keywords as string[]).map(
+      (keyword) => keyword.charAt(0).toUpperCase() + keyword.slice(1),
+    );
     keywords.forEach((keywords) => {
       params.append('keywords', keywords);
     });
@@ -179,8 +178,17 @@ const GetAllUsers = () => {
     'country',
     'keywords',
   ];
+
+  const handleClick = (id: string) => {
+    navigate(`/user/find/${id}`);
+  };
+
   const handleInputChange = (e: any) => {
-    const inputKeywords = e.target.value;
+    const inputKeywords = e.target.value
+      .split(' ')
+      .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+    console.log('inputKeywords', inputKeywords);
     setKeywords(inputKeywords);
 
     if (inputKeywords.length === 0) {
@@ -244,38 +252,12 @@ const GetAllUsers = () => {
                 </div>
               );
             }
-            // else if (key === 'keywords') {
-            //   return (
-            //     <div key={key} className="md:flex md:flex-col flex-1 mb-1 mr-2">
-            //       <input
-            //         type="text"
-            //         value={filters[key].join(',')}
-            //         onChange={(e) => {
-            //           setFilter(key, 'value', e.target.value.split(','));
-            //           setKeywords(e.target.value);
-            //           handleInputChange(e);
-            //         }}
-            //         className="form-input w-full"
-            //         placeholder={`keywords`}
-            //       />
-            //       {isDropdownOpen && keywords.length > 0 && (
-            //         <div className="dropdown">
-            //           <ul>
-            //             {autoCompleteKeyword.map((keyword, index) => (
-            //               <li key={index}>{keyword}</li>
-            //             ))}
-            //           </ul>
-            //         </div>
-            //       )}
-            //     </div>
-            //   );
-            // }
           })}
         </div>
       </div>
       <div className="flex w-full justify-between text-center flex-end">
-        <div className="flex flex-row w-1/3 items-center">
-          <div className="md:flex md:flex-row w-3/4">
+        <div className="flex flex-row w-2/3 items-center">
+          <div className="md:flex md:flex-row w-full">
             {filterKeys.map((key) => {
               if (key === 'country') {
                 return (
@@ -298,8 +280,11 @@ const GetAllUsers = () => {
                       type="text"
                       value={filters[key].join(',')}
                       onChange={(e) => {
-                        setFilter(key, 'value', e.target.value.split(','));
-                        setKeywords(e.target.value);
+                        const keywords = e.target.value.split(',').map((word) => {
+                          const trimmedWord = word.trim();
+                          return trimmedWord.charAt(0).toUpperCase() + trimmedWord.slice(1).toLowerCase();
+                        });
+                        setFilter(key, 'value', keywords);
                         handleInputChange(e);
                       }}
                       className="form-input w-full"
@@ -374,6 +359,9 @@ const GetAllUsers = () => {
           onSortStatusChange={setSortStatus}
           minHeight={200}
           paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+          onRowClick={(row) => {
+            handleClick(row._id);
+          }}
         />
       </div>
     </div>
