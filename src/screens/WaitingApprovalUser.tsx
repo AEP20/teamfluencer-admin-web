@@ -15,7 +15,7 @@ import DownloadPdfButton from '../components/DownloadPdfButton';
 import DownloadCSVButton from '../components/DownloadCSVButton';
 import { selectToken } from '../redux/store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faVenus, faMars } from '@fortawesome/free-solid-svg-icons';
+import { faVenus, faMars, faEye } from '@fortawesome/free-solid-svg-icons';
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
@@ -203,11 +203,6 @@ const WaitingApprovalUser = () => {
     'country',
   ];
 
-  const handleClick = (id: string) => {
-    console.log('id', id);
-    navigate(`/user/find/${id}`);
-  };
-
   return (
     <div className="panel">
       <div className=" flex md:items-center md:flex-row flex-col gap-5">
@@ -294,6 +289,18 @@ const WaitingApprovalUser = () => {
           className="whitespace-nowrap table-hover"
           records={recordsData}
           columns={[
+            {
+              accessor: 'details',
+              title: 'Details',
+              sortable: false,
+              render: ({ _id }: any) => (
+                <Link to={`/user/find/${_id}`}>
+                  <div className="text-center items-center">
+                    <FontAwesomeIcon icon={faEye} style={{ color: '#005eff' }} />
+                  </div>
+                </Link>
+              ),
+            },
             { accessor: 'id', title: 'Id', sortable: true },
             {
               accessor: 'firstName',
@@ -336,9 +343,6 @@ const WaitingApprovalUser = () => {
           onSortStatusChange={setSortStatus}
           minHeight={200}
           paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-          onRowClick={(row) => {
-            handleClick(row._id);
-          }}
         />
       </div>
     </div>
