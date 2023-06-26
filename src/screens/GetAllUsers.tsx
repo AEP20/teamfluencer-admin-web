@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { TAfindAllUser } from '../services/userAPI';
@@ -12,7 +12,7 @@ import DownloadPdfButton from '../components/DownloadPdfButton';
 import DownloadCSVButton from '../components/DownloadCSVButton';
 import KeywordData from '../JSON/KEYWORDS.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faVenus, faMars } from '@fortawesome/free-solid-svg-icons';
+import { faVenus, faMars, faEye } from '@fortawesome/free-solid-svg-icons';
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
@@ -379,6 +379,18 @@ const GetAllUsers = () => {
           className="whitespace-nowrap table-hover"
           records={recordsData}
           columns={[
+            {
+              accessor: 'details',
+              title: 'Details',
+              sortable: false,
+              render: ({ _id }: any) => (
+                <Link to={`/user/find/${_id}`}>
+                  <div className="text-center items-center">
+                    <FontAwesomeIcon icon={faEye} style={{ color: '#005eff' }} />
+                  </div>
+                </Link>
+              ),
+            },
             { accessor: 'id', title: 'Id', sortable: true },
             {
               accessor: 'firstName',
@@ -420,9 +432,9 @@ const GetAllUsers = () => {
           onSortStatusChange={setSortStatus}
           minHeight={200}
           paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-          onRowClick={(row) => {
-            handleClick(row._id);
-          }}
+          // onRowClick={(row) => {
+          //   handleClick(row._id);
+          // }}
         />
       </div>
     </div>
