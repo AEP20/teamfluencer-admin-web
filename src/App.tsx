@@ -31,7 +31,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/auth/*" element={!token ? <AuthLayout /> : <Navigate to="/" />} />
+        <Route path="/auth/*" element={!token ? <AuthLayout /> : <Navigate to="/user/getall" />} />
         <Route path="/*" element={token ? <MainLayout /> : <Navigate to="/auth/login" />} />
         <Route path="/user/*" element={token ? <UserLayout /> : <Navigate to="/auth/login" />} />
         <Route path="/brands/*" element={token ? <BrandsLayout /> : <Navigate to="/auth/login" />} />
@@ -58,7 +58,7 @@ function MainLayout() {
       <Suspense fallback={<div>Loading...</div>}>
         <CommonLayout>
           <Routes>
-            <Route path="/" element={<Index />} />
+            {/* <Route path="/" element={<Index />} /> */}
             <Route path="/api-docs" element={<APIdocsScreen />} />
           </Routes>
         </CommonLayout>
