@@ -192,16 +192,23 @@ const GetAllUsers = () => {
 
   const autoCompleteKeywords = keywords.split(',').map((keyword) => keyword.trim());
 
+  const lastKeyword = autoCompleteKeywords[autoCompleteKeywords.length - 1];
+
   const filteredKeywords = KeywordData.keywords
-    .filter((keyword: string) => {
-      const lowercaseKeyword = keyword.toLowerCase();
-      return autoCompleteKeywords.every((autoCompleteKeyword) =>
-        lowercaseKeyword.includes(autoCompleteKeyword.toLowerCase()),
-      );
-    })
-    .slice(0, 5);
+    .filter((keyword: string) => keyword.toLowerCase().includes(lastKeyword.toLowerCase()))
+    .slice(0, 4);
 
   const autoCompleteKeyword: string[] = autoCompleteKeywords.length === 0 ? [] : filteredKeywords;
+
+  useEffect(() => {
+    const handleClick = () => {
+      setIsDropdownOpen(false);
+    };
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  }, []);
 
   return (
     <div className="panel">
@@ -236,51 +243,43 @@ const GetAllUsers = () => {
                   />
                 </div>
               );
-            } else if (key === 'keywords') {
-              return (
-                <div key={key} className="md:flex md:flex-col flex-1 mb-1 mr-2">
-                  <input
-                    type="text"
-                    value={filters[key].join(',')}
-                    onChange={(e) => {
-                      setFilter(key, 'value', e.target.value.split(','));
-                      setKeywords(e.target.value);
-                      handleInputChange(e);
-                    }}
-                    className="form-input w-full"
-                    placeholder={`keywords`}
-                  />
-                  {isDropdownOpen && keywords.length > 0 && (
-                    <div className="dropdown pt-10" style={{ position: 'fixed', zIndex: '999' }}>
-                      <ul>
-                        {autoCompleteKeyword.map((keyword, index) => (
-                          <li key={index}>{keyword}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              );
             }
+            // else if (key === 'keywords') {
+            //   return (
+            //     <div key={key} className="md:flex md:flex-col flex-1 mb-1 mr-2">
+            //       <input
+            //         type="text"
+            //         value={filters[key].join(',')}
+            //         onChange={(e) => {
+            //           setFilter(key, 'value', e.target.value.split(','));
+            //           setKeywords(e.target.value);
+            //           handleInputChange(e);
+            //         }}
+            //         className="form-input w-full"
+            //         placeholder={`keywords`}
+            //       />
+            //       {isDropdownOpen && keywords.length > 0 && (
+            //         <div className="dropdown">
+            //           <ul>
+            //             {autoCompleteKeyword.map((keyword, index) => (
+            //               <li key={index}>{keyword}</li>
+            //             ))}
+            //           </ul>
+            //         </div>
+            //       )}
+            //     </div>
+            //   );
+            // }
           })}
         </div>
       </div>
       <div className="flex w-full justify-between text-center flex-end">
         <div className="flex flex-row w-1/3 items-center">
-          <div className="ltr:ml-auto rtl:mr-auto mr-2">
-            <input
-              type="text"
-              className="form-input w-auto"
-              placeholder="Keywords"
-              value={keywords}
-              onChange={(e) => setKeywords(e.target.value)}
-            />
-          </div>
           <div className="md:flex md:flex-row w-3/4">
             {filterKeys.map((key) => {
               if (key === 'country') {
                 return (
-                  <div key={key} className="md:flex md:flex-col flex-1">
+                  <div key={key} className="md:flex md:flex-col flex-1 ml-12 pl-1">
                     <input
                       type="text"
                       value={filters[key].value}
@@ -290,6 +289,31 @@ const GetAllUsers = () => {
                       className="form-input w-full"
                       placeholder={`${key} value`}
                     />
+                  </div>
+                );
+              } else if (key === 'keywords') {
+                return (
+                  <div key={key} className="md:flex md:flex-col flex-1 mb-1 mr-2 ml-5">
+                    <input
+                      type="text"
+                      value={filters[key].join(',')}
+                      onChange={(e) => {
+                        setFilter(key, 'value', e.target.value.split(','));
+                        setKeywords(e.target.value);
+                        handleInputChange(e);
+                      }}
+                      className="form-input w-full"
+                      placeholder={`keywords`}
+                    />
+                    {isDropdownOpen && keywords.length > 0 && (
+                      <div className="dropdown pt-10" style={{ position: 'fixed', zIndex: 999 }}>
+                        <ul>
+                          {autoCompleteKeyword.map((keyword, index) => (
+                            <li key={index}>{keyword}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 );
               }
