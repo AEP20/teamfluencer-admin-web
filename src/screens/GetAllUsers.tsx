@@ -187,10 +187,6 @@ const GetAllUsers = () => {
     'gender',
   ];
 
-  const handleClick = (id: string) => {
-    navigate(`/user/find/${id}`);
-  };
-
   const handleInputChange = (e: any) => {
     const inputKeywords = e.target.value
       .split(' ')
@@ -432,9 +428,6 @@ const GetAllUsers = () => {
           onSortStatusChange={setSortStatus}
           minHeight={200}
           paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-          // onRowClick={(row) => {
-          //   handleClick(row._id);
-          // }}
         />
       </div>
     </div>
