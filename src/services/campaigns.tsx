@@ -23,7 +23,6 @@ export const TAfindApprovalCampaign = async (token: string) => {
 };
 
 export const TAdoApprovalCampaign = async (status: string, rejected_reason: string, id: string, token: string) => {
-  console.log('heeeeee', token);
   const query = new URLSearchParams({
     id,
     status,
@@ -31,7 +30,6 @@ export const TAdoApprovalCampaign = async (status: string, rejected_reason: stri
   });
 
   try {
-    console.log('url', `/verificate?${query}`);
     const response = await apiClient.put(`/verificate?${query}`, {
       headers: {
         Authorization: `Bearer ${token}`,

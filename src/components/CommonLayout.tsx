@@ -11,6 +11,7 @@ import FindUser from '../screens/FindUser';
 import { useEffect, useState, PropsWithChildren, Suspense } from 'react';
 import { IRootState } from '../redux/store/index';
 import { toggleSidebar } from '../redux/store/themeConfigSlice';
+import React from 'react';
 
 const CommonLayout = ({ children }: PropsWithChildren) => {
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);

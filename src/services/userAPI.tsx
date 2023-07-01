@@ -24,7 +24,6 @@ export const TAfindUser = async (data: any, token: string) => {
 };
 
 export const TAfindAllUser = async (params: any, token: string) => {
-  console.log('/getall?' + params);
   try {
     const response = await apiClient.get(`/getall?${params}`, {
       headers: {
@@ -32,13 +31,11 @@ export const TAfindAllUser = async (params: any, token: string) => {
       },
     });
     if (response.status === 200) {
-      console.log('response', response);
       return response;
     } else {
       throw new Error('Find User failed');
     }
   } catch (error) {
-    console.log('error', error);
     throw error;
   }
 };
@@ -50,7 +47,6 @@ export const TAfindApprovalUser = async (token: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('response', response);
     if (response.status === 200) {
       return response;
     } else {

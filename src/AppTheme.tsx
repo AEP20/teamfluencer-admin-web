@@ -18,6 +18,7 @@ import {
   toggleNavbar,
   toggleSemidark,
 } from './redux/store/themeConfigSlice';
+import React from 'react';
 
 function AppTheme({ children }: PropsWithChildren) {
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);

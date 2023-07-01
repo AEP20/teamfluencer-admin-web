@@ -4,6 +4,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { toggleSidebar } from '../redux/store/themeConfigSlice';
 import { IRootState } from '../redux/store';
 import { useEffect } from 'react';
+import React from 'react';
 
 const Sidebar = () => {
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);

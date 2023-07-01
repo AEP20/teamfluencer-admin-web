@@ -20,7 +20,6 @@ const DoApprovalCampaigns: React.FC = () => {
       try {
         const response = await TAfindApprovalCampaign(token);
         if (response.data && Array.isArray(response.data)) {
-          console.log('neyi', response.data);
           setData(response.data);
           setIsLoading(false);
         }
@@ -31,11 +30,9 @@ const DoApprovalCampaigns: React.FC = () => {
     };
     fetchData();
   }, [refreshData]);
-  console.log('token', token);
 
   const handleApprove = async (status: string, rejected_reason: string, id: string, token: string) => {
     setIsLoading(true);
-    console.log('status', status, 'rejectReason', rejected_reason, 'id', id, 'anasısikik', token);
     const response = await TAdoApprovalCampaign(status, rejected_reason, id, token);
     if (!response) {
       return;

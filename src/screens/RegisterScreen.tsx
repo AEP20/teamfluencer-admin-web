@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { useEffect } from 'react';
+import React from 'react';
 
 function RegisterScreen() {
   //   const dispatch = useDispatch();

@@ -9,6 +9,7 @@ import { toggleSidebar } from '../redux/store/themeConfigSlice';
 import i18next from 'i18next';
 import Dropdown from './Dropdown';
 import HealthCheck from './HealthCheck';
+import React from 'react';
 
 function Header() {
   const dispatch = useDispatch();

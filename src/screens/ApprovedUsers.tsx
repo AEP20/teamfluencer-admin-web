@@ -46,7 +46,6 @@ const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
 const fetchData = async (token: string) => {
   try {
     const response = await TAapprovedUser(token);
-    console.log('ennnn', response.data);
     if (response.data && Array.isArray(response.data)) {
       const data = response.data.map((item, index) => ({
         id: index + 1,

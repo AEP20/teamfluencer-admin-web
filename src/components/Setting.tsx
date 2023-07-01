@@ -10,6 +10,7 @@ import {
   toggleTheme,
   toggleSemidark,
 } from '../redux/store/themeConfigSlice';
+import React from 'react';
 
 const Setting = () => {
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);

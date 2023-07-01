@@ -13,6 +13,7 @@ import DownloadCSVButton from '../components/DownloadCSVButton';
 import KeywordData from '../JSON/KEYWORDS.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVenus, faMars, faEye, faStar } from '@fortawesome/free-solid-svg-icons';
+import React from 'react';
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
@@ -45,7 +46,6 @@ const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
 const fetchData = async (query: any, token: string) => {
   try {
     const response = await TAfindAllUser(query, token);
-    console.log('cevappp', response.data);
     if (response.data && Array.isArray(response.data)) {
       const data = response.data.map((item: any, index: any) => ({
         id: index + 1,
@@ -127,8 +127,6 @@ const GetAllUsers = () => {
   };
   const [filters, setFilters] = useState<Filters>(defaultState);
 
-  console.log('konusma', filters);
-
   const setFilter = (
     key: keyof Filters,
     type: FilterType,
@@ -203,7 +201,6 @@ const GetAllUsers = () => {
       .split(' ')
       .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
-    console.log('inputKeywords', inputKeywords);
     setKeywords(inputKeywords);
 
     if (inputKeywords.length === 0) {

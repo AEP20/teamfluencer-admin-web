@@ -30,7 +30,6 @@ interface User {
 
 const DoApprovalScreen: React.FC = () => {
   const token = useSelector(selectToken);
-  console.log('token', token);
   const [data, setData] = useState<User[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -41,7 +40,6 @@ const DoApprovalScreen: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await TAfindAllApprovalUser(token);
-        console.log('modexl', response.data);
         if (response.data && Array.isArray(response.data)) {
           setData(response.data);
           setIsLoading(false);
@@ -57,7 +55,6 @@ const DoApprovalScreen: React.FC = () => {
   const handleApprove = async (id: any, isVerified: boolean) => {
     setIsLoading(true);
     try {
-      console.log('buraaaaa', token);
       const response = await TAverifyUser(id, isVerified, token);
       if (!response) {
         setError('Response is null');

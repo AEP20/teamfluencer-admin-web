@@ -12,7 +12,6 @@ import { selectToken } from '../redux/store/userSlice';
 
 const FindUser = () => {
   const { id } = useParams<{ id: string }>();
-  console.log('hooooo', id);
   const dispatch = useDispatch();
   const token = useSelector(selectToken);
 
@@ -56,7 +55,6 @@ const FindUser = () => {
     }
 
     try {
-      console.log('token', token);
       const response = await TAfindUser(data, token);
       const object = {
         username: response.username,

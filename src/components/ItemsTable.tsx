@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, Font } from '@react-pdf/renderer';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 Font.register({
   family: 'Noto Serif',
