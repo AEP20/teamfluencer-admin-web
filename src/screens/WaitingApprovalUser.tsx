@@ -1,11 +1,8 @@
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { login, logout, selectUser } from '../redux/store/userSlice';
-import { TAlogin, TAsignup } from '../services/authAPI';
-import React from 'react';
-import UserProfile from '../components/UserProfile';
-import { TAfindUser, TAfindApprovalUser } from '../services/userAPI';
+import { TAfindApprovalUser } from '../services/userAPI';
 import { WaitingApprovalUserData } from '../types/waitingApprovalUserData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';

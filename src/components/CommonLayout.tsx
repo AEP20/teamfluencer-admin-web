@@ -1,17 +1,11 @@
-import { BrowserRouter as Router, Route, BrowserRouter, Routes, Navigate } from 'react-router-dom';
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegisterScreen';
-import Index from '../screens/Index';
-import { login, logout, selectUser } from '../redux/store/userSlice';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Setting from '../components/Setting';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
-import FindUser from '../screens/FindUser';
 import { useEffect, useState, PropsWithChildren, Suspense } from 'react';
 import { IRootState } from '../redux/store/index';
 import { toggleSidebar } from '../redux/store/themeConfigSlice';
-import React from 'react';
 
 const CommonLayout = ({ children }: PropsWithChildren) => {
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);

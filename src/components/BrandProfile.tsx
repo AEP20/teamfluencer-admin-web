@@ -1,14 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../redux/store/userSlice';
-import { IRootState } from '../redux/store/index';
-import { toggleSidebar } from '../redux/store/themeConfigSlice';
-import { TAfindUser } from '../services/userAPI';
-import InstagramSharedPosts from './InstagramSharedPosts';
-import TiktokProfilePicture from './TiktokProfilePicture';
-import InstagramProfilePicture from './InstagramProfilePicture';
-import ReadMore from './ReadMore';
 import { MoneyExchanges, BillingAddress, BrandType, InfoType } from '../types/brandData';
 import './styles/styles.css';
 

@@ -1,11 +1,6 @@
+import React from 'react';
 import { useEffect, PropsWithChildren } from 'react';
-import { BrowserRouter as Router, Route, BrowserRouter, Routes, Navigate } from 'react-router-dom';
-import Header from './components/Header';
-import LoginScreen from './screens/LoginScreen';
-import RegisterScreen from './screens/RegisterScreen';
-import Index from './screens/Index';
 import { useSelector, useDispatch } from 'react-redux';
-import { login, logout, selectUser } from './redux/store/userSlice';
 import store from './redux/store/index';
 import { IRootState } from './redux/store/index';
 import {
@@ -18,7 +13,6 @@ import {
   toggleNavbar,
   toggleSemidark,
 } from './redux/store/themeConfigSlice';
-import React from 'react';
 
 function AppTheme({ children }: PropsWithChildren) {
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);
