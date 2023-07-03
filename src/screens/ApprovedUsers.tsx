@@ -14,6 +14,7 @@ import { selectToken } from '../redux/store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVenus, faMars, faEye } from '@fortawesome/free-solid-svg-icons';
 
+
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
   return fixedPhoneNumber;
