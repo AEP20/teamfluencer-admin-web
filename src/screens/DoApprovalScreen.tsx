@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import React from 'react';
 import { TAfindAllApprovalUser, TAverifyUser } from '../services/userAPI';
-import { InstagramData, TiktokData, ProfileData, MoneyData, SharedPostData, VideosData } from '../types/profileData';
+import { SharedPostData, VideosData } from '../types/profileData';
 import ReadMore from '../components/ReadMore';
 import { selectToken } from '../redux/store/userSlice';
 import { useSelector } from 'react-redux';

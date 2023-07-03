@@ -1,8 +1,8 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
-import { login, logout, selectUser } from '../redux/store/userSlice';
-import { TAlogin, TAsignup } from '../services/authAPI';
+import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useState } from 'react';
+import { login } from '../redux/store/userSlice';
+import { TAlogin } from '../services/authAPI';
 import React from 'react';
 
 const LoginScreen = () => {

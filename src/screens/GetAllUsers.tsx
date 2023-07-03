@@ -1,3 +1,4 @@
+import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -13,7 +14,6 @@ import DownloadCSVButton from '../components/DownloadCSVButton';
 import KeywordData from '../JSON/KEYWORDS.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVenus, faMars, faEye, faStar } from '@fortawesome/free-solid-svg-icons';
-import React from 'react';
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);

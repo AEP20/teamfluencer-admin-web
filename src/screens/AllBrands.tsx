@@ -1,16 +1,10 @@
-import { Link, useNavigate } from 'react-router-dom';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { login, logout, selectUser } from '../redux/store/userSlice';
-import { TAlogin, TAsignup } from '../services/authAPI';
-import React from 'react';
-import UserProfile from '../components/UserProfile';
 import { TAfindAllBrands } from '../services/brandAPI';
-import { WaitingApprovalUserData } from '../types/waitingApprovalUserData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
-import { Filters, FilterType } from '../types/waitingApprovalUserData';
 import { AllBrandType } from '../types/brandData';
 import { selectToken } from '../redux/store/userSlice';
 

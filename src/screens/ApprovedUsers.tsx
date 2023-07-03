@@ -1,7 +1,7 @@
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import React from 'react';
 import { TAapprovedUser } from '../services/userAPI';
 import { WaitingApprovalUserData } from '../types/waitingApprovalUserData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
@@ -13,7 +13,6 @@ import DownloadCSVButton from '../components/DownloadCSVButton';
 import { selectToken } from '../redux/store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVenus, faMars, faEye } from '@fortawesome/free-solid-svg-icons';
-
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);

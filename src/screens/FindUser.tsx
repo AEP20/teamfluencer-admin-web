@@ -1,9 +1,7 @@
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import React from 'react';
+import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { login, logout, selectUser } from '../redux/store/userSlice';
-import { TAlogin, TAsignup } from '../services/authAPI';
-import React from 'react';
 import UserProfile from '../components/UserProfile';
 import { TAfindUser, TAfindUserById } from '../services/userAPI';
 import { ProfileData } from '../types/profileData';

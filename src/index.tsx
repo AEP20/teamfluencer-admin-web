@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 // import 'react-perfect-scrollbar/dist/css/styles.css';
 import './index.css';

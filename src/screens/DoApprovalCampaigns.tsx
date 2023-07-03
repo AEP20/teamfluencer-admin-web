@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import React from 'react';
 import { TAfindApprovalCampaign, TAdoApprovalCampaign } from '../services/campaigns';
-import ReadMore from '../components/ReadMore';
-import { Campaign, Limitations, Statistic, Details, ApplicationCounts } from '../types/campaignsData';
+import { Campaign } from '../types/campaignsData';
 import { selectToken } from '../redux/store/userSlice';
 import { useSelector } from 'react-redux';
 

@@ -1,11 +1,11 @@
-import { BrowserRouter as Router, Route, BrowserRouter, Routes, Navigate } from 'react-router-dom';
+import React from 'react';
+import { Route, BrowserRouter, Routes, Navigate } from 'react-router-dom';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
-import Index from './screens/Index';
-import { login, logout } from './redux/store/userSlice';
+import { login } from './redux/store/userSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import FindUser from './screens/FindUser';
-import { useEffect, startTransition, Suspense } from 'react';
+import { useEffect, Suspense } from 'react';
 import CommonLayout from './components/CommonLayout';
 import WaitingApprovalUser from './screens/WaitingApprovalUser';
 import FindBrand from './screens/FindBrand';
@@ -16,7 +16,6 @@ import GetAllUsers from './screens/GetAllUsers';
 import DoApprovalCampaigns from './screens/DoApprovalCampaigns';
 import { selectToken } from './redux/store/userSlice';
 import ApprovedUsers from './screens/ApprovedUsers';
-import React from 'react';
 
 function App() {
   const token = useSelector(selectToken);
