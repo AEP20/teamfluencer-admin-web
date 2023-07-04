@@ -1,5 +1,5 @@
 const apiClient = {
-  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin/auth`,
+  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin/healthcheck`,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -8,7 +8,7 @@ const apiClient = {
 
 export const TAhealth = async () => {
   try {
-    const response = await fetch(`${apiClient.baseURL}/health`, {
+    const response = await fetch(`${apiClient.baseURL}`, {
       method: 'GET',
       headers: apiClient.headers,
     });

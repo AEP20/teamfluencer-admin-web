@@ -1,5 +1,5 @@
 const apiClient = {
-  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin/auth`,
+  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin/brand`,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ export const TAfindAllBrands = async (token: string) => {
       var content = await response.json();
       return content;
     } else {
-      throw new Error('Find User failed');
+      throw new Error('Brands not found');
     }
   } catch (error) {
     throw error;

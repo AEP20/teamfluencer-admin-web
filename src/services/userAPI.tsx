@@ -43,7 +43,6 @@ export const TAfindAllUser = async (params: any, token: string) => {
       },
       credentials: 'include',
     });
-
     if (response.status === 200) {
       var content = await response.json();
       return content;
@@ -70,7 +69,7 @@ export const TAfindApprovalUser = async (token: string) => {
       var content = await response.json();
       return content;
     } else {
-      throw new Error('Find User failed');
+      throw new Error('Find Approval Users failed');
     }
   } catch (error) {
     throw error;
@@ -87,7 +86,6 @@ export const TAfindAllApprovalUser = async (token: string) => {
       },
       credentials: 'include',
     });
-
     if (response.status === 200) {
       var content = await response.json();
       return content;
