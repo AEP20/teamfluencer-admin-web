@@ -40,8 +40,8 @@ const DoApprovalScreen: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await TAfindAllApprovalUser(token);
-        if (response.data && Array.isArray(response.data)) {
-          setData(response.data);
+        if (response && Array.isArray(response)) {
+          setData(response);
           setIsLoading(false);
         }
       } catch (error: any) {

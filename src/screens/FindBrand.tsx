@@ -73,7 +73,7 @@ const FindBrand = () => {
       };
       setbrandData(object);
     } catch (error: any) {
-      setError(error.response.data.message);
+      setError(error.response.message);
     }
   };
 

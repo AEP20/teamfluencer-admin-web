@@ -18,8 +18,8 @@ const DoApprovalCampaigns: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await TAfindApprovalCampaign(token);
-        if (response.data && Array.isArray(response.data)) {
-          setData(response.data);
+        if (response && Array.isArray(response)) {
+          setData(response);
           setIsLoading(false);
         }
       } catch (err: any) {

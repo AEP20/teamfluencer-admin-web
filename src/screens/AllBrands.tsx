@@ -11,9 +11,9 @@ import { selectToken } from '../redux/store/userSlice';
 const fetchData = async (token: string) => {
   try {
     const response = await TAfindAllBrands(token);
-    if (response && Array.isArray(response.data.brands)) {
-      const totalLength = response.data.brands.length;
-      const data = response.data.brands
+    if (response && Array.isArray(response.brands)) {
+      const totalLength = response.brands.length;
+      const data = response.brands
         .map((item: any, index: any) => ({
           id: totalLength - index,
           brand_name: item.brand_name,
