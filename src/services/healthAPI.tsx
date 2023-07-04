@@ -1,28 +1,25 @@
-import axios from 'axios';
-
-const apiClient = axios.create({
-  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin`,
-  timeout: 5000,
-  withCredentials: true, // Enable sending cookies with requests
+const apiClient = {
+  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin/auth`,
+  timeout: 10000,
   headers: {
-    credentials: 'include',
-    'Access-Control-Allow-Origin': 'https://admin.teamfluencer.co',
-    'Access-Control-Allow-Credentials': 'true',
-    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-  }, // Enable sending cookies with requests
-});
-
-// Set up the CORS headers
-apiClient.defaults.headers.common['Access-Control-Allow-Origin'] = 'https://admin.teamfluencer.co'; // Replace with your desired allowed origin
-apiClient.defaults.headers.common['Access-Control-Allow-Credentials'] = 'true';
-apiClient.defaults.headers.common['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept';
+    'Content-Type': 'application/json',
+  },
+};
 
 export const TAhealth = async () => {
   try {
-    const response = await apiClient.get('/health');
+    const response = await fetch(`${apiClient.baseURL}/health`, {
+      method: 'GET',
+      headers: apiClient.headers,
+    });
 
-    if (response.status === 200 && response.data.status === 'UP') {
-      return response.data;
+    if (response.status === 200) {
+      const responseData = await response.json();
+      if (responseData.status === 'UP') {
+        return responseData;
+      } else {
+        throw new Error('Health check failed');
+      }
     } else {
       throw new Error('Health check failed');
     }
