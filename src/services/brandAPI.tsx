@@ -1,15 +1,15 @@
-import axios from 'axios';
-
-const apiClient = axios.create({
+const apiClient = {
   baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin/brand`,
   timeout: 5000,
-  withCredentials: true, // Enable sending cookies with requests
-});
-
-// Set up the CORS headers
-apiClient.defaults.headers.common['Access-Control-Allow-Origin'] = 'https://admin.teamfluencer.co'; // Replace with your desired allowed origin
-apiClient.defaults.headers.common['Access-Control-Allow-Credentials'] = 'true';
-apiClient.defaults.headers.common['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept';
+  withCredentials: true,
+  headers: {
+    credentials: 'include',
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': 'https://admin.teamfluencer.co',
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+  },
+};
 
 export const TAfindBrand = async (data: any, token: string) => {
   try {
@@ -22,13 +22,18 @@ export const TAfindBrand = async (data: any, token: string) => {
       query = `?brand_name=${data.brandname}`;
     }
 
-    const response = await apiClient.get(`/get${query}`, {
+    const response = await fetch(`${apiClient.baseURL}/get${query}`, {
+      method: 'GET',
       headers: {
+        ...apiClient.headers,
         Authorization: `Bearer ${token}`,
       },
+      credentials: 'include',
     });
+
     if (response.status === 200) {
-      return response.data;
+      var content = await response.json();
+      return content;
     } else {
       throw new Error('Find User failed');
     }
@@ -39,14 +44,18 @@ export const TAfindBrand = async (data: any, token: string) => {
 
 export const TAfindAllBrands = async (token: string) => {
   try {
-    const response = await apiClient.get(`/getall`, {
+    const response: any = await fetch(`${apiClient.baseURL}/getall`, {
+      method: 'GET',
       headers: {
+        ...apiClient.headers,
         Authorization: `Bearer ${token}`,
       },
+      credentials: 'include',
     });
 
     if (response.status === 200) {
-      return response;
+      var content = await response.json();
+      return content;
     } else {
       throw new Error('Find User failed');
     }
@@ -55,16 +64,20 @@ export const TAfindAllBrands = async (token: string) => {
   }
 };
 
-
 export const TAfindBrandById = async (id: any, token: string) => {
   try {
-    const response = await apiClient.get(`/getuser/${id}`, {
+    const response = await fetch(`${apiClient.baseURL}/getuser/${id}`, {
+      method: 'GET',
       headers: {
+        ...apiClient.headers,
         Authorization: `Bearer ${token}`,
       },
+      credentials: 'include',
     });
+
     if (response.status === 200) {
-      return response;
+      var content = await response.json();
+      return content;
     } else {
       throw new Error('Find User failed');
     }

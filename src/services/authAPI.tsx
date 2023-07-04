@@ -1,26 +1,23 @@
-import axios from 'axios';
-
-const apiClient = axios.create({
+const apiClient = {
   baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin/auth`,
   timeout: 10000,
-  withCredentials: true, // Enable sending cookies with requests
-});
-
-// Set up the CORS headers
-apiClient.defaults.headers.common['Access-Control-Allow-Origin'] = 'https://admin.teamfluencer.co'; // Replace with your desired allowed origin
-apiClient.defaults.headers.common['Access-Control-Allow-Credentials'] = 'true';
-apiClient.defaults.headers.common['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept';
-
+  headers: {
+    'Content-Type': 'application/json',
+  },
+};
 
 export const TAlogin = async (email: string, password: string) => {
   try {
-    const response = await apiClient.post('/signin', {
-      email,
-      password,
+    const response = await fetch(`${apiClient.baseURL}/signin`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: apiClient.headers,
+      body: JSON.stringify({ email, password }),
     });
 
     if (response.status === 200) {
-      return response;
+      var content = await response.json();
+      return content;
     } else {
       throw new Error('Login failed');
     }
@@ -31,13 +28,16 @@ export const TAlogin = async (email: string, password: string) => {
 
 export const TAsignup = async (email: string, password: string) => {
   try {
-    const response = await apiClient.post('/admin/login', {
-      email,
-      password,
+    const response = await fetch(`${apiClient.baseURL}/admin/login`, {
+      method: 'POST',
+      headers: apiClient.headers,
+      credentials: 'include',
+      body: JSON.stringify({ email, password }),
     });
 
     if (response.status === 200) {
-      return response;
+      var content = await response.json();
+      return content;
     } else {
       throw new Error('Signup failed');
     }
