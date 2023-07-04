@@ -32,13 +32,13 @@ const LoginScreen = () => {
         dispatch(
           login({
             user: email,
-            token: response.data.token,
+            token: response.token,
           }),
         );
       }
     } catch (error: any) {
       if (error.response) {
-        setError(error.response.data.error);
+        setError(error.response.error);
       } else {
         setError(error.message);
       }

@@ -18,7 +18,7 @@ const FindUser = () => {
       const fetchData = async () => {
         try {
           const response = await TAfindUserById(id, token);
-          setProfileData(response.data);
+          setProfileData(response);
         } catch (error) {
           console.log(error);
         }
@@ -72,7 +72,7 @@ const FindUser = () => {
       setProfileData(object);
     } catch (error: any) {
       if (error.response) {
-        setError(error.response.data.error);
+        setError(error.response.error);
       } else {
         setError(error.message);
       }

@@ -1,31 +1,25 @@
-import axios from 'axios';
-
-const apiClient = axios.create({
-  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin/campaign`,
-  timeout: 5000,
-  withCredentials: true, // Enable sending cookies with requests
+const apiClient = {
+  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin/auth`,
+  timeout: 10000,
   headers: {
-    "credentials": "include",
-    'Access-Control-Allow-Origin': "https://admin.teamfluencer.co",
-    'Access-Control-Allow-Credentials': 'true',
-    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-  },// Enable sending cookies with requests
-});
-
-// Set up the CORS headers
-apiClient.defaults.headers.common['Access-Control-Allow-Origin'] = 'https://admin.teamfluencer.co'; // Replace with your desired allowed origin
-apiClient.defaults.headers.common['Access-Control-Allow-Credentials'] = 'true';
-apiClient.defaults.headers.common['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept';
+    'Content-Type': 'application/json',
+  },
+};
 
 export const TAfindApprovalCampaign = async (token: string) => {
   try {
-    const response = await apiClient.get(`/getverificationcampaign`, {
+    const response = await fetch(`${apiClient.baseURL}/getverificationcampaign`, {
+      method: 'GET',
       headers: {
+        ...apiClient.headers,
         Authorization: `Bearer ${token}`,
       },
+      credentials: 'include',
     });
+
     if (response.status === 200) {
-      return response;
+      var content = await response.json();
+      return content;
     } else {
       throw new Error('Find User failed');
     }
@@ -42,11 +36,15 @@ export const TAdoApprovalCampaign = async (status: string, rejected_reason: stri
   });
 
   try {
-    const response = await apiClient.put(`/verificate?${query}`, {
+    const response = await fetch(`${apiClient.baseURL}/verificate?${query}`, {
+      method: 'PUT',
       headers: {
+        ...apiClient.headers,
         Authorization: `Bearer ${token}`,
       },
+      credentials: 'include',
     });
+
     if (response.status === 200) {
       return response;
     }

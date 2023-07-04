@@ -1,13 +1,8 @@
 const apiClient = {
-  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin/brand`,
-  timeout: 5000,
-  withCredentials: true,
+  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin/auth`,
+  timeout: 10000,
   headers: {
-    credentials: 'include',
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': 'https://admin.teamfluencer.co',
-    'Access-Control-Allow-Credentials': 'true',
-    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
   },
 };
 
