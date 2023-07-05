@@ -3,10 +3,7 @@ const apiClient = {
   timeout: 5000,
   withCredentials: true,
   headers: {
-    credentials: 'include',
-    'Access-Control-Allow-Origin': 'https://admin.teamfluencer.co',
-    'Access-Control-Allow-Credentials': 'true',
-    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+    'Content-Type': 'application/json',
   },
 };
 
@@ -37,11 +34,11 @@ export const TAfindAllUser = async (params: any, token: string) => {
   try {
     const response = await fetch(`${apiClient.baseURL}/getall?${params}`, {
       method: 'GET',
-      headers: {
-        ...apiClient.headers,
-        Authorization: `Bearer ${token}`,
-      },
       credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
     });
     if (response.status === 200) {
       var content = await response.json();
@@ -58,11 +55,11 @@ export const TAfindApprovalUser = async (token: string) => {
   try {
     const response = await fetch(`${apiClient.baseURL}/getverificationprofiles`, {
       method: 'GET',
-      headers: {
-        ...apiClient.headers,
-        Authorization: `Bearer ${token}`,
-      },
       credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
     });
 
     if (response.status === 200) {

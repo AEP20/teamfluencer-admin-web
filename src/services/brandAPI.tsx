@@ -63,11 +63,11 @@ export const TAfindBrandById = async (id: any, token: string) => {
   try {
     const response = await fetch(`${apiClient.baseURL}/getuser/${id}`, {
       method: 'GET',
-      headers: {
-        ...apiClient.headers,
-        Authorization: `Bearer ${token}`,
-      },
       credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
     });
 
     if (response.status === 200) {
