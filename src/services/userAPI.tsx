@@ -77,11 +77,11 @@ export const TAfindAllApprovalUser = async (token: string) => {
   try {
     const response = await fetch(`${apiClient.baseURL}/getallverificationprofiles`, {
       method: 'GET',
-      headers: {
-        ...apiClient.headers,
-        Authorization: `Bearer ${token}`,
-      },
       credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
     });
     if (response.status === 200) {
       var content = await response.json();
@@ -97,12 +97,12 @@ export const TAfindAllApprovalUser = async (token: string) => {
 export const TAverifyUser = async (id: any, isVerified: boolean, token: string) => {
   try {
     const response = await fetch(`${apiClient.baseURL}/verificateuser/${id}/${isVerified}`, {
-      method: 'PUT',
-      headers: {
-        ...apiClient.headers,
-        Authorization: `Bearer ${token}`,
-      },
+      method: 'POST',
       credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
     });
 
     if (response.status === 200) {

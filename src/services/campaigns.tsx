@@ -10,11 +10,11 @@ export const TAfindApprovalCampaign = async (token: string) => {
   try {
     const response = await fetch(`${apiClient.baseURL}/getverificationcampaign`, {
       method: 'GET',
-      headers: {
-        ...apiClient.headers,
-        Authorization: `Bearer ${token}`,
-      },
       credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
     });
 
     if (response.status === 200) {
@@ -37,12 +37,12 @@ export const TAdoApprovalCampaign = async (status: string, rejected_reason: stri
 
   try {
     const response = await fetch(`${apiClient.baseURL}/verificate?${query}`, {
-      method: 'PUT',
-      headers: {
-        ...apiClient.headers,
-        Authorization: `Bearer ${token}`,
-      },
+      method: 'POST',
       credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
     });
 
     if (response.status === 200) {

@@ -19,11 +19,11 @@ export const TAfindBrand = async (data: any, token: string) => {
 
     const response = await fetch(`${apiClient.baseURL}/get${query}`, {
       method: 'GET',
-      headers: {
-        ...apiClient.headers,
-        Authorization: `Bearer ${token}`,
-      },
       credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
     });
 
     if (response.status === 200) {
@@ -41,11 +41,11 @@ export const TAfindAllBrands = async (token: string) => {
   try {
     const response: any = await fetch(`${apiClient.baseURL}/getall`, {
       method: 'GET',
-      headers: {
-        ...apiClient.headers,
-        Authorization: `Bearer ${token}`,
-      },
       credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
     });
 
     if (response.status === 200) {
