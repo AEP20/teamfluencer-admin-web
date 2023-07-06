@@ -94,9 +94,9 @@ export const TAfindAllApprovalUser = async (token: string) => {
   }
 };
 
-export const TAverifyUser = async (id: any, isVerified: boolean, token: string) => {
+export const TAverifyUser = async (id: any, status: string, token: string) => {
   try {
-    const response = await fetch(`${apiClient.baseURL}/verificateuser/${id}/${isVerified}`, {
+    const response = await fetch(`${apiClient.baseURL}/verificateuser/${id}/${status}`, {
       method: 'POST',
       credentials: 'include',
       headers: {
