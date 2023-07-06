@@ -385,7 +385,7 @@ const GetAllUsers = () => {
                       placeholder={`keywords`}
                     />
                     {isDropdownOpen && keywords.length > 0 && (
-                      <div className="dropdown pt-10" style={{ position: 'fixed', zIndex: 999 }}>
+                      <div className="dropdown pt-10 " style={{ position: 'fixed', zIndex: 999 }}>
                         <ul>
                           {autoCompleteKeyword.map((keyword, index) => (
                             <li key={index}>{keyword}</li>

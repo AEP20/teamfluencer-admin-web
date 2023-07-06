@@ -47,9 +47,33 @@ const AllBrands = () => {
   const [initialRecords, setInitialRecords] = useState(sortBy(userData, 'id'));
   const [recordsData, setRecordsData] = useState(initialRecords);
   const [tempData, setTempData] = useState(initialRecords);
-  const [search, setSearch] = useState('');
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const [searchMatches, setSearchMatches] = useState<AllBrandType[]>([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    const loadBrands = async () => {
+      const response = await fetchData(token);
+      setSearch(response.data);
+    };
+
+    loadBrands();
+  }, []);
+
+  const searchBrands = (text: string) => {
+    let matches = userData.filter((brand: AllBrandType) => {
+      const regex = new RegExp(`^${text}`, 'gi');
+      return brand.brand_name.match(regex);
+    });
+    if (searchMatches.length === 0) {
+      setIsDropdownOpen(false);
+    } else {
+      setIsDropdownOpen(true);
+    }
+    setSearchMatches(matches);
+  };
 
   useEffect(() => {
     setPage(1);
@@ -78,6 +102,16 @@ const AllBrands = () => {
     setRecordsData([...initialRecords.slice(from, to)]);
   }, [page, pageSize, initialRecords]);
 
+  useEffect(() => {
+    const handleClick = () => {
+      setIsDropdownOpen(false);
+    };
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  }, []);
+
   return (
     <div className="panel">
       <div className="mb-4.5 flex md:items-center md:flex-row flex-col gap-5">
@@ -88,8 +122,19 @@ const AllBrands = () => {
             className="form-input w-auto"
             placeholder="Search..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              searchBrands(e.target.value);
+            }}
           />
+          {isDropdownOpen && searchMatches.length > 0 && (
+            <div className="absolute bg-white border border-gray-300 rounded mt-2 z-10">
+              {searchMatches.slice(0, 4).map((match: AllBrandType) => (
+                <div className="p-2 border-b border-gray-300 hover:bg-gray-100" key={match.id}>
+                  {match.brand_name}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       <div className="datatables">
