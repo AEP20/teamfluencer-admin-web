@@ -14,14 +14,18 @@ const fetchData = async (token: string) => {
     if (response && Array.isArray(response.brands)) {
       const totalLength = response.brands.length;
       const data = response.brands
-        .map((item: any, index: any) => ({
-          id: totalLength - index,
-          brand_name: item.brand_name,
-          first_name: item.first_name,
-          last_name: item.last_name,
-          email: item.email,
-          phone: item.phone,
-        }))
+        .map((item: any, index: any) => {
+          const formattedDate = new Date(item.last_login).toISOString().split('T')[0];
+          return {
+            id: totalLength - index,
+            brand_name: item.brand_name,
+            first_name: item.first_name,
+            last_name: item.last_name,
+            email: item.email,
+            phone: item.phone,
+            last_login: formattedDate,
+          };
+        })
         .reverse();
       return data;
     }
@@ -106,6 +110,7 @@ const AllBrands = () => {
             { accessor: 'last_name', title: 'Last Name', sortable: true },
             { accessor: 'email', title: 'Email', sortable: true },
             { accessor: 'phone', title: 'Phone', sortable: true },
+            { accessor: 'last_login', title: 'Last Login', sortable: true },
           ]}
           totalRecords={initialRecords.length}
           recordsPerPage={pageSize}
