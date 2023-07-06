@@ -52,10 +52,10 @@ const DoApprovalScreen: React.FC = () => {
     fetchData();
   }, [refreshData]);
 
-  const handleApprove = async (id: any, isVerified: boolean) => {
+  const handleApprove = async (id: any, status: string) => {
     setIsLoading(true);
     try {
-      const response = await TAverifyUser(id, isVerified, token);
+      const response = await TAverifyUser(id, status, token);
       if (!response) {
         setError('Response is null');
         return;
@@ -96,13 +96,13 @@ const DoApprovalScreen: React.FC = () => {
         <div className="flex flex-row justify-between">
           <div>
             <button
-              onClick={() => handleApprove(data[currentIndex].id, false)}
+              onClick={() => handleApprove(data[currentIndex].id, "false")}
               className="mt-2 mr-2 py-2 px-6 rounded-md bg-red-500 text-white hover:bg-red-600"
             >
               Red
             </button>
             <button
-              onClick={() => handleApprove(data[currentIndex].id, true)}
+              onClick={() => handleApprove(data[currentIndex].id, "true")}
               className="mt-2 mr-2 py-2 px-6 rounded-md bg-green-500 text-white hover:bg-green-600"
             >
               Onay
