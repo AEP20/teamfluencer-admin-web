@@ -32,6 +32,7 @@ const FindUser = () => {
   });
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [username, setUsername] = useState('');
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,11 +41,13 @@ const FindUser = () => {
 
     let data;
 
-    if (email !== '' && phone === '') {
+    if (email !== '' && phone === '' && username === '') {
       data = { email };
-    } else if (phone !== '' && email === '') {
+    } else if (phone !== '' && email === '' && username === '') {
       data = { phone };
-    } else if (phone === '' && email === '') {
+    } else if (phone === '' && email === '' && username !== '') {
+      data = { username };
+    } else if (phone === '' && email === '' && username === '') {
       setError('Please provide email or phone');
       return;
     } else {
@@ -91,6 +94,15 @@ const FindUser = () => {
             setEmail(e.target.value);
           }}
         />
+        <input
+          type="username"
+          placeholder="username"
+          className="form-input text-sm"
+          onChange={(e) => {
+            setUsername(e.target.value);
+          }}
+        />
+
         <input
           type="tel"
           placeholder="6-(666)-111-7777"
