@@ -10,6 +10,7 @@ import CommonLayout from './components/CommonLayout';
 import WaitingApprovalUser from './screens/WaitingApprovalUser';
 import FindBrand from './screens/FindBrand';
 import AllBrands from './screens/AllBrands';
+import AllCampaign from './screens/AllCampaign';
 import DoApprovalScreen from './screens/DoApprovalScreen';
 import APIdocsScreen from './screens/APIdocsScreen';
 import GetAllUsers from './screens/GetAllUsers';
@@ -110,6 +111,7 @@ function CampaignsLayout() {
             <Route path="/find" element={<FindBrand />} />
             <Route path="/find-all" element={<AllBrands />} />
             <Route path="/do-approval" element={<DoApprovalCampaigns />} />
+            <Route path="/find-all-campaigns" element={<AllCampaign />} />
           </Routes>
         </CommonLayout>
       </Suspense>

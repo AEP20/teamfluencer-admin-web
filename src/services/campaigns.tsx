@@ -6,6 +6,28 @@ const apiClient = {
   },
 };
 
+export const TAfindAllCampaigns = async (token: string) => {
+  try {
+    const response = await fetch(`${apiClient.baseURL}/getall`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 200) {
+      var content = await response.json();
+      return content;
+    } else {
+      throw new Error('Find User failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const TAfindApprovalCampaign = async (token: string) => {
   try {
     const response = await fetch(`${apiClient.baseURL}/getverificationcampaign`, {
@@ -21,7 +43,7 @@ export const TAfindApprovalCampaign = async (token: string) => {
       var content = await response.json();
       return content;
     } else {
-      throw new Error('Find User failed');
+      throw new Error('Find Campaign failed');
     }
   } catch (error) {
     throw error;
