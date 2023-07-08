@@ -75,4 +75,17 @@ type Campaign = {
   barter_photo: string[];
 };
 
-export type { Campaign, Limitations, Statistic, Details, ApplicationCounts };
+type campaignFilterType = 'min' | 'max' | 'value';
+
+
+type campaignFilters = {
+  country: string;
+  platform: 'insta-post' | 'insta-story' | 'insta-reels' | 'tiktok' | '';
+  is_verified: 'true' | 'false' | '';
+  gender: 'male' | 'female' | '';
+  min_followers: number;
+  min_age: number;
+  max_age: number;
+};
+
+export type { Campaign, Limitations, campaignFilters,campaignFilterType, Statistic, Details, ApplicationCounts };
