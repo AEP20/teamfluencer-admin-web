@@ -57,14 +57,14 @@ const fetchData = async (query: any, token: string) => {
         phone: phoneNumberFixer(item.phone),
         gender: item.gender,
         profile_complete: item.profile_complete,
-        followers: item.insta.followers,
+        followers: item.insta?.followers,
         insta_post_number: item.post_number,
-        average_like: instaAverageLikeFixer(item.insta.average_like),
-        tiktok_followers: tiktokFollowersFixer(item.tiktok.followers),
+        average_like: instaAverageLikeFixer(item.insta?.average_like),
+        tiktok_followers: tiktokFollowersFixer(item.tiktok?.followers),
         tiktok_videos: item.videos,
-        tiktok_average_like: tiktokAverageLikeFixer(item.tiktok.tiktok_average_like),
-        tiktok_engagement_rate: engagementRateFixer(item.tiktok.tiktok_engagement_rate),
-        keywords: item.insta.keywords,
+        tiktok_average_like: tiktokAverageLikeFixer(item.tiktok?.tiktok_average_like),
+        tiktok_engagement_rate: engagementRateFixer(item.tiktok?.tiktok_engagement_rate),
+        keywords: item.insta?.keywords,
         _id: item._id,
         verification: item.verification,
       }));
@@ -171,7 +171,7 @@ const GetAllUsers = () => {
     });
 
     try {
-      const data = await fetchData(params, token);
+      const data: any = await fetchData(params, token);
       if (data !== undefined) {
         setInitialRecords(data);
         setUserData(data);
