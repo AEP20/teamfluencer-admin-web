@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { selectToken } from '../redux/store/userSlice';
-import { TAfindAllCampaigns } from '../services/campaigns';
-import { Campaign, campaignFilters, campaignFilterType } from '../types/campaignsData';
+import { TAfindAllCampaigns, TAfindCampaign } from '../services/campaigns';
+import { CampaignType, campaignFilters, campaignFilterType, Campaign } from '../types/campaignsData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import CampaignProfile from '../components/CampaignProfile';
 
 const fetchData = async (token: string) => {
   try {
@@ -40,7 +41,8 @@ function AllCampaign() {
     dispatch(setPageTitle('All Campaigns'));
   }, [dispatch]);
 
-  const [campaignData, setCampaignData] = useState([] as Campaign[]);
+  const [userData, setUserData] = useState([] as Campaign[]);
+  const [campaignData, setCampaignData] = useState([] as CampaignType[]);
   const [page, setPage] = useState(1);
   const PAGE_SIZES = [10, 20, 30, 50, 100, 500];
   const [pageSize, setPageSize] = useState(PAGE_SIZES[3]);
@@ -48,6 +50,9 @@ function AllCampaign() {
   const [recordsData, setRecordsData] = useState(initialRecords);
   const [error, setError] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [search, setSearch] = useState('');
+  const [searchMatches, setSearchMatches] = useState<Campaign[]>([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     const loadCampaigns = async () => {
@@ -55,6 +60,7 @@ function AllCampaign() {
         const response = await fetchData(token);
         setCampaignData(response);
         setInitialRecords(response);
+        setSearch(response.data);
       } catch (error) {
         setError('No data found');
       }
@@ -62,6 +68,91 @@ function AllCampaign() {
 
     loadCampaigns();
   }, [token]);
+
+  const searchCampaign = (text: string) => {
+    let matches = userData.filter((campaign: Campaign) => {
+      const regex = new RegExp(`^${text}`, 'gi');
+      return campaign.name.match(regex);
+    });
+    if (matches.length === 0) {
+      setIsDropdownOpen(false);
+    } else {
+      setIsDropdownOpen(true);
+    }
+    setSearchMatches(matches);
+  };
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const data = await fetchData(token);
+        if (data !== undefined) {
+          setInitialRecords(data);
+          setUserData(data);
+        } else {
+          setError('No data found');
+        }
+      } catch (error) {
+        setError('No data found');
+      }
+    };
+    getUserData();
+  }, []);
+
+  useEffect(() => {
+    const handleClick = () => {
+      setIsDropdownOpen(false);
+    };
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  }, []);
+
+  const handleForm = async (e: any) => {
+    e.preventDefault();
+
+    if (!searchCampaign) {
+      setError('Please provide brand name');
+      return;
+    }
+    try {
+      const response = await TAfindCampaign(searchCampaign, token);
+      const object: CampaignType = {
+        currency: response.currency,
+        country: response.country,
+        name: response.name,
+        cover_photo: response.cover_photo,
+        description: response.description,
+        platform: response.platform,
+        is_verified: response.is_verified,
+        verification: response.verification,
+        rejected_reason: response.rejected_reason,
+        visibility: false,
+        content_offered: false,
+        limitations: {
+          gender: response.limitations?.gender ?? '',
+          min_follower: response.limitations?.min_follower ?? 0,
+          max_follower: response.limitations?.max_follower ?? 0,
+          min_age: response.limitations?.min_age ?? 0,
+          max_age: response.limitations?.max_age ?? 0,
+          school: response.limitations?.school ?? '',
+          city: response.limitations?.city ?? '',
+        },
+        max_cost: 0,
+        total_cost: 0,
+        details: {
+          photo: [],
+          link: '',
+          description: '',
+        },
+        _id: '',
+      };
+      setCampaignData([...campaignData, object]);
+    } catch (error: any) {
+      setError(error.response.message);
+    }
+  };
 
   useEffect(() => {
     setPage(1);
@@ -73,7 +164,7 @@ function AllCampaign() {
     setRecordsData([...initialRecords.slice(from, to)]);
   }, [page, pageSize, initialRecords]);
 
-  const verifiedİcon = (is_verified: boolean) => {
+  const verifiedIcon = (is_verified: boolean) => {
     if (is_verified) {
       return <FontAwesomeIcon icon={faCheck} color="green" />;
     } else {
@@ -81,7 +172,7 @@ function AllCampaign() {
     }
   };
 
-  const renderDescriptionCell = ({ description, _id }: Campaign) => {
+  const renderDescriptionCell = ({ description }: CampaignType) => {
     const toggleExpandedRow = () => {
       setIsExpanded(!isExpanded);
     };
@@ -135,19 +226,11 @@ function AllCampaign() {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  const filterKeys: (keyof campaignFilters)[] = [
-    'country',
-    'platform',
-    'is_verified',
-    'gender',
-    'min_followers',
-    'min_age',
-    'max_age',
-  ];
 
   return (
     <div className="panel">
       {error && <div className="alert alert-danger">{error}</div>}
+      {/* <div className="w-full ">{campaignData && <CampaignProfile {...campaignData} />}</div> */}
       <div className="flex md:flex-row flex-row gap-10">
         <div className="flex flex-row gap-24 items-center items-row">
           <div>
@@ -176,7 +259,7 @@ function AllCampaign() {
               />
             </div>
           </div>
-          <div >
+          <div>
             <div className="filter-item">
               <label htmlFor="min_age" className="filter-label">
                 Min Age:
@@ -358,6 +441,32 @@ function AllCampaign() {
               Any
             </label>
           </div>
+          <div className="ltr:ml-auto rtl:mr-auto flex mt-12 h-10">
+            <input
+              type="text"
+              className="form-input w-auto"
+              placeholder="Search Brand Name"
+              value={search}
+              onChange={(e) => {
+                const text = e.target.value;
+                searchCampaign(text);
+              }}
+            />
+            {isDropdownOpen && searchMatches.length > 0 && (
+              <div className="absolute bg-white border border-gray-300 rounded mt-10 z-10">
+                {searchMatches.slice(0, 4).map((match: Campaign) => (
+                  <div className="p-2 border-b border-gray-300 hover:bg-gray-100" key={match._id}>
+                    {match.name}
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="flex justify-center">
+              <button type="button" onClick={handleForm} className="btn btn-primary ml-3">
+                Submit
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -385,7 +494,7 @@ function AllCampaign() {
               sortable: true,
               render: ({ is_verified }) => (
                 <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {verifiedİcon(is_verified)}
+                  {verifiedIcon(is_verified)}
                 </div>
               ),
             },

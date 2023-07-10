@@ -22,7 +22,7 @@ export const TAfindBrand = async (data: any, token: string) => {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -44,7 +44,7 @@ export const TAfindAllBrands = async (token: string) => {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -66,7 +66,7 @@ export const TAfindBrandById = async (id: any, token: string) => {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -75,6 +75,29 @@ export const TAfindBrandById = async (id: any, token: string) => {
       return content;
     } else {
       throw new Error('Find User failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAupdateBrand = async (id: any, data: any, token: string) => {
+  try {
+    const response = await fetch(`${apiClient.baseURL}/update/${id}`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (response.status === 200) {
+      const content = await response.json();
+      return content;
+    } else {
+      throw new Error('Update failed');
     }
   } catch (error) {
     throw error;

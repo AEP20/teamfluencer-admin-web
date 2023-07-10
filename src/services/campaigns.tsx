@@ -6,6 +6,33 @@ const apiClient = {
   },
 };
 
+export const TAfindCampaign = async (data: any, token: string) => {
+  try {
+    let query = '';
+    if (data.name) {
+      query = `?name=${data.name}`;
+    }
+
+    const response = await fetch(`${apiClient.baseURL}/get${query}`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 200) {
+      var content = await response.json();
+      return content;
+    } else {
+      throw new Error('Find Campaign failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const TAfindAllCampaigns = async (token: string) => {
   try {
     const response = await fetch(`${apiClient.baseURL}/getall`, {
@@ -13,7 +40,7 @@ export const TAfindAllCampaigns = async (token: string) => {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -35,7 +62,7 @@ export const TAfindApprovalCampaign = async (token: string) => {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -63,7 +90,7 @@ export const TAdoApprovalCampaign = async (status: string, rejected_reason: stri
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
