@@ -99,7 +99,7 @@ const BrandProfile = (data: BrandType) => {
         </div>
       </div>
       <div className="profile-section bg-white p-3 shadow-md mb-3">
-        <h3 className="section-title text-lg font-semibold mb-3">Personal Information</h3>
+        <h3 className="section-title text-lg font-semibold mb-3">Brand Information</h3>
         <table className="table-responsive">
           <tbody>
             {brandInfo.map((info: InfoType) => (

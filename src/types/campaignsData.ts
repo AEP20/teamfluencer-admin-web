@@ -37,6 +37,25 @@ type ApplicationCounts = {
   application_done?: number;
 };
 
+type CampaignType = {
+  _id: string; // Brand's ObjectId
+  currency: string;
+  country: string;
+  name: string;
+  cover_photo: string;
+  description: string;
+  platform: 'insta-post' | 'insta-story' | 'insta-reels' | 'tiktok';
+  is_verified: boolean;
+  verification: string;
+  rejected_reason: string;
+  visibility: boolean;
+  content_offered: boolean;
+  limitations: Limitations;
+  max_cost: number;
+  total_cost: number;
+  details: Details;
+};
+
 type Campaign = {
   _id: string; // Brand's ObjectId
   created_at: Date;
@@ -75,8 +94,12 @@ type Campaign = {
   barter_photo: string[];
 };
 
-type campaignFilterType = 'min' | 'max' | 'value';
+type InfoType = {
+  key: string;
+  value: string | number | boolean | any[];
+};
 
+type campaignFilterType = 'min' | 'max' | 'value';
 
 type campaignFilters = {
   country: string;
@@ -88,4 +111,14 @@ type campaignFilters = {
   max_age: number;
 };
 
-export type { Campaign, Limitations, campaignFilters,campaignFilterType, Statistic, Details, ApplicationCounts };
+export type {
+  Campaign,
+  Limitations,
+  campaignFilters,
+  campaignFilterType,
+  Statistic,
+  Details,
+  ApplicationCounts,
+  InfoType,
+  CampaignType,
+};
