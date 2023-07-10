@@ -9,7 +9,11 @@ const apiClient = {
 
 export const TAfindUser = async (data: any, token: string) => {
   try {
-    const query = data.email ? `_email=${data.email}` : data.username ? `_username=${data.username}` : `_phone=${data.phone}`;
+    const query = data.email
+      ? `_email=${data.email}`
+      : data.username
+      ? `_username=${data.username}`
+      : `_phone=${data.phone}`;
     const response = await fetch(`${apiClient.baseURL}/getuser?${query}`, {
       method: 'GET',
       headers: {
@@ -37,7 +41,7 @@ export const TAfindAllUser = async (params: any, token: string) => {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     if (response.status === 200) {
@@ -58,7 +62,7 @@ export const TAfindApprovalUser = async (token: string) => {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -80,7 +84,7 @@ export const TAfindAllApprovalUser = async (token: string) => {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     if (response.status === 200) {
@@ -94,17 +98,16 @@ export const TAfindAllApprovalUser = async (token: string) => {
   }
 };
 
-export const TAverifyUser = async (id: any, status: string, token: string) => {
+export const TAverifyUser = async (id: string, status: string, token: string) => {
   try {
     const response = await fetch(`${apiClient.baseURL}/verificateuser/${id}/${status}`, {
       method: 'POST',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
-
     if (response.status === 200) {
       var content = await response.json();
       return content;
