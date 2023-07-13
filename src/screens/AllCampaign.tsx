@@ -53,6 +53,7 @@ function AllCampaign() {
   const [search, setSearch] = useState('');
   const [searchMatches, setSearchMatches] = useState<Campaign[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showCampaign, setShowCampaign] = useState(false);
 
   useEffect(() => {
     const loadCampaigns = async () => {
@@ -72,6 +73,10 @@ function AllCampaign() {
   const searchCampaign = (text: string) => {
     let matches = userData.filter((campaign: Campaign) => {
       const regex = new RegExp(`^${text}`, 'gi');
+      if (text === '') {
+        setShowCampaign(false);
+        return null;
+      }
       return campaign.name.match(regex);
     });
     if (matches.length === 0) {
@@ -109,50 +114,51 @@ function AllCampaign() {
     };
   }, []);
 
-  const handleForm = async (e: any) => {
-    e.preventDefault();
+  // const handleForm = async (e: any) => {
+  //   e.preventDefault();
 
-    if (!searchCampaign) {
-      setError('Please provide brand name');
-      return;
-    }
-    try {
-      const response = await TAfindCampaign(searchCampaign, token);
-      const object: CampaignType = {
-        currency: response.currency,
-        country: response.country,
-        name: response.name,
-        cover_photo: response.cover_photo,
-        description: response.description,
-        platform: response.platform,
-        is_verified: response.is_verified,
-        verification: response.verification,
-        rejected_reason: response.rejected_reason,
-        visibility: false,
-        content_offered: false,
-        limitations: {
-          gender: response.limitations?.gender ?? '',
-          min_follower: response.limitations?.min_follower ?? 0,
-          max_follower: response.limitations?.max_follower ?? 0,
-          min_age: response.limitations?.min_age ?? 0,
-          max_age: response.limitations?.max_age ?? 0,
-          school: response.limitations?.school ?? '',
-          city: response.limitations?.city ?? '',
-        },
-        max_cost: 0,
-        total_cost: 0,
-        details: {
-          photo: [],
-          link: '',
-          description: '',
-        },
-        _id: '',
-      };
-      setCampaignData([...campaignData, object]);
-    } catch (error: any) {
-      setError(error.response.message);
-    }
-  };
+  //   if (!searchCampaign) {
+  //     setError('Please provide campaign name');
+  //     return;
+  //   }
+  //   try {
+  //     const response = await TAfindCampaign(searchCampaign, token);
+  //     const object: CampaignType = {
+  //       currency: response.currency,
+  //       country: response.country,
+  //       name: response.name,
+  //       cover_photo: response.cover_photo,
+  //       description: response.description,
+  //       platform: response.platform,
+  //       is_verified: response.is_verified,
+  //       verification: response.verification,
+  //       rejected_reason: response.rejected_reason,
+  //       visibility: false,
+  //       content_offered: false,
+  //       limitations: {
+  //         gender: response.limitations?.gender ?? '',
+  //         min_follower: response.limitations?.min_follower ?? 0,
+  //         max_follower: response.limitations?.max_follower ?? 0,
+  //         min_age: response.limitations?.min_age ?? 0,
+  //         max_age: response.limitations?.max_age ?? 0,
+  //         school: response.limitations?.school ?? '',
+  //         city: response.limitations?.city ?? '',
+  //       },
+  //       max_cost: 0,
+  //       total_cost: 0,
+  //       details: {
+  //         photo: [],
+  //         link: '',
+  //         description: '',
+  //       },
+  //       _id: '',
+  //     };
+  //     setShowCampaign(true);
+  //     setCampaignData([object]);
+  //   } catch (error: any) {
+  //     setError(error.response.message);
+  //   }
+  // };
 
   useEffect(() => {
     setPage(1);
@@ -200,37 +206,27 @@ function AllCampaign() {
     }
   };
 
-  type campaignFilters = {
-    country: string | '';
-    platform: 'insta-post' | 'insta-story' | 'insta-reels' | 'tiktok' | '';
-    is_verified: 'true' | 'false' | '';
-    gender: 'male' | 'female' | '';
-    min_followers: number | '';
-    min_age: number | '';
-    max_age: number | '';
-  };
-
   const defaultState: campaignFilters = {
     country: '',
     platform: '',
     is_verified: '',
     gender: '',
     min_followers: 0,
+    max_followers: 0,
     min_age: 0,
     max_age: 0,
   };
 
   const [filters, setFilters] = useState<campaignFilters>(defaultState);
 
-  const setFilter = (key: keyof campaignFilters, type: campaignFilterType, value: string | boolean | number) => {
+  const setFilter = (key: keyof campaignFilters, _type: campaignFilterType, value: string | boolean | number) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
-
 
   return (
     <div className="panel">
       {error && <div className="alert alert-danger">{error}</div>}
-      {/* <div className="w-full ">{campaignData && <CampaignProfile {...campaignData} />}</div> */}
+      {showCampaign && searchMatches.map((campaign) => <CampaignProfile key={campaign._id} {...campaign} />)}
       <div className="flex md:flex-row flex-row gap-10">
         <div className="flex flex-row gap-24 items-center items-row">
           <div>
@@ -247,15 +243,15 @@ function AllCampaign() {
               />
             </div>
             <div className="filter-item">
-              <label htmlFor="country" className="filter-label">
-                Country:
+              <label htmlFor="max_followers" className="filter-label">
+                Max Followers:
               </label>
               <input
                 className="form-input w-full mb-2"
                 type="text"
-                id="country"
-                value={filters.country}
-                onChange={(e) => setFilter('country', 'value', e.target.value)}
+                id="max_followers"
+                value={filters.max_followers}
+                onChange={(e) => setFilter('max_followers', 'value', parseInt(e.target.value))}
               />
             </div>
           </div>
@@ -315,7 +311,7 @@ function AllCampaign() {
                 }}
                 className="mr-2"
               />
-              Insta Post
+              Insta Story
             </label>
             <label>
               <input
@@ -441,30 +437,44 @@ function AllCampaign() {
               Any
             </label>
           </div>
-          <div className="ltr:ml-auto rtl:mr-auto flex mt-12 h-10">
-            <input
-              type="text"
-              className="form-input w-auto"
-              placeholder="Search Brand Name"
-              value={search}
-              onChange={(e) => {
-                const text = e.target.value;
-                searchCampaign(text);
-              }}
-            />
-            {isDropdownOpen && searchMatches.length > 0 && (
-              <div className="absolute bg-white border border-gray-300 rounded mt-10 z-10">
-                {searchMatches.slice(0, 4).map((match: Campaign) => (
-                  <div className="p-2 border-b border-gray-300 hover:bg-gray-100" key={match._id}>
-                    {match.name}
-                  </div>
-                ))}
+          <div className="flex flex-col gap-6">
+            <div className="ltr:ml-auto rtl:mr-auto flex mt-12 h-10">
+              <input
+                type="text"
+                className="form-input w-auto"
+                placeholder="Search Campaign Name"
+                value={search}
+                onChange={(e) => {
+                  const text = e.target.value;
+                  searchCampaign(text);
+                }}
+              />
+              {isDropdownOpen && searchMatches.length > 0 && (
+                <div className="absolute bg-white border border-gray-300 rounded mt-10 z-10">
+                  {searchMatches.slice(0, 4).map((match: Campaign) => (
+                    <div className="p-2 border-b border-gray-300 hover:bg-gray-100" key={match._id}>
+                      {match.name}
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="flex justify-center">
+                <button type="button" onClick={() => setShowCampaign(true)} className="btn btn-primary ml-3">
+                  Submit
+                </button>
               </div>
-            )}
-            <div className="flex justify-center">
-              <button type="button" onClick={handleForm} className="btn btn-primary ml-3">
-                Submit
-              </button>
+            </div>
+            <div className="filter-item">
+              <label htmlFor="country" className="filter-label">
+                Country:
+              </label>
+              <input
+                className="form-input w-full mb-2"
+                type="text"
+                id="country"
+                value={filters.country}
+                onChange={(e) => setFilter('country', 'value', e.target.value)}
+              />
             </div>
           </div>
         </div>
@@ -498,6 +508,11 @@ function AllCampaign() {
                 </div>
               ),
             },
+            { accessor: 'visibility', title: 'Visibility', sortable: true,  render: ({ visibility }) => (
+              <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {verifiedIcon(visibility)}
+              </div>
+            ),},
           ]}
           totalRecords={initialRecords.length}
           recordsPerPage={pageSize}
@@ -505,7 +520,7 @@ function AllCampaign() {
           onPageChange={(p) => setPage(p)}
           recordsPerPageOptions={PAGE_SIZES}
           onRecordsPerPageChange={setPageSize}
-          sortStatus={{} as DataTableSortStatus} // Sort fonksiyonunu etkinleştirmek için gereken değişiklikler yapmanız gerekmektedir.
+          sortStatus={{} as DataTableSortStatus}
           onSortStatusChange={() => {}}
           minHeight={200}
           paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
