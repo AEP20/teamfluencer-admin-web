@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { selectToken } from '../redux/store/userSlice';
-import { TAfindAllCampaigns, TAfindCampaign } from '../services/campaigns';
+import { TAfindAllCampaigns, TAfindCampaign } from '../services/campaignsAPI';
 import { CampaignType, campaignFilters, campaignFilterType, Campaign } from '../types/campaignsData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
