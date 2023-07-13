@@ -102,13 +102,38 @@ type InfoType = {
 type campaignFilterType = 'min' | 'max' | 'value';
 
 type campaignFilters = {
-  country: string;
+  country: string | '';
   platform: 'insta-post' | 'insta-story' | 'insta-reels' | 'tiktok' | '';
   is_verified: 'true' | 'false' | '';
   gender: 'male' | 'female' | '';
-  min_followers: number;
-  min_age: number;
-  max_age: number;
+  min_followers: number | '';
+  max_followers: number | '';
+  min_age: number | '';
+  max_age: number | '';
+};
+
+type CountryFilterValue = {
+  value: 'TR' | 'Other' | '' | 'All';
+};
+
+type FilterType = 'min' | 'max' | 'value';
+
+type FilterValue = {
+  min: string;
+  max: string;
+};
+
+type Filters = {
+  platform: 'insta-post' | 'insta-story' | 'insta-reels' | 'tiktok' | '';
+  min_age: FilterValue;
+  max_age: FilterValue;
+  min_followers: FilterValue;
+  max_followers: FilterValue;
+  country: CountryFilterValue;
+  gender: 'male' | 'female' | '';
+  is_verified: 'true' | 'false' | '';
+  school?: FilterValue;
+  city?: FilterValue;
 };
 
 export type {
@@ -121,4 +146,8 @@ export type {
   ApplicationCounts,
   InfoType,
   CampaignType,
+  CountryFilterValue,
+  FilterValue,
+  Filters,
+  FilterType,
 };
