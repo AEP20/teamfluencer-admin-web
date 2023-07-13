@@ -1,5 +1,5 @@
 const apiClient = {
-  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin/user`,
+  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin-user`,
   timeout: 5000,
   withCredentials: true,
   headers: {

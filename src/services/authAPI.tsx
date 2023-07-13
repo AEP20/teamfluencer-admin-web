@@ -1,5 +1,5 @@
 const apiClient = {
-  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin/auth`,
+  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin-auth`,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -28,7 +28,7 @@ export const TAlogin = async (email: string, password: string) => {
 
 export const TAsignup = async (email: string, password: string) => {
   try {
-    const response = await fetch(`${apiClient.baseURL}/admin/login`, {
+    const response = await fetch(`${apiClient.baseURL}/admin-login`, {
       method: 'POST',
       headers: apiClient.headers,
       credentials: 'include',

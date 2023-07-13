@@ -1,5 +1,5 @@
 const apiClient = {
-  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin/campaign`,
+  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin-campaign`,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -57,14 +57,17 @@ export const TAfindAllCampaigns = async (token: string) => {
 
 export const TAfindApprovalCampaign = async (token: string) => {
   try {
+    console.log("token : ", token,)
+
     const response = await fetch(`${apiClient.baseURL}/getverificationcampaign`, {
       method: 'GET',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`,
       },
     });
+    console.log("response", response)
 
     if (response.status === 200) {
       var content = await response.json();
