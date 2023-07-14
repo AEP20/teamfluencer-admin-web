@@ -17,6 +17,7 @@ import GetAllUsers from './screens/GetAllUsers';
 import DoApprovalCampaigns from './screens/DoApprovalCampaigns';
 import { selectToken } from './redux/store/userSlice';
 import ApprovedUsers from './screens/ApprovedUsers';
+import ApprovedCampaigns from './screens/ApprovedCampaigns';
 
 function App() {
   const token = useSelector(selectToken);
@@ -112,6 +113,7 @@ function CampaignsLayout() {
             <Route path="/find-all" element={<AllBrands />} />
             <Route path="/do-approval" element={<DoApprovalCampaigns />} />
             <Route path="/find-all-campaigns" element={<AllCampaign />} />
+            <Route path="/approved-campaigns" element={<ApprovedCampaigns />} />
           </Routes>
         </CommonLayout>
       </Suspense>
