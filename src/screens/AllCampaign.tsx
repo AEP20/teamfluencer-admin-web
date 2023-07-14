@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { selectToken } from '../redux/store/userSlice';
-import { TAfindAllCampaigns, TAfindCampaign } from '../services/campaignsAPI';
+import { TAfindAllCampaigns } from '../services/campaignsAPI';
 import { CampaignType, campaignFilters, campaignFilterType, Campaign } from '../types/campaignsData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
@@ -113,52 +113,6 @@ function AllCampaign() {
       document.removeEventListener('click', handleClick);
     };
   }, []);
-
-  // const handleForm = async (e: any) => {
-  //   e.preventDefault();
-
-  //   if (!searchCampaign) {
-  //     setError('Please provide campaign name');
-  //     return;
-  //   }
-  //   try {
-  //     const response = await TAfindCampaign(searchCampaign, token);
-  //     const object: CampaignType = {
-  //       currency: response.currency,
-  //       country: response.country,
-  //       name: response.name,
-  //       cover_photo: response.cover_photo,
-  //       description: response.description,
-  //       platform: response.platform,
-  //       is_verified: response.is_verified,
-  //       verification: response.verification,
-  //       rejected_reason: response.rejected_reason,
-  //       visibility: false,
-  //       content_offered: false,
-  //       limitations: {
-  //         gender: response.limitations?.gender ?? '',
-  //         min_follower: response.limitations?.min_follower ?? 0,
-  //         max_follower: response.limitations?.max_follower ?? 0,
-  //         min_age: response.limitations?.min_age ?? 0,
-  //         max_age: response.limitations?.max_age ?? 0,
-  //         school: response.limitations?.school ?? '',
-  //         city: response.limitations?.city ?? '',
-  //       },
-  //       max_cost: 0,
-  //       total_cost: 0,
-  //       details: {
-  //         photo: [],
-  //         link: '',
-  //         description: '',
-  //       },
-  //       _id: '',
-  //     };
-  //     setShowCampaign(true);
-  //     setCampaignData([object]);
-  //   } catch (error: any) {
-  //     setError(error.response.message);
-  //   }
-  // };
 
   useEffect(() => {
     setPage(1);
