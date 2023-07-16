@@ -19,11 +19,16 @@ const fetchData = async (token: string) => {
         .map((item: any, index: any) => {
           return {
             id: totalLength - index,
+            _id: item._id,
             name: item.name,
             description: item.description,
             country: item.country,
             platform: item.platform,
             is_verified: item.is_verified,
+            visibility: item.visibility,
+            limitations: item.limitations,
+            rejected_reason: item.rejected_reason,
+            application_counts: item.application_counts,
           };
         })
         .reverse();
@@ -124,8 +129,8 @@ function AllCampaign() {
     setRecordsData([...initialRecords.slice(from, to)]);
   }, [page, pageSize, initialRecords]);
 
-  const verifiedIcon = (is_verified: boolean) => {
-    if (is_verified) {
+  const verifiedIcon = (visibility: boolean) => {
+    if (visibility) {
       return <FontAwesomeIcon icon={faCheck} color="green" />;
     } else {
       return <FontAwesomeIcon icon={faTimes} color="red" />;
@@ -181,7 +186,7 @@ function AllCampaign() {
     <div className="panel">
       {error && <div className="alert alert-danger">{error}</div>}
       {showCampaign && searchMatches.map((campaign) => <CampaignProfile key={campaign._id} {...campaign} />)}
-      <div className="flex md:flex-row flex-row gap-10">
+      <div className="flex md:flex-row flex-row gap-10 mt-8">
         <div className="flex flex-row gap-24 items-center items-row">
           <div>
             <div className="filter-item">
@@ -237,7 +242,7 @@ function AllCampaign() {
           </div>
         </div>
         <div className="flex flex-row gap-24 align-start">
-          <div className="filter-item">
+          <div className="filter-item w-28">
             <label htmlFor="platform" className="filter-label">
               Platform:
             </label>
@@ -350,7 +355,7 @@ function AllCampaign() {
             </label>
           </div>
 
-          <div className="md:flex md:flex-col mr-2 ml-2">
+          <div className="md:flex md:flex-col mr-2 ml-2 w-24">
             <h2 className="text-sm font-bold mb-2">Gender</h2>
             <label>
               <input
@@ -462,11 +467,16 @@ function AllCampaign() {
                 </div>
               ),
             },
-            { accessor: 'visibility', title: 'Visibility', sortable: true,  render: ({ visibility }) => (
-              <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {verifiedIcon(visibility)}
-              </div>
-            ),},
+            {
+              accessor: 'visibility',
+              title: 'Visibility',
+              sortable: true,
+              render: ({ visibility }) => (
+                <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {verifiedIcon(visibility)}
+                </div>
+              ),
+            },
           ]}
           totalRecords={initialRecords.length}
           recordsPerPage={pageSize}
