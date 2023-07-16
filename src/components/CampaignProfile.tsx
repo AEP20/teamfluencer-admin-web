@@ -89,7 +89,6 @@ const CampaignProfile = (data: CampaignType) => {
   ];
 
   async function toggleVisibility(_id: string, visibility: string, token: string) {
-    console.log("id : ", _id, "visibility : ", visibility, "token : ", token)
     try {
      const response = await TAdoVisibleCampaign(_id, visibility, token);
       if (response){
