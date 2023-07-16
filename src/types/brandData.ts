@@ -34,7 +34,7 @@ type MoneyExchanges = {
 
 type InfoType = {
   key: string;
-  value: string | number | boolean | any[];
+  value: string | number | boolean | any[] | undefined;
 };
 
 type AllBrandType = {
