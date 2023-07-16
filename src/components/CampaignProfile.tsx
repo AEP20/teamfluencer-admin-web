@@ -77,7 +77,6 @@ const CampaignProfile = (data: CampaignType) => {
       },
     );
   }, [data]);
-  console.log("data Id : ", data._id)
 
   const campaignInfo: InfoType[] = [
     { key: 'ID:', value: _id},
