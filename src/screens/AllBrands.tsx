@@ -16,15 +16,9 @@ const fetchData = async (token: string) => {
       const totalLength = response.brands.length;
       const data = response.brands
         .map((item: any, index: any) => {
-          const formattedDate = new Date(item.last_login).toISOString().split('T')[0];
           return {
             id: totalLength - index,
-            brand_name: item.brand_name,
-            first_name: item.first_name,
-            last_name: item.last_name,
-            email: item.email,
-            phone: item.phone,
-            last_login: formattedDate,
+            ...item,
           };
         })
         .reverse();
@@ -35,31 +29,31 @@ const fetchData = async (token: string) => {
   }
 };
 
-const updateBrand = async (id: any, data: any, token: string) => {
-  try {
-    const response = await TAupdateBrand(id, data, token);
-    if (response && Array.isArray(response.brands)) {
-      const totalLength = response.brands.length;
-      const data = response.brands
-        .map((item: any, index: any) => {
-          const formattedDate = new Date(item.last_login).toISOString().split('T')[0];
-          return {
-            id: totalLength - index,
-            brand_name: item.brand_name,
-            first_name: item.first_name,
-            last_name: item.last_name,
-            email: item.email,
-            phone: item.phone,
-            last_login: formattedDate,
-          };
-        })
-        .reverse();
-      return data;
-    }
-  } catch (error: any) {
-    throw new Error(error);
-  }
-};
+// const updateBrand = async (id: any, data: any, token: string) => {
+//   try {
+//     const response = await TAupdateBrand(id, data, token);
+//     if (response && Array.isArray(response.brands)) {
+//       const totalLength = response.brands.length;
+//       const data = response.brands
+//         .map((item: any, index: any) => {
+//           const formattedDate = new Date(item.last_login).toISOString().split('T')[0];
+//           return {
+//             id: totalLength - index,
+//             brand_name: item.brand_name,
+//             first_name: item.first_name,
+//             last_name: item.last_name,
+//             email: item.email,
+//             phone: item.phone,
+//             last_login: formattedDate,
+//           };
+//         })
+//         .reverse();
+//       return data;
+//     }
+//   } catch (error: any) {
+//     throw new Error(error);
+//   }
+// };
 
 const AllBrands = () => {
   const dispatch = useDispatch();
@@ -79,12 +73,15 @@ const AllBrands = () => {
   const [search, setSearch] = useState('');
   const [searchMatches, setSearchMatches] = useState<AllBrandType[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [brandData, setbrandData] = useState<BrandType | null>(null);
+  const [brandData, setBrandData] = useState<BrandType | null>(null);
+  const [showBrand, setShowBrand] = useState(false);
 
   useEffect(() => {
     const loadBrands = async () => {
       const response = await fetchData(token);
       setSearch(response.data);
+      setBrandData(response);
+      setInitialRecords(response);
     };
 
     loadBrands();
@@ -93,9 +90,14 @@ const AllBrands = () => {
   const searchBrands = (text: string) => {
     let matches = userData.filter((brand: AllBrandType) => {
       const regex = new RegExp(`^${text}`, 'gi');
+
+      if (text === '') {
+        setShowBrand(false);
+        return null;
+      }
       return brand.brand_name.match(regex);
     });
-    if (searchMatches.length === 0) {
+    if (matches.length === 0) {
       setIsDropdownOpen(false);
     } else {
       setIsDropdownOpen(true);
@@ -140,57 +142,34 @@ const AllBrands = () => {
     };
   }, []);
 
-  const handleForm = async (e: any) => {
-    e.preventDefault();
-
-    if (!searchBrands) {
-      setError('Please provide brand name');
-      return;
-    }
-    try {
-      const response = await TAfindBrand(searchBrands, token);
-      const object: BrandType = {
-        balance: response.balance,
-        email: response.email,
-        brand_name: response.brand_name,
-        country: response.country,
-        first_name: response.first_name,
-        last_name: response.last_name,
-        phone: response.phone,
-        currency: response.currency,
-        language: response.language,
-        brand_logo: response.brand_logo,
-        job_title: response.job_title,
-        billing_address: {
-          type: response.billing_address?.type ?? '',
-          firm_name: response.billing_address?.firm_name ?? '',
-          contactName: response.billing_address?.contactName ?? '',
-          id: response.billing_address?.id ?? '',
-          city: response.billing_address?.city ?? '',
-          country: response.billing_address?.country ?? '',
-          address: response.billing_address?.address ?? '',
-          zipCode: response.billing_address?.zipCode ?? '',
-        },
-        money_exchanges: Array.isArray(response.money_exchanges)
-          ? response.money_exchanges.map((exchange: MoneyExchanges) => ({
-              operation: exchange?.operation ?? '',
-              amount: exchange?.amount ?? 0,
-              application_id: exchange?.application_id ?? '',
-              action_time: exchange?.action_time ?? '',
-            }))
-          : [],
-      };
-      setbrandData(object);
-    } catch (error: any) {
-      setError(error.response.message);
-    }
-  };
-
   return (
     <div className="panel">
       <div className="mb-4.5 flex md:items-center md:flex-row flex-col gap-5">
         {error && <div className="bg-red-200 text-red-800 border border-red-600 p-2 rounded">{error}</div>}
-        <div className="w-full ">{brandData && <BrandProfile {...brandData} />}</div>
+        {showBrand &&
+          searchMatches.map((brand) => (
+            <BrandProfile
+              balance={0}
+              country={''}
+              currency={''}
+              language={''}
+              brand_logo={''}
+              job_title={''}
+              billing_address={{
+                type: '',
+                firm_name: '',
+                contactName: '',
+                id: '',
+                city: '',
+                country: '',
+                address: '',
+                zipCode: '',
+              }}
+              money_exchanges={[]}
+              key={brand.first_name}
+              {...brand}
+            />
+          ))}
         <div className="ltr:ml-auto rtl:mr-auto flex">
           <input
             type="text"
@@ -198,7 +177,8 @@ const AllBrands = () => {
             placeholder="Search Brand Name"
             value={search}
             onChange={(e) => {
-              searchBrands(e.target.value);
+              const text = e.target.value;
+              searchBrands(text);
             }}
           />
           {isDropdownOpen && searchMatches.length > 0 && (
@@ -211,7 +191,7 @@ const AllBrands = () => {
             </div>
           )}
           <div className="flex justify-center">
-            <button type="button" onClick={handleForm} className="btn btn-primary ml-3">
+            <button type="button" onClick={() => setShowBrand(true)} className="btn btn-primary ml-3">
               Submit
             </button>
           </div>

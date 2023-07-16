@@ -87,18 +87,7 @@ const BrandProfile = (data: BrandType) => {
 
   return (
     <>
-      <div className="profile-container p-4 rounded-lg  w-2/3">
-        <div className="flex items-center mb-20">
-          <div className="flex flex-row items-center mr-16">
-            {brandLogo ? (
-              <img src={brandLogo} alt="brand_logo" className="rounded-full w-32 h-32 mr-3" />
-            ) : (
-              <p className="text-3xl font-bold text-black text-center mb-24">No Image</p>
-            )}
-          </div>
-        </div>
-      </div>
-      <div className="profile-section bg-white p-3 shadow-md mb-3">
+      <div className="profile-section bg-white p-3 shadow-md mb-3 w-full">
         <h3 className="section-title text-lg font-semibold mb-3">Brand Information</h3>
         <table className="table-responsive">
           <tbody>

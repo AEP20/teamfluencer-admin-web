@@ -19,16 +19,7 @@ const fetchData = async (token: string) => {
         .map((item: any, index: any) => {
           return {
             id: totalLength - index,
-            _id: item._id,
-            name: item.name,
-            description: item.description,
-            country: item.country,
-            platform: item.platform,
-            is_verified: item.is_verified,
-            visibility: item.visibility,
-            limitations: item.limitations,
-            rejected_reason: item.rejected_reason,
-            application_counts: item.application_counts,
+            ...item,
           };
         })
         .reverse();
