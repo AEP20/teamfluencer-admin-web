@@ -46,7 +46,6 @@ function ApprovedCampaigns() {
     const loadCampaigns = async () => {
       try {
         const response = await fetchData(token);
-        console.log('response : ', response);
         if (response && Array.isArray(response) && response.length > 0) {
           setCampaignData(response);
           setInitialRecords(response);

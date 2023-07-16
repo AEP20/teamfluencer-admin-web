@@ -42,6 +42,7 @@ type CampaignType = {
   currency: string;
   country: string;
   name: string;
+  application_counts: ApplicationCounts;
   cover_photo: string;
   description: string;
   platform: 'insta-post' | 'insta-story' | 'insta-reels' | 'tiktok';
@@ -96,7 +97,7 @@ type Campaign = {
 
 type InfoType = {
   key: string;
-  value: string | number | boolean | any[];
+  value: string | number | boolean | any[] | 'male' | 'female';
 };
 
 type campaignFilterType = 'min' | 'max' | 'value';
