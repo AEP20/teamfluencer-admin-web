@@ -146,30 +146,32 @@ const AllBrands = () => {
     <div className="panel">
       <div className="mb-4.5 flex md:items-center md:flex-row flex-col gap-5">
         {error && <div className="bg-red-200 text-red-800 border border-red-600 p-2 rounded">{error}</div>}
-        {showBrand &&
-          searchMatches.map((brand) => (
-            <BrandProfile
-              balance={0}
-              country={''}
-              currency={''}
-              language={''}
-              brand_logo={''}
-              job_title={''}
-              billing_address={{
-                type: '',
-                firm_name: '',
-                contactName: '',
-                id: '',
-                city: '',
-                country: '',
-                address: '',
-                zipCode: '',
-              }}
-              money_exchanges={[]}
-              key={brand.first_name}
-              {...brand}
-            />
-          ))}
+        <div className='flex flex-col w-full'>
+          {showBrand &&
+            searchMatches.map((brand) => (
+              <BrandProfile
+                balance={0}
+                country={''}
+                currency={''}
+                language={''}
+                brand_logo={''}
+                job_title={''}
+                billing_address={{
+                  type: '',
+                  firm_name: '',
+                  contactName: '',
+                  id: '',
+                  city: '',
+                  country: '',
+                  address: '',
+                  zipCode: '',
+                }}
+                money_exchanges={[]}
+                key={brand.first_name}
+                {...brand}
+              />
+            ))}
+        </div>
         <div className="ltr:ml-auto rtl:mr-auto flex">
           <input
             type="text"
