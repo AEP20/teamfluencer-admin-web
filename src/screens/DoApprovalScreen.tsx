@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import React from 'react';
-import { TAfindAllApprovalUser, TAverifyUser } from '../services/userAPI';
+import { TAfindApprovalUser, TAverifyUser } from '../services/userAPI';
 import { SharedPostData, VideosData } from '../types/profileData';
 import ReadMore from '../components/ReadMore';
 import { selectToken } from '../redux/store/userSlice';
@@ -39,7 +39,7 @@ const DoApprovalScreen: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await TAfindAllApprovalUser(token);
+        const response = await TAfindApprovalUser(token);
         if (response && Array.isArray(response)) {
           setData(response);
           setIsLoading(false);

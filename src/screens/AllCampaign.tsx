@@ -129,31 +129,11 @@ function AllCampaign() {
   };
 
   const renderDescriptionCell = ({ description }: CampaignType) => {
-    const toggleExpandedRow = () => {
-      setIsExpanded(!isExpanded);
-    };
-
-    if (isExpanded) {
-      return (
-        <div>
-          {description}
-          <button type="button" onClick={toggleExpandedRow} className="text-blue-500 hover:underline">
-            Less
-          </button>
-        </div>
-      );
-    } else if (description.length > 50) {
-      return (
-        <div>
-          {`${description.slice(0, 50)}... `}
-          <button type="button" onClick={toggleExpandedRow} className="text-blue-500 hover:underline">
-            More
-          </button>
-        </div>
-      );
-    } else {
-      return <div>{description}</div>;
-    }
+    return (
+      <div className="tooltip" data-tooltip={description}>
+        <div className="text-container">{description.length > 100 ? `${description.slice(0, 100)}...` : description}</div>
+      </div>
+    );
   };
 
   const defaultState: campaignFilters = {

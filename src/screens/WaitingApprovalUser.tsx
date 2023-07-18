@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { TAfindApprovalUser } from '../services/userAPI';
+import { TAfindAllApprovalUser } from '../services/userAPI';
 import { WaitingApprovalUserData } from '../types/waitingApprovalUserData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
@@ -44,7 +44,7 @@ const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
 
 const fetchData = async (token: string) => {
   try {
-    const response = await TAfindApprovalUser(token);
+    const response = await TAfindAllApprovalUser(token);
     if (response && Array.isArray(response)) {
       const data = response.map((item, index) => ({
         id: index + 1,
@@ -325,7 +325,6 @@ const WaitingApprovalUser = () => {
             { accessor: 'insta_post_number', title: 'Insta Post Number', sortable: true },
             { accessor: 'average_like', title: 'Insta Average Like', sortable: true },
             { accessor: 'tiktok_followers', title: 'Tiktok Followers', sortable: true },
-            { accessor: 'tiktok_videos', title: 'Tiktok Videos', sortable: true },
             { accessor: 'tiktok_average_like', title: 'Tiktok Average Like', sortable: true },
             { accessor: 'tiktok_engagement_rate', title: 'Tiktok Engagement Rate', sortable: true },
           ]}
