@@ -24,7 +24,7 @@ const fetchData = async (token: string) => {
       const totalLength = response.campaigns.length;
       const data = response.campaigns.map((item: any, index: any) => {
         return {
-          id: totalLength - index,
+          id: index + 1,
           ...item,
         };
       });
