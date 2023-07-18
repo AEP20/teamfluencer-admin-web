@@ -30,7 +30,8 @@ export const TAfindBrand = async (data: any, token: string) => {
       var content = await response.json();
       return content;
     } else {
-      throw new Error('Find User failed');
+      const errorResponse = await response.json();
+      throw new Error(errorResponse.message);
     }
   } catch (error) {
     throw error;

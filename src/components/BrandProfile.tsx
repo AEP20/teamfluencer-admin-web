@@ -74,7 +74,7 @@ const BrandProfile = (data: BrandType) => {
 
   return (
     <>
-      <div className="profile-section bg-white p-3 shadow-md mb-3 w-full">
+      <div className="profile-section bg-white p-3 shadow-md mb-3 w-3/5">
         <h3 className="section-title text-lg font-semibold mb-3">Brand Information</h3>
         <table className="table-responsive">
           <tbody>

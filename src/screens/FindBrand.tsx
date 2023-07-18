@@ -38,7 +38,9 @@ const FindBrand = () => {
     }
 
     try {
-      const response = await TAfindBrand(data, token);
+      const res = await TAfindBrand(data, token);
+      const response = Array.isArray(res) ? res[0] : res;
+
       const object: BrandType = {
         balance: response.balance,
         email: response.email,
@@ -73,7 +75,7 @@ const FindBrand = () => {
       };
       setbrandData(object);
     } catch (error: any) {
-      setError(error.response.message);
+      setError(error.message);
     }
   };
 
@@ -91,7 +93,7 @@ const FindBrand = () => {
         />
         <input
           type="tel"
-          placeholder="6-(666)-111-7777"
+          placeholder="phone number (ex: 905555555555)"
           className="form-input text-sm"
           onChange={(e) => {
             setPhone(e.target.value);
