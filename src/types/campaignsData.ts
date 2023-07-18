@@ -38,7 +38,7 @@ type ApplicationCounts = {
 };
 
 type CampaignType = {
-  _id: string; // Brand's ObjectId
+  _id: string;
   currency: string;
   country: string;
   name: string;
@@ -100,55 +100,37 @@ type InfoType = {
   value: string | number | boolean | any[] | 'male' | 'female';
 };
 
-type campaignFilterType = 'min' | 'max' | 'value';
-
-type campaignFilters = {
-  country: string | '';
-  platform: 'insta-post' | 'insta-story' | 'insta-reels' | 'tiktok' | '';
-  is_verified: 'true' | 'false' | '';
-  gender: 'male' | 'female' | '';
-  min_followers: number | '';
-  max_followers: number | '';
-  min_age: number | '';
-  max_age: number | '';
-};
-
-type CountryFilterValue = {
-  value: 'TR' | 'Other' | '' | 'All';
-};
-
-type FilterType = 'min' | 'max' | 'value';
-
 type FilterValue = {
   min: string;
   max: string;
 };
 
-type Filters = {
-  platform: 'insta-post' | 'insta-story' | 'insta-reels' | 'tiktok' | '';
-  min_age: FilterValue;
-  max_age: FilterValue;
-  min_followers: FilterValue;
-  max_followers: FilterValue;
-  country: CountryFilterValue;
-  gender: 'male' | 'female' | '';
+type FilterType = 'min' | 'max' | 'value';
+
+type CountryFilterValue = {
+  value: 'TR' | 'Other' | '' ;
+};
+
+type CampaignFilters = {
   is_verified: 'true' | 'false' | '';
-  school?: FilterValue;
-  city?: FilterValue;
+  visibility: 'true' | 'false' | '';
+  max_cost: FilterValue;
+  country: CountryFilterValue;
+  created_at: 'last_week' | 'last_month' | 'last_three_months' | '';
+  active_campaigns: boolean | '';
+  platform: 'insta-post' | 'insta-story' | 'insta-reels' | 'tiktok' | '';
 };
 
 export type {
   Campaign,
   Limitations,
-  campaignFilters,
-  campaignFilterType,
   Statistic,
   Details,
   ApplicationCounts,
-  InfoType,
   CampaignType,
-  CountryFilterValue,
+  InfoType,
+  CampaignFilters,
   FilterValue,
-  Filters,
   FilterType,
+  CountryFilterValue,
 };

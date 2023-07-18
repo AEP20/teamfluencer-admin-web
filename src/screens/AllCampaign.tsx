@@ -3,7 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { selectToken } from '../redux/store/userSlice';
 import { TAfindAllCampaigns } from '../services/campaignsAPI';
-import { CampaignType, campaignFilters, campaignFilterType, Campaign } from '../types/campaignsData';
+import {
+  CampaignType,
+  Campaign,
+  CampaignFilters,
+  FilterValue,
+  FilterType,
+  CountryFilterValue,
+} from '../types/campaignsData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,14 +22,12 @@ const fetchData = async (token: string) => {
     const response = await TAfindAllCampaigns(token);
     if (response && Array.isArray(response.campaigns)) {
       const totalLength = response.campaigns.length;
-      const data = response.campaigns
-        .map((item: any, index: any) => {
-          return {
-            id: totalLength - index,
-            ...item,
-          };
-        })
-        .reverse();
+      const data = response.campaigns.map((item: any, index: any) => {
+        return {
+          id: totalLength - index,
+          ...item,
+        };
+      });
       return data;
     }
   } catch (error: any) {
@@ -41,15 +46,15 @@ function AllCampaign() {
   const [campaignData, setCampaignData] = useState([] as CampaignType[]);
   const [page, setPage] = useState(1);
   const PAGE_SIZES = [10, 20, 30, 50, 100, 500];
-  const [pageSize, setPageSize] = useState(PAGE_SIZES[3]);
+  const [pageSize, setPageSize] = useState(PAGE_SIZES[4]);
   const [initialRecords, setInitialRecords] = useState(sortBy(campaignData, 'id'));
   const [recordsData, setRecordsData] = useState(initialRecords);
   const [error, setError] = useState<string | null>(null);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [search, setSearch] = useState('');
   const [searchMatches, setSearchMatches] = useState<Campaign[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showCampaign, setShowCampaign] = useState(false);
+  const [tempData, setTempData] = useState(initialRecords);
 
   useEffect(() => {
     const loadCampaigns = async () => {
@@ -65,23 +70,6 @@ function AllCampaign() {
 
     loadCampaigns();
   }, [token]);
-
-  const searchCampaign = (text: string) => {
-    let matches = userData.filter((campaign: Campaign) => {
-      const regex = new RegExp(`^${text}`, 'gi');
-      if (text === '') {
-        setShowCampaign(false);
-        return null;
-      }
-      return campaign.name.match(regex);
-    });
-    if (matches.length === 0) {
-      setIsDropdownOpen(false);
-    } else {
-      setIsDropdownOpen(true);
-    }
-    setSearchMatches(matches);
-  };
 
   useEffect(() => {
     const getUserData = async () => {
@@ -100,6 +88,53 @@ function AllCampaign() {
     getUserData();
   }, []);
 
+  const defaultState: CampaignFilters = {
+    is_verified: '',
+    visibility: '',
+    max_cost: { min: '', max: '' },
+    country: { value: '' },
+    created_at: '',
+    active_campaigns: '',
+    platform: '',
+  };
+
+  const [filters, setFilters] = useState<CampaignFilters>(defaultState);
+
+  const setFilter = (
+    key: keyof CampaignFilters,
+    type: FilterType,
+    value:
+      | string
+      | boolean
+      | ('TR' | 'Other' | '')
+      | ('last_week' | 'last_month' | 'last_three_months' | '')
+      | ('insta-post' | 'insta-story' | 'insta-reels' | 'tiktok' | ''),
+  ) => {
+    if (key === 'is_verified' || key === 'visibility') {
+      setFilters((prev) => ({ ...prev, [key]: value as 'true' | 'false' | '' }));
+    } else if (key === 'country') {
+      setFilters((prev) => ({ ...prev, [key]: { value: value as 'TR' | 'Other' | '' } }));
+    } else if (key === 'created_at') {
+      setFilters((prev) => ({ ...prev, [key]: value as 'last_week' | 'last_month' | 'last_three_months' | '' }));
+    } else if (key === 'active_campaigns') {
+      setFilters((prev) => ({ ...prev, [key]: value as boolean | '' }));
+    } else if (key === 'platform') {
+      setFilters((prev) => ({ ...prev, [key]: value as 'insta-post' | 'insta-story' | 'insta-reels' | 'tiktok' | '' }));
+    } else if (type) {
+      setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
+    }
+  };
+
+  const filterKeys: (keyof CampaignFilters)[] = [
+    'is_verified',
+    'visibility',
+    'country',
+    'created_at',
+    'active_campaigns',
+    'platform',
+    'max_cost',
+  ];
+
   useEffect(() => {
     const handleClick = () => {
       setIsDropdownOpen(false);
@@ -113,6 +148,76 @@ function AllCampaign() {
   useEffect(() => {
     setPage(1);
   }, [pageSize]);
+
+  useEffect(() => {
+    let dt = userData;
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (key === 'country') {
+        const countryValue = value as CountryFilterValue;
+        if (countryValue.value) {
+          if (countryValue.value === 'TR') {
+            dt = dt.filter((d) => d[key as keyof typeof d] === 'TR');
+          } else if (countryValue.value === 'Other') {
+            dt = dt.filter((d) => d[key as keyof typeof d] !== 'TR');
+          } else {
+            dt = dt.filter((d) => d[key as keyof typeof d] === countryValue.value);
+          }
+        }
+      } else if (key === 'is_verified' || key === 'visibility' || key === 'active_campaigns') {
+        const filterValue = value as boolean | '';
+        if (filterValue !== '') {
+          dt = dt.filter((d) => d[key as keyof typeof d] === filterValue);
+        }
+      } else if (key === 'created_at') {
+        const filterValue = value as 'last_week' | 'last_month' | 'last_three_months' | '';
+        if (filterValue !== '') {
+          const currentDate = new Date();
+          let filteredDate: Date;
+          if (filterValue === 'last_week') filteredDate = new Date(currentDate.setDate(currentDate.getDate() - 7));
+          else if (filterValue === 'last_month')
+            filteredDate = new Date(currentDate.setMonth(currentDate.getMonth() - 1));
+          else if (filterValue === 'last_three_months')
+            filteredDate = new Date(currentDate.setMonth(currentDate.getMonth() - 3));
+
+          dt = dt.filter((d) => {
+            const dateValue = d[key as keyof typeof d];
+            if (typeof dateValue === 'string' || dateValue instanceof Date) {
+              return new Date(dateValue) >= filteredDate;
+            }
+            return true;
+          });
+        }
+      } else if (key === 'platform') {
+        const filterValue = value as 'insta-post' | 'insta-story' | 'insta-reels' | 'tiktok' | '';
+        if (filterValue !== '') {
+          dt = dt.filter((d) => d[key as keyof typeof d] === filterValue);
+        }
+      } else {
+        const { min, max } = value as FilterValue;
+
+        if (min !== '' && min !== null) {
+          dt = dt.filter((d) => Number(d[key as keyof typeof d]) >= Number(min));
+        }
+
+        if (max !== '' && max !== null) {
+          dt = dt.filter((d) => Number(d[key as keyof typeof d]) <= Number(max));
+        }
+      }
+    });
+
+    setInitialRecords(dt);
+    setTempData(dt);
+  }, [filters]);
+
+  const searchCampaign = (text: string) => {
+    let matches = userData.filter((campaign: Campaign) => {
+      const regex = new RegExp(text, 'gi');
+      return campaign.name.match(regex);
+    });
+
+    setInitialRecords(matches);
+  };
 
   useEffect(() => {
     const from = (page - 1) * pageSize;
@@ -131,282 +236,165 @@ function AllCampaign() {
   const renderDescriptionCell = ({ description }: CampaignType) => {
     return (
       <div className="tooltip" data-tooltip={description}>
-        <div className="text-container">{description.length > 100 ? `${description.slice(0, 100)}...` : description}</div>
+        <div className="text-container">
+          {description.length > 100 ? `${description.slice(0, 100)}...` : description}
+        </div>
       </div>
     );
-  };
-
-  const defaultState: campaignFilters = {
-    country: '',
-    platform: '',
-    is_verified: '',
-    gender: '',
-    min_followers: 0,
-    max_followers: 0,
-    min_age: 0,
-    max_age: 0,
-  };
-
-  const [filters, setFilters] = useState<campaignFilters>(defaultState);
-
-  const setFilter = (key: keyof campaignFilters, _type: campaignFilterType, value: string | boolean | number) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   return (
     <div className="panel">
       {error && <div className="alert alert-danger">{error}</div>}
       {showCampaign && searchMatches.map((campaign) => <CampaignProfile key={campaign._id} {...campaign} />)}
-      <div className="flex md:flex-row flex-row gap-10 mt-8">
-        <div className="flex flex-row gap-24 items-center items-row">
-          <div>
-            <div className="filter-item">
-              <label htmlFor="min_followers" className="filter-label">
-                Min Followers:
-              </label>
-              <input
-                className="form-input w-full mb-2"
-                type="text"
-                id="min_followers"
-                value={filters.min_followers}
-                onChange={(e) => setFilter('min_followers', 'value', parseInt(e.target.value))}
-              />
-            </div>
-            <div className="filter-item">
-              <label htmlFor="max_followers" className="filter-label">
-                Max Followers:
-              </label>
-              <input
-                className="form-input w-full mb-2"
-                type="text"
-                id="max_followers"
-                value={filters.max_followers}
-                onChange={(e) => setFilter('max_followers', 'value', parseInt(e.target.value))}
-              />
-            </div>
-          </div>
-          <div>
-            <div className="filter-item">
-              <label htmlFor="min_age" className="filter-label">
-                Min Age:
-              </label>
-              <input
-                className="form-input w-full mb-2"
-                type="text"
-                id="min_age"
-                value={filters.min_age}
-                onChange={(e) => setFilter('min_age', 'value', parseInt(e.target.value))}
-              />
-            </div>
-            <div className="filter-item">
-              <label htmlFor="max_age" className="filter-label">
-                Max Age:
-              </label>
-              <input
-                className="form-input w-full mb-2"
-                type="text"
-                id="max_age"
-                value={filters.max_age}
-                onChange={(e) => setFilter('max_age', 'value', parseInt(e.target.value))}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-row gap-24 align-start">
-          <div className="filter-item w-28">
-            <label htmlFor="platform" className="filter-label">
-              Platform:
-            </label>
-            <label>
-              <input
-                type="radio"
-                id="platform"
-                value="insta-post"
-                checked={filters.platform === 'insta-post'}
-                onChange={(e) => {
-                  setFilter('platform', 'value', e.target.value);
-                }}
-                className="mr-2"
-              />
-              Insta Post
-            </label>
-            <label>
-              <input
-                type="radio"
-                id="platform"
-                value="insta-story"
-                checked={filters.platform === 'insta-story'}
-                onChange={(e) => {
-                  setFilter('platform', 'value', e.target.value);
-                }}
-                className="mr-2"
-              />
-              Insta Story
-            </label>
-            <label>
-              <input
-                type="radio"
-                id="platform"
-                value="insta-reels"
-                checked={filters.platform === 'insta-reels'}
-                onChange={(e) => {
-                  setFilter('platform', 'value', e.target.value);
-                }}
-                className="mr-2"
-              />
-              Insta Reels
-            </label>
-            <label>
-              <input
-                type="radio"
-                id="platform"
-                value="tiktok"
-                checked={filters.platform === 'tiktok'}
-                onChange={(e) => {
-                  setFilter('platform', 'value', e.target.value);
-                }}
-                className="mr-2"
-              />
-              Tiktok
-            </label>
-            <label>
-              <input
-                type="radio"
-                id="platform"
-                value=""
-                checked={filters.platform === ''}
-                onChange={(e) => {
-                  setFilter('platform', 'value', e.target.value);
-                }}
-                className="mr-2"
-              />
-              Any
-            </label>
-          </div>
-          <div className="md:flex md:flex-col mr-2 ml-2">
-            <h2 className="text-sm font-bold mb-2">Verification</h2>
-            <label>
-              <input
-                type="radio"
-                id="is_verified"
-                value="true"
-                checked={filters.is_verified === 'true'}
-                onChange={(e) => {
-                  setFilter('is_verified', 'value', e.target.value);
-                }}
-                className="mr-2"
-              />
-              True
-            </label>
-            <label>
-              <input
-                type="radio"
-                id="is_verified"
-                value="false"
-                checked={filters.is_verified === 'false'}
-                onChange={(e) => {
-                  setFilter('is_verified', 'value', e.target.value);
-                }}
-                className="mr-2"
-              />
-              False
-            </label>
-            <label>
-              <input
-                type="radio"
-                id="is_verified"
-                value=""
-                checked={filters.is_verified === ''}
-                onChange={(e) => {
-                  setFilter('is_verified', 'value', e.target.value);
-                }}
-                className="mr-2"
-              />
-              Any
-            </label>
-          </div>
 
-          <div className="md:flex md:flex-col mr-2 ml-2 w-24">
-            <h2 className="text-sm font-bold mb-2">Gender</h2>
-            <label>
-              <input
-                type="radio"
-                id="gender"
-                value="male"
-                checked={filters.gender === 'male'}
-                onChange={(e) => {
-                  setFilter('gender', 'value', e.target.value);
-                }}
-                className="mr-2"
-              />
-              Male
-            </label>
-            <label>
-              <input
-                type="radio"
-                id="gender"
-                value="female"
-                checked={filters.gender === 'female'}
-                onChange={(e) => {
-                  setFilter('gender', 'value', e.target.value);
-                }}
-                className="mr-2"
-              />
-              Female
-            </label>
-            <label>
-              <input
-                type="radio"
-                value=""
-                checked={filters.gender === ''}
-                onChange={(e) => {
-                  setFilter('gender', 'value', e.target.value);
-                }}
-                className="mr-2"
-              />
-              Any
-            </label>
-          </div>
-          <div className="flex flex-col gap-6">
-            <div className="ltr:ml-auto rtl:mr-auto flex mt-12 h-10">
-              <input
-                type="text"
-                className="form-input w-auto"
-                placeholder="Search Campaign Name"
-                value={search}
-                onChange={(e) => {
-                  const text = e.target.value;
-                  searchCampaign(text);
-                }}
-              />
-              {isDropdownOpen && searchMatches.length > 0 && (
-                <div className="absolute bg-white border border-gray-300 rounded mt-10 z-10">
-                  {searchMatches.slice(0, 4).map((match: Campaign) => (
-                    <div className="p-2 border-b border-gray-300 hover:bg-gray-100" key={match._id}>
-                      {match.name}
-                    </div>
+      <input
+        type="text"
+        className="form-input w-auto"
+        placeholder="Search Campaign Name"
+        value={search}
+        onChange={(e) => {
+          const text = e.target.value;
+          setSearch(text);
+          searchCampaign(text);
+        }}
+      />
+
+      <div className="flex md:items-center md:flex-row flex-col">
+        <div className="flex flex-col justify-center text-center"></div>
+        <div className="md:flex md:flex-row w-full">
+          {filterKeys.map((key) => {
+            if (key === 'is_verified' || key === 'visibility' || key === 'active_campaigns') {
+              return (
+                <div key={key} className="md:flex md:flex-col mr-2 ml-2">
+                  <h2 className="text-sm font-bold mb-2">{key.charAt(0).toUpperCase() + key.slice(1)}</h2>
+                  <label>
+                    <input
+                      type="radio"
+                      value="true"
+                      checked={filters[key] === true}
+                      onChange={(e) => {
+                        setFilter(key, 'value', e.target.value === 'true');
+                      }}
+                      className="mr-2"
+                    />
+                    True
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      value="false"
+                      checked={filters[key] === false}
+                      onChange={(e) => {
+                        setFilter(key, 'value', e.target.value === 'true');
+                      }}
+                      className="mr-2"
+                    />
+                    False
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      value=""
+                      checked={filters[key] === ''}
+                      onChange={(e) => {
+                        setFilter(key, 'value', e.target.value);
+                      }}
+                      className="mr-2"
+                    />
+                    Any
+                  </label>
+                </div>
+              );
+            } else if (key === 'country') {
+              const countries = ['TR', 'Other', ''];
+              return (
+                <div key={key} className="md:flex md:flex-col mr-2 ml-2">
+                  <h2 className="text-sm font-bold mb-2">{key.charAt(0).toUpperCase() + key.slice(1)}</h2>
+                  {countries.map((country) => (
+                    <label key={country}>
+                      <input
+                        type="radio"
+                        value={country}
+                        checked={filters[key].value === country}
+                        onChange={(e) => {
+                          setFilter(key, 'value', e.target.value);
+                        }}
+                        className="mr-2"
+                      />
+                      {country || 'Any'}
+                    </label>
                   ))}
                 </div>
-              )}
-              <div className="flex justify-center">
-                <button type="button" onClick={() => setShowCampaign(true)} className="btn btn-primary ml-3">
-                  Submit
-                </button>
-              </div>
-            </div>
-            <div className="filter-item">
-              <label htmlFor="country" className="filter-label">
-                Country:
-              </label>
-              <input
-                className="form-input w-full mb-2"
-                type="text"
-                id="country"
-                value={filters.country}
-                onChange={(e) => setFilter('country', 'value', e.target.value)}
-              />
-            </div>
-          </div>
+              );
+            } else if (key === 'platform') {
+              const platforms = ['insta-post', 'insta-story', 'insta-reels', 'tiktok', ''];
+              return (
+                <div key={key} className="md:flex md:flex-col mr-2 ml-2">
+                  <h2 className="text-sm font-bold mb-2">{key.charAt(0).toUpperCase() + key.slice(1)}</h2>
+                  {platforms.map((platform) => (
+                    <label key={platform}>
+                      <input
+                        type="radio"
+                        value={platform}
+                        checked={filters[key] === platform}
+                        onChange={(e) => {
+                          setFilter(key, 'value', e.target.value);
+                        }}
+                        className="mr-2"
+                      />
+                      {platform || 'Any'}
+                    </label>
+                  ))}
+                </div>
+              );
+            } else if (key === 'created_at') {
+              const creationDates = ['last_week', 'last_month', 'last_three_months', ''];
+              return (
+                <div key={key} className="md:flex md:flex-col mr-2 ml-2">
+                  <h2 className="text-sm font-bold mb-2">{key.charAt(0).toUpperCase() + key.slice(1)}</h2>
+                  {creationDates.map((date) => (
+                    <label key={date}>
+                      <input
+                        type="radio"
+                        value={date}
+                        checked={filters[key] === date}
+                        onChange={(e) => {
+                          setFilter(key, 'value', e.target.value);
+                        }}
+                        className="mr-2"
+                      />
+                      {date || 'Any'}
+                    </label>
+                  ))}
+                </div>
+              );
+            } else if (key === 'max_cost') {
+              return (
+                <div key={key} className="md:flex md:flex-col flex-1/2 mr-2">
+                  <input
+                    type="text"
+                    value={filters[key].min}
+                    onChange={(e) => {
+                      setFilter(key, 'min', e.target.value);
+                    }}
+                    className="form-input w-full mb-2"
+                    placeholder={`${key} min`}
+                  />
+
+                  <input
+                    type="text"
+                    value={filters[key].max}
+                    onChange={(e) => {
+                      setFilter(key, 'max', e.target.value);
+                    }}
+                    className="form-input w-full"
+                    placeholder={`${key} max`}
+                  />
+                </div>
+              );
+            }
+          })}
         </div>
       </div>
 
@@ -445,6 +433,26 @@ function AllCampaign() {
               render: ({ visibility }) => (
                 <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {verifiedIcon(visibility)}
+                </div>
+              ),
+            },
+            {
+              accessor: 'created_at',
+              title: 'Created At',
+              sortable: true,
+              render: ({ created_at }: any) => (
+                <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {new Date(created_at).toLocaleDateString()}
+                </div>
+              ),
+            },
+            {
+              accessor: 'max_cost',
+              title: 'Max Cost',
+              sortable: true,
+              render: ({ max_cost }: any) => (
+                <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {max_cost && max_cost.toLocaleString()}
                 </div>
               ),
             },
