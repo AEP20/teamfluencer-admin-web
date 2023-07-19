@@ -78,12 +78,19 @@ const AllBrands = () => {
 
   useEffect(() => {
     const loadBrands = async () => {
-      const response = await fetchData(token);
-      setSearch(response.data);
-      setBrandData(response);
-      setInitialRecords(response);
+      try {
+        const response = await fetchData(token);
+        if (response !== undefined) {
+          setSearch(response.data);
+          setBrandData(response);
+          setInitialRecords(response);
+        } else {
+          setError('No data found');
+        }
+      } catch (error) {
+        setError('No data found');
+      }
     };
-
     loadBrands();
   }, []);
 
@@ -146,7 +153,7 @@ const AllBrands = () => {
     <div className="panel">
       <div className="mb-4.5 flex md:items-center md:flex-row flex-col gap-5">
         {error && <div className="bg-red-200 text-red-800 border border-red-600 p-2 rounded">{error}</div>}
-        <div className='flex flex-col w-full'>
+        <div className="flex flex-col w-full">
           {showBrand &&
             searchMatches.map((brand) => (
               <BrandProfile
@@ -217,7 +224,12 @@ const AllBrands = () => {
             { accessor: 'last_name', title: 'Last Name', sortable: true },
             { accessor: 'email', title: 'Email', sortable: true },
             { accessor: 'phone', title: 'Phone', sortable: true },
-            { accessor: 'last_login', title: 'Last Login', sortable: true },
+            {
+              accessor: 'last_login',
+              title: 'Last Login',
+              sortable: true,
+              render: ({ last_login }: any) => <div>{new Date(last_login).toLocaleDateString()}</div>,
+            },
           ]}
           totalRecords={initialRecords.length}
           recordsPerPage={pageSize}
