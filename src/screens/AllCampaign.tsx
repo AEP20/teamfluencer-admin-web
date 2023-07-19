@@ -130,7 +130,7 @@ function AllCampaign() {
     'visibility',
     'country',
     'created_at',
-    'active_campaigns',
+    // 'active_campaigns',
     'platform',
     'max_cost',
   ];
@@ -248,27 +248,15 @@ function AllCampaign() {
       {error && <div className="alert alert-danger">{error}</div>}
       {showCampaign && searchMatches.map((campaign) => <CampaignProfile key={campaign._id} {...campaign} />)}
 
-      <input
-        type="text"
-        className="form-input w-auto"
-        placeholder="Search Campaign Name"
-        value={search}
-        onChange={(e) => {
-          const text = e.target.value;
-          setSearch(text);
-          searchCampaign(text);
-        }}
-      />
-
       <div className="flex md:items-center md:flex-row flex-col">
         <div className="flex flex-col justify-center text-center"></div>
-        <div className="md:flex md:flex-row w-full">
+        <div className="flex flex-col md:flex-row">
           {filterKeys.map((key) => {
             if (key === 'is_verified' || key === 'visibility' || key === 'active_campaigns') {
               return (
-                <div key={key} className="md:flex md:flex-col mr-2 ml-2">
+                <div key={key} className="flex flex-col mr-4 ml-2">
                   <h2 className="text-sm font-bold mb-2">{key.charAt(0).toUpperCase() + key.slice(1)}</h2>
-                  <label>
+                  <label className="inline-flex items-center mb-2">
                     <input
                       type="radio"
                       value="true"
@@ -276,11 +264,11 @@ function AllCampaign() {
                       onChange={(e) => {
                         setFilter(key, 'value', e.target.value === 'true');
                       }}
-                      className="mr-2"
+                      className="form-radio text-pink-600 mr-2"
                     />
-                    True
+                    <span className="text-gray-700">True</span>
                   </label>
-                  <label>
+                  <label className="inline-flex items-center mb-2">
                     <input
                       type="radio"
                       value="false"
@@ -288,11 +276,11 @@ function AllCampaign() {
                       onChange={(e) => {
                         setFilter(key, 'value', e.target.value === 'true');
                       }}
-                      className="mr-2"
+                      className="form-radio text-pink-600 mr-2"
                     />
-                    False
+                    <span className="text-gray-700">False</span>
                   </label>
-                  <label>
+                  <label className="inline-flex items-center">
                     <input
                       type="radio"
                       value=""
@@ -300,19 +288,19 @@ function AllCampaign() {
                       onChange={(e) => {
                         setFilter(key, 'value', e.target.value);
                       }}
-                      className="mr-2"
+                      className="form-radio text-pink-600 mr-2"
                     />
-                    Any
+                    <span className="text-gray-700">Any</span>
                   </label>
                 </div>
               );
             } else if (key === 'country') {
               const countries = ['TR', 'Other', ''];
               return (
-                <div key={key} className="md:flex md:flex-col mr-2 ml-2">
+                <div key={key} className="flex flex-col mr-4 ml-2">
                   <h2 className="text-sm font-bold mb-2">{key.charAt(0).toUpperCase() + key.slice(1)}</h2>
                   {countries.map((country) => (
-                    <label key={country}>
+                    <label key={country} className="inline-flex items-center mb-2">
                       <input
                         type="radio"
                         value={country}
@@ -320,9 +308,9 @@ function AllCampaign() {
                         onChange={(e) => {
                           setFilter(key, 'value', e.target.value);
                         }}
-                        className="mr-2"
+                        className="form-radio text-pink-600 mr-2"
                       />
-                      {country || 'Any'}
+                      <span className="text-gray-700">{country || 'Any'}</span>
                     </label>
                   ))}
                 </div>
@@ -330,10 +318,10 @@ function AllCampaign() {
             } else if (key === 'platform') {
               const platforms = ['insta-post', 'insta-story', 'insta-reels', 'tiktok', ''];
               return (
-                <div key={key} className="md:flex md:flex-col mr-2 ml-2">
+                <div key={key} className="flex flex-col mr-8 ml-2">
                   <h2 className="text-sm font-bold mb-2">{key.charAt(0).toUpperCase() + key.slice(1)}</h2>
                   {platforms.map((platform) => (
-                    <label key={platform}>
+                    <label key={platform} className="inline-flex items-center mb-2">
                       <input
                         type="radio"
                         value={platform}
@@ -341,9 +329,9 @@ function AllCampaign() {
                         onChange={(e) => {
                           setFilter(key, 'value', e.target.value);
                         }}
-                        className="mr-2"
+                        className="form-radio text-pink-600 mr-2"
                       />
-                      {platform || 'Any'}
+                      <span className="text-gray-700">{platform || 'Any'}</span>
                     </label>
                   ))}
                 </div>
@@ -351,10 +339,10 @@ function AllCampaign() {
             } else if (key === 'created_at') {
               const creationDates = ['last_week', 'last_month', 'last_three_months', ''];
               return (
-                <div key={key} className="md:flex md:flex-col mr-2 ml-2">
+                <div key={key} className="flex flex-col mr-4 ml-2">
                   <h2 className="text-sm font-bold mb-2">{key.charAt(0).toUpperCase() + key.slice(1)}</h2>
                   {creationDates.map((date) => (
-                    <label key={date}>
+                    <label key={date} className="inline-flex items-center mb-2">
                       <input
                         type="radio"
                         value={date}
@@ -362,16 +350,16 @@ function AllCampaign() {
                         onChange={(e) => {
                           setFilter(key, 'value', e.target.value);
                         }}
-                        className="mr-2"
+                        className="form-radio text-pink-600 mr-2"
                       />
-                      {date || 'Any'}
+                      <span className="text-gray-700">{date || 'Any'}</span>
                     </label>
                   ))}
                 </div>
               );
             } else if (key === 'max_cost') {
               return (
-                <div key={key} className="md:flex md:flex-col flex-1/2 mr-2">
+                <div key={key} className="flex flex-col flex-1/2 mr-4">
                   <input
                     type="text"
                     value={filters[key].min}
@@ -396,6 +384,17 @@ function AllCampaign() {
             }
           })}
         </div>
+        <input
+          type="text"
+          className="form-input w-auto absolute top-0 right-0 mt-8 mr-16"
+          placeholder="Search Campaign Name"
+          value={search}
+          onChange={(e) => {
+            const text = e.target.value;
+            setSearch(text);
+            searchCampaign(text);
+          }}
+        />
       </div>
 
       <div className="datatables">

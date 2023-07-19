@@ -249,7 +249,7 @@ const GetAllUsers = () => {
                       onChange={(e) => {
                         setFilter(key, 'value', e.target.value);
                       }}
-                      className="mr-2"
+                      className="form-radio text-pink-600 mr-2"
                     />
                     Male
                   </label>
@@ -261,7 +261,7 @@ const GetAllUsers = () => {
                       onChange={(e) => {
                         setFilter(key, 'value', e.target.value);
                       }}
-                      className="mr-2"
+                      className="form-radio text-pink-600 mr-2"
                     />
                     Female
                   </label>
@@ -273,7 +273,7 @@ const GetAllUsers = () => {
                       onChange={(e) => {
                         setFilter(key, 'value', e.target.value);
                       }}
-                      className="mr-2"
+                      className="form-radio text-pink-600 mr-2"
                     />
                     Any
                   </label>
@@ -291,7 +291,7 @@ const GetAllUsers = () => {
                       onChange={(e) => {
                         setFilter(key, 'value', e.target.value);
                       }}
-                      className="mr-2"
+                      className="form-radio text-pink-600 mr-2"
                     />
                     True
                   </label>
@@ -303,7 +303,7 @@ const GetAllUsers = () => {
                       onChange={(e) => {
                         setFilter(key, 'value', e.target.value);
                       }}
-                      className="mr-2"
+                      className="form-radio text-pink-600 mr-2"
                     />
                     False
                   </label>
@@ -315,7 +315,7 @@ const GetAllUsers = () => {
                       onChange={(e) => {
                         setFilter(key, 'value', e.target.value);
                       }}
-                      className="mr-2"
+                      className="form-radio text-pink-600 mr-2"
                     />
                     Any
                   </label>
@@ -424,6 +424,7 @@ const GetAllUsers = () => {
           className="whitespace-nowrap table-hover"
           records={recordsData}
           columns={[
+            { accessor: 'id', title: 'Id', sortable: true },
             {
               accessor: 'verification',
               title: 'Verified',
@@ -446,7 +447,6 @@ const GetAllUsers = () => {
                 </Link>
               ),
             },
-            { accessor: 'id', title: 'Id', sortable: true },
             {
               accessor: 'firstName',
               title: 'Name',
@@ -494,4 +494,3 @@ const GetAllUsers = () => {
 };
 
 export default GetAllUsers;
-

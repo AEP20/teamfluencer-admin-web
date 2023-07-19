@@ -2,6 +2,16 @@ import React, { useEffect, useState } from 'react';
 import convertToCSV from '../utils/WaitingApprovalUserCSV';
 
 const DownloadCSVButton = ({ className, userData }: any) => {
+  if (userData && userData.length > 0) {
+    userData.map((user: any) => {
+      delete user.keywords;
+    });
+
+    userData.map((user: any) => {
+      delete user.profile_complete;
+    });
+  }
+
   const [url, setUrl] = useState('');
 
   useEffect(() => {

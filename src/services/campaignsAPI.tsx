@@ -103,7 +103,6 @@ export const TAfindAllCampaigns = async (token: string) => {
 
 export const TAfindApprovalCampaign = async (token: string) => {
   try {
-    console.log("token : ", token,)
 
     const response = await fetch(`${apiClient.baseURL}/getverificationcampaign`, {
       method: 'GET',
@@ -113,7 +112,6 @@ export const TAfindApprovalCampaign = async (token: string) => {
         'Authorization': `Bearer ${token}`,
       },
     });
-    console.log("response", response)
 
     if (response.status === 200) {
       var content = await response.json();
