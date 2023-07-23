@@ -1,5 +1,5 @@
 const apiClient = {
-  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin-healthcheck`,
+  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/healthcheck`,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
