@@ -8,6 +8,8 @@ import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { AllBrandType, BrandType, MoneyExchanges } from '../types/brandData';
 import { selectToken } from '../redux/store/userSlice';
 import BrandProfile from '../components/BrandProfile';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDollarSign } from '@fortawesome/free-solid-svg-icons';
 
 const fetchData = async (token: string) => {
   try {
@@ -157,7 +159,7 @@ const AllBrands = () => {
           {showBrand &&
             searchMatches.map((brand) => (
               <BrandProfile
-                balance={0}
+                // balance={0}
                 country={''}
                 currency={''}
                 language={''}
@@ -216,14 +218,40 @@ const AllBrands = () => {
             {
               accessor: 'firstName',
               title: 'Name',
-              sortable: true,
               render: ({ first_name, last_name }) => <div>{`${first_name} ${last_name}`}</div>,
             },
-            { accessor: 'brand_name', title: 'Brand Name', sortable: true },
-            { accessor: 'first_name', title: 'First Name', sortable: true },
-            { accessor: 'last_name', title: 'Last Name', sortable: true },
-            { accessor: 'email', title: 'Email', sortable: true },
-            { accessor: 'phone', title: 'Phone', sortable: true },
+            //create a money accessor to show the balance in the table, if balance is more than 0 then show a money icon
+            {
+              accessor: 'balance',
+              title: 'Balance',
+              sortable: true,
+              render: ({ balance }: any) => (
+                <div>
+                  {balance > 0 ? (
+                    <div>
+                      <p style={
+                        {
+                          color: '#009e1a',
+                          display: 'inline-block',
+                          marginRight: '5px',
+                          fontWeight: 'bold'
+                        }
+                      }>
+                        {balance}
+                      </p>
+                      <FontAwesomeIcon icon={faDollarSign} style={{ color: '#009e1a' }} />
+                    </div>
+                  ) : (
+                    <div>{balance}</div>
+                  )}
+                </div>
+              ),
+            },
+            { accessor: 'brand_name', title: 'Brand Name' },
+            { accessor: 'first_name', title: 'First Name' },
+            { accessor: 'last_name', title: 'Last Name' },
+            { accessor: 'email', title: 'Email' },
+            { accessor: 'phone', title: 'Phone' },
             {
               accessor: 'last_login',
               title: 'Last Login',

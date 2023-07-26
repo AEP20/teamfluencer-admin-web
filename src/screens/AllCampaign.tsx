@@ -16,6 +16,7 @@ import sortBy from 'lodash/sortBy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import CampaignProfile from '../components/CampaignProfile';
+import { faHeartPulse } from '@fortawesome/free-solid-svg-icons';
 
 const fetchData = async (token: string) => {
   try {
@@ -227,9 +228,9 @@ function AllCampaign() {
 
   const verifiedIcon = (visibility: boolean) => {
     if (visibility) {
-      return <FontAwesomeIcon icon={faCheck} color="green" />;
+      return <FontAwesomeIcon size="lg" icon={faCheck} color="green" />;
     } else {
-      return <FontAwesomeIcon icon={faTimes} color="red" />;
+      return <FontAwesomeIcon size="lg" icon={faTimes} color="red" />;
     }
   };
 
@@ -427,11 +428,15 @@ function AllCampaign() {
             },
             {
               accessor: 'visibility',
-              title: 'Visibility',
+              title: 'active',
               sortable: true,
               render: ({ visibility }) => (
                 <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {verifiedIcon(visibility)}
+                  <FontAwesomeIcon
+                    icon={faHeartPulse}
+                    size="lg"
+                    style={{ color: visibility ? '#009e1a' : '#ff0000' }}
+                  />
                 </div>
               ),
             },
