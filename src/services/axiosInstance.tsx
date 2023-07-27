@@ -18,7 +18,7 @@ apiClient.interceptors.response.use(
   (response: any): any => {
     return response;
   },
-  (error) => {
+  (error) => {  
     if (error.response.status === 401 && error.response.data.message === 'TOKEN_EXPIRED') {
       logoutUser();
     }
