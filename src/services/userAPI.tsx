@@ -1,11 +1,4 @@
-const apiClient = {
-  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/user`,
-  timeout: 5000,
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-};
+import apiClient from './axiosInstance';
 
 export const TAfindUser = async (data: any, token: string) => {
   try {
@@ -14,18 +7,15 @@ export const TAfindUser = async (data: any, token: string) => {
       : data.username
       ? `_username=${data.username}`
       : `_phone=${data.phone}`;
-    const response = await fetch(`${apiClient.baseURL}/getuser?${query}`, {
-      method: 'GET',
+
+    const response = await apiClient.get(`/user/getuser?${query}`, {
       headers: {
-        ...apiClient.headers,
         Authorization: `Bearer ${token}`,
       },
-      credentials: 'include',
     });
 
     if (response.status === 200) {
-      var content = await response.json();
-      return content;
+      return response.data;
     } else {
       throw new Error('Find User failed');
     }
@@ -36,17 +26,14 @@ export const TAfindUser = async (data: any, token: string) => {
 
 export const TAfindAllUser = async (params: any, token: string) => {
   try {
-    const response = await fetch(`${apiClient.baseURL}/getall?${params}`, {
-      method: 'GET',
-      credentials: 'include',
+    const response = await apiClient.get(`/user/getall?${params}`, {
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
+
     if (response.status === 200) {
-      var content = await response.json();
-      return content;
+      return response.data;
     } else {
       throw new Error('Find User failed');
     }
@@ -57,18 +44,14 @@ export const TAfindAllUser = async (params: any, token: string) => {
 
 export const TAfindApprovalUser = async (token: string) => {
   try {
-    const response = await fetch(`${apiClient.baseURL}/getverificationprofiles`, {
-      method: 'GET',
-      credentials: 'include',
+    const response = await apiClient.get(`/user/getverificationprofiles`, {
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
 
     if (response.status === 200) {
-      var content = await response.json();
-      return content;
+      return response.data;
     } else {
       throw new Error('Find Approval Users failed');
     }
@@ -79,17 +62,14 @@ export const TAfindApprovalUser = async (token: string) => {
 
 export const TAfindAllApprovalUser = async (token: string) => {
   try {
-    const response = await fetch(`${apiClient.baseURL}/getallverificationprofiles`, {
-      method: 'GET',
-      credentials: 'include',
+    const response = await apiClient.get(`/user/getallverificationprofiles`, {
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
+
     if (response.status === 200) {
-      var content = await response.json();
-      return content;
+      return response.data;
     } else {
       throw new Error('Find User failed');
     }
@@ -100,17 +80,19 @@ export const TAfindAllApprovalUser = async (token: string) => {
 
 export const TAverifyUser = async (id: string, status: string, token: string) => {
   try {
-    const response = await fetch(`${apiClient.baseURL}/verificateuser/${id}/${status}`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+    const response = await apiClient.post(
+      `/user/verificateuser/${id}/${status}`,
+      {},
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
+
     if (response.status === 200) {
-      var content = await response.json();
-      return content;
+      return response.data;
     }
   } catch (error) {
     throw error;
@@ -119,18 +101,14 @@ export const TAverifyUser = async (id: string, status: string, token: string) =>
 
 export const TAapprovedUser = async (token: string) => {
   try {
-    const response = await fetch(`${apiClient.baseURL}/getverifiedprofiles`, {
-      method: 'GET',
+    const response = await apiClient.get(`/user/getverifiedprofiles`, {
       headers: {
-        ...apiClient.headers,
         Authorization: `Bearer ${token}`,
       },
-      credentials: 'include',
     });
 
     if (response.status === 200) {
-      var content = await response.json();
-      return content;
+      return response.data;
     } else {
       throw new Error('Find Approved User failed');
     }
@@ -141,18 +119,14 @@ export const TAapprovedUser = async (token: string) => {
 
 export const TAfindUserById = async (id: any, token: string) => {
   try {
-    const response = await fetch(`${apiClient.baseURL}/getuser/${id}`, {
-      method: 'GET',
+    const response = await apiClient.get(`/user/getuser/${id}`, {
       headers: {
-        ...apiClient.headers,
         Authorization: `Bearer ${token}`,
       },
-      credentials: 'include',
     });
 
     if (response.status === 200) {
-      var content = await response.json();
-      return content;
+      return response.data;
     } else {
       throw new Error('Find User failed');
     }

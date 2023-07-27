@@ -1,10 +1,4 @@
-const apiClient = {
-  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/brand`,
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-};
+import apiClient from './axiosInstance';
 
 export const TAfindBrand = async (data: any, token: string) => {
   try {
@@ -17,21 +11,16 @@ export const TAfindBrand = async (data: any, token: string) => {
       query = `?brand_name=${data.brandname}`;
     }
 
-    const response = await fetch(`${apiClient.baseURL}/get${query}`, {
-      method: 'GET',
-      credentials: 'include',
+    const response = await apiClient.get(`/brand/get${query}`, {
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
 
     if (response.status === 200) {
-      var content = await response.json();
-      return content;
+      return response.data;
     } else {
-      const errorResponse = await response.json();
-      throw new Error(errorResponse.message);
+      throw new Error(response.data.message);
     }
   } catch (error) {
     throw error;
@@ -40,18 +29,14 @@ export const TAfindBrand = async (data: any, token: string) => {
 
 export const TAfindAllBrands = async (token: string) => {
   try {
-    const response: any = await fetch(`${apiClient.baseURL}/getall`, {
-      method: 'GET',
-      credentials: 'include',
+    const response = await apiClient.get(`/brand/getall`, {
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
 
     if (response.status === 200) {
-      var content = await response.json();
-      return content;
+      return response.data;
     } else {
       throw new Error('Brands not found');
     }
@@ -62,18 +47,14 @@ export const TAfindAllBrands = async (token: string) => {
 
 export const TAfindBrandById = async (id: any, token: string) => {
   try {
-    const response = await fetch(`${apiClient.baseURL}/getuser/${id}`, {
-      method: 'GET',
-      credentials: 'include',
+    const response = await apiClient.get(`/brand/getuser/${id}`, {
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
 
     if (response.status === 200) {
-      var content = await response.json();
-      return content;
+      return response.data;
     } else {
       throw new Error('Find User failed');
     }
@@ -84,19 +65,15 @@ export const TAfindBrandById = async (id: any, token: string) => {
 
 export const TAupdateBrand = async (id: any, data: any, token: string) => {
   try {
-    const response = await fetch(`${apiClient.baseURL}/update/${id}`, {
-      method: 'PUT',
-      credentials: 'include',
+    const response = await apiClient.put(`/brand/update/${id}`, data, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(data),
     });
 
     if (response.status === 200) {
-      const content = await response.json();
-      return content;
+      return response.data;
     } else {
       throw new Error('Update failed');
     }

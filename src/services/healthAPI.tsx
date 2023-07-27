@@ -1,20 +1,11 @@
-const apiClient = {
-  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/healthcheck`,
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-};
+import apiClient from './axiosInstance';
 
 export const TAhealth = async () => {
   try {
-    const response = await fetch(`${apiClient.baseURL}`, {
-      method: 'GET',
-      headers: apiClient.headers,
-    });
+    const response = await apiClient.get('/healthcheck');
 
     if (response.status === 200) {
-      const responseData = await response.json();
+      const responseData = response.data;
       if (responseData.status === 'UP') {
         return responseData;
       } else {
