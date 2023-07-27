@@ -14,7 +14,6 @@ import { selectToken } from '../redux/store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVenus, faMars, faEye } from '@fortawesome/free-solid-svg-icons';
 
-
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
   return fixedPhoneNumber;
@@ -90,12 +89,15 @@ const ApprovedUsers = () => {
   const [search, setSearch] = useState('');
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setPage(1);
   }, [pageSize]);
 
   useEffect(() => {
+    setLoading(true);
+
     const getUserData = async () => {
       try {
         const data = await fetchData(token);
@@ -107,6 +109,8 @@ const ApprovedUsers = () => {
         }
       } catch (error) {
         setError('No data found');
+      } finally {
+        setLoading(false);
       }
     };
     getUserData();
@@ -273,66 +277,72 @@ const ApprovedUsers = () => {
         </div>
       </div>
       <div className="datatables">
-        <DataTable
-          highlightOnHover
-          className="whitespace-nowrap table-hover"
-          records={recordsData}
-          columns={[
-            {
-              accessor: 'details',
-              title: 'Details',
-              sortable: false,
-              render: ({ _id }: any) => (
-                <Link to={`/user/find/${_id}`}>
+        {loading ? (
+          <div className="flex items-center justify-center h-40">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-pink-600"></div>
+          </div>
+        ) : (
+          <DataTable
+            highlightOnHover
+            className="whitespace-nowrap table-hover"
+            records={recordsData}
+            columns={[
+              {
+                accessor: 'details',
+                title: 'Details',
+                sortable: false,
+                render: ({ _id }: any) => (
+                  <Link to={`/user/find/${_id}`}>
+                    <div className="text-center items-center">
+                      <FontAwesomeIcon icon={faEye} style={{ color: '#005eff' }} />
+                    </div>
+                  </Link>
+                ),
+              },
+              { accessor: 'id', title: 'Id', sortable: true },
+              {
+                accessor: 'firstName',
+                title: 'Name',
+                sortable: true,
+                render: ({ name }) => <div>{name}</div>,
+              },
+              { accessor: 'email', title: 'Email', sortable: true },
+              { accessor: 'age', title: 'Age', sortable: true },
+              {
+                accessor: 'gender',
+                title: 'Gender',
+                sortable: false,
+                render: ({ gender }) => (
                   <div className="text-center items-center">
-                    <FontAwesomeIcon icon={faEye} style={{ color: '#005eff' }} />
+                    {gender === 'male' ? (
+                      <FontAwesomeIcon icon={faMars} style={{ color: '#005eff' }} />
+                    ) : (
+                      <FontAwesomeIcon icon={faVenus} style={{ color: '#ff00dd' }} />
+                    )}
                   </div>
-                </Link>
-              ),
-            },
-            { accessor: 'id', title: 'Id', sortable: true },
-            {
-              accessor: 'firstName',
-              title: 'Name',
-              sortable: true,
-              render: ({ name }) => <div>{name}</div>,
-            },
-            { accessor: 'email', title: 'Email', sortable: true },
-            { accessor: 'age', title: 'Age', sortable: true },
-            {
-              accessor: 'gender',
-              title: 'Gender',
-              sortable: false,
-              render: ({ gender }) => (
-                <div className="text-center items-center">
-                  {gender === 'male' ? (
-                    <FontAwesomeIcon icon={faMars} style={{ color: '#005eff' }} />
-                  ) : (
-                    <FontAwesomeIcon icon={faVenus} style={{ color: '#ff00dd' }} />
-                  )}
-                </div>
-              ),
-            },
-            { accessor: 'country', title: 'Country', sortable: true },
-            { accessor: 'followers', title: 'Insta Followers', sortable: true },
-            { accessor: 'insta_post_number', title: 'Insta Post Number', sortable: true },
-            { accessor: 'average_like', title: 'Insta Average Like', sortable: true },
-            { accessor: 'tiktok_followers', title: 'Tiktok Followers', sortable: true },
-            { accessor: 'tiktok_videos', title: 'Tiktok Videos', sortable: true },
-            { accessor: 'tiktok_average_like', title: 'Tiktok Average Like', sortable: true },
-            { accessor: 'tiktok_engagement_rate', title: 'Tiktok Engagement Rate', sortable: true },
-          ]}
-          totalRecords={initialRecords.length}
-          recordsPerPage={pageSize}
-          page={page}
-          onPageChange={(p) => setPage(p)}
-          recordsPerPageOptions={PAGE_SIZES}
-          onRecordsPerPageChange={setPageSize}
-          sortStatus={sortStatus}
-          onSortStatusChange={setSortStatus}
-          minHeight={200}
-          paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-        />
+                ),
+              },
+              { accessor: 'country', title: 'Country', sortable: true },
+              { accessor: 'followers', title: 'Insta Followers', sortable: true },
+              { accessor: 'insta_post_number', title: 'Insta Post Number', sortable: true },
+              { accessor: 'average_like', title: 'Insta Average Like', sortable: true },
+              { accessor: 'tiktok_followers', title: 'Tiktok Followers', sortable: true },
+              { accessor: 'tiktok_videos', title: 'Tiktok Videos', sortable: true },
+              { accessor: 'tiktok_average_like', title: 'Tiktok Average Like', sortable: true },
+              { accessor: 'tiktok_engagement_rate', title: 'Tiktok Engagement Rate', sortable: true },
+            ]}
+            totalRecords={initialRecords.length}
+            recordsPerPage={pageSize}
+            page={page}
+            onPageChange={(p) => setPage(p)}
+            recordsPerPageOptions={PAGE_SIZES}
+            onRecordsPerPageChange={setPageSize}
+            sortStatus={sortStatus}
+            onSortStatusChange={setSortStatus}
+            minHeight={200}
+            paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+          />
+        )}
       </div>
     </div>
   );
