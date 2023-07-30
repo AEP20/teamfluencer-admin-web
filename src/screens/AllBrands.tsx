@@ -159,6 +159,8 @@ const AllBrands = () => {
           {showBrand &&
             searchMatches.map((brand) => (
               <BrandProfile
+                _id={''}
+                notes={''}
                 // balance={0}
                 country={''}
                 currency={''}
@@ -229,14 +231,14 @@ const AllBrands = () => {
                 <div>
                   {balance > 0 ? (
                     <div>
-                      <p style={
-                        {
+                      <p
+                        style={{
                           color: '#009e1a',
                           display: 'inline-block',
                           marginRight: '5px',
-                          fontWeight: 'bold'
-                        }
-                      }>
+                          fontWeight: 'bold',
+                        }}
+                      >
                         {balance}
                       </p>
                       <FontAwesomeIcon icon={faDollarSign} style={{ color: '#009e1a' }} />

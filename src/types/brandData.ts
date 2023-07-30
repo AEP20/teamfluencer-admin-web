@@ -1,4 +1,5 @@
 type BrandType = {
+  _id: string;
   balance: number;
   email: string;
   brand_name: string;
@@ -12,6 +13,7 @@ type BrandType = {
   job_title: string;
   billing_address: BillingAddress;
   money_exchanges: MoneyExchanges[];
+  notes: string;
 };
 
 type BillingAddress = {

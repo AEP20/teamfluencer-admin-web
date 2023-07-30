@@ -66,12 +66,14 @@ const FindBrand = () => {
 
         money_exchanges: Array.isArray(response.money_exchanges)
           ? response.money_exchanges.map((exchange: MoneyExchanges) => ({
-              operation: exchange?.operation ?? '',
-              amount: exchange?.amount ?? 0,
-              application_id: exchange?.application_id ?? '',
-              action_time: exchange?.action_time ?? '',
-            }))
+            operation: exchange?.operation ?? '',
+            amount: exchange?.amount ?? 0,
+            application_id: exchange?.application_id ?? '',
+            action_time: exchange?.action_time ?? '',
+          }))
           : [],
+        notes: '',
+        _id: ''
       };
       setbrandData(object);
     } catch (error: any) {

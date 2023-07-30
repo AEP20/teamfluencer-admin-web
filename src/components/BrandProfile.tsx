@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { MoneyExchanges, BillingAddress, BrandType, InfoType } from '../types/brandData';
 import './styles/styles.css';
+import { selectToken } from '../redux/store/userSlice';
+import { useSelector } from 'react-redux';
+import { TAaddBrandNote, TAdeleteNote, TAupdateNote } from '../services/brandAPI';
 
 const BrandProfile = (data: BrandType) => {
+  const token = useSelector(selectToken);
+
+  const [_id, setId] = useState('');
   const [balance, setBalance] = useState(0);
   const [email, setEmail] = useState('');
   const [brandName, setBrandName] = useState('');
@@ -13,6 +19,7 @@ const BrandProfile = (data: BrandType) => {
   const [currency, setCurrency] = useState('');
   const [language, setLanguage] = useState('');
   const [jobTitle, setJobTitle] = useState('');
+  const [notes, setNotes] = useState('');
   const [moneyExchanges, setMoneyExchanges] = useState<MoneyExchanges[]>([]);
 
   const [billingAddress, setBillingAddress] = useState<BillingAddress>({
@@ -27,6 +34,7 @@ const BrandProfile = (data: BrandType) => {
   });
 
   useEffect(() => {
+    setId(data?._id ?? '');
     setEmail(data?.email ?? '');
     setPhone(data?.phone ?? '');
     setCountry(data?.country ?? '');
@@ -57,59 +65,152 @@ const BrandProfile = (data: BrandType) => {
         action_time: '',
       },
     );
+    setNotes(data?.notes ?? '');
   }, [data]);
 
   const brandInfo: InfoType[] = [
-    { key: 'Brand Name:', value: brandName },
-    { key: 'Email:', value: email },
-    { key: 'Phone:', value: phone },
-    { key: 'Country:', value: country },
-    { key: 'First Name:', value: firstName },
-    { key: 'Last Name:', value: lastName },
-    { key: 'Currency:', value: currency },
-    { key: 'Language:', value: language },
-    { key: 'Job Title:', value: jobTitle },
-    { key: 'Balance:', value: balance },
+    { key: 'Brand Name', value: brandName },
+    { key: 'Email', value: email },
+    { key: 'Phone', value: phone },
+    { key: 'Country', value: country },
+    { key: 'First Name', value: firstName },
+    { key: 'Last Name', value: lastName },
+    { key: 'Currency', value: currency },
+    { key: 'Language', value: language },
+    { key: 'Job Title', value: jobTitle },
+    { key: 'Balance', value: balance },
   ];
+
+  const billing_address: InfoType[] = [
+    { key: 'Type', value: billingAddress.type },
+    { key: 'Firm Name', value: billingAddress.firm_name },
+    { key: 'Contact Name', value: billingAddress.contactName },
+    { key: 'ID', value: billingAddress.id },
+    { key: 'City', value: billingAddress.city },
+    { key: 'Country', value: billingAddress.country },
+    { key: 'Address', value: billingAddress.address },
+    { key: 'Zip Code', value: billingAddress.zipCode },
+  ];
+
+  async function AddNote(id: string, data: string, token: string) {
+    try {
+      console.log('id', id, 'notes', data);
+      const response = await TAaddBrandNote(id, data, token);
+      if (response.status === 200) {
+        alert('Note added successfully');
+        console.log('ADD NOTE KULLANILDI');
+      }
+    } catch (error) {
+      console.log('ERRORR HATTII');
+      throw error;
+    }
+  }
+
+  async function UpdateNote(id: string, data: string, token: string) {
+    try {
+      const response = await TAupdateNote(id, data, token);
+      if (response.status === 200) {
+        alert('Note updated successfully');
+        console.log('UPDATE NOTE KULLANILDI');
+      }
+    } catch (error) {
+      console.log('ERRORR HATTII');
+      throw error;
+    }
+  }
+  async function DeleteNote(id: string, token: string) {
+    try {
+      const response = await TAdeleteNote(id, token);
+      if (response.status === 200) {
+        alert('Note deleted successfully');
+        console.log('DELETE NOTE KULLANILDI');
+      }
+    } catch (error) {
+      console.log('ERRORR HATTII');
+      throw error;
+    }
+  }
 
   return (
     <>
       <div className="profile-section bg-white p-3 shadow-md mb-3 w-3/5">
-        <h3 className="section-title text-lg font-semibold mb-3">Brand Information</h3>
+        <h3 className="section-title text-xl font-bold mb-3">Brand Information</h3>
         <table className="table-responsive">
           <tbody>
             {brandInfo.map((info: InfoType) => (
               <tr>
-                <td>{info.key}</td>
-                <td>{info.value}</td>
+                <td className="font-bold text-md">{info.key}</td>
+                <td className="font-semibold">=</td>
+                <td className="font-semibold">{info.value}</td>
               </tr>
             ))}
           </tbody>
         </table>
-
-        <h3 className="section-title text-lg font-semibold mb-3 mt-5">Billing Information</h3>
-        <tr className="flex">
-          <td className="flex w-full flex-col ml-3 info-value">
-            <tr>Type : {billingAddress.type}</tr>
-            <div className="border-t border-gray-200 my-2" />
-            <tr>Firm Name : {billingAddress.firm_name}</tr>
-            <div className="border-t border-gray-200 my-2" />
-            <tr>Contact Name : {billingAddress.contactName}</tr>
-            <div className="border-t border-gray-200 my-2" />
-            <tr>ID : {billingAddress.id}</tr>
-            <div className="border-t border-gray-200 my-2" />
-            <tr>City : {billingAddress.city}</tr>
-            <div className="border-t border-gray-200 my-2" />
-            <tr>Country : {billingAddress.country}</tr>
-            <div className="border-t border-gray-200 my-2" />
-            <tr>Address : {billingAddress.address}</tr>
-            <div className="border-t border-gray-200 my-2" />
-            <tr>Zip Code : {billingAddress.zipCode}</tr>
-          </td>
-        </tr>
-
+        <div className="flex flex-col">
+          <div className="flex flex-col">
+            <label className="text-sm font-semibold text-gray-500">Note</label>
+            <textarea
+              className="border border-gray-300 rounded-md p-2"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
+          </div>
+          <button
+            className="bg-blue-500 text-white rounded-md px-3 py-2 mt-2"
+            onClick={() => UpdateNote(_id, notes, token)}
+          >
+            Update Note
+          </button>
+        </div>
+        {(billingAddress.address ||
+          billingAddress.city ||
+          billingAddress.contactName ||
+          billingAddress.country ||
+          billingAddress.firm_name ||
+          billingAddress.id ||
+          billingAddress.type ||
+          billingAddress.zipCode) && (
+          <>
+            <h3 className="section-title text-lg font-semibold mb-3 mt-5">Billing Information</h3>
+            <tr className="flex">
+              <td className="flex w-full flex-col ml-3 info-value">
+                <tr className="font-bold">
+                  Type : <span className="font-semibold">{billingAddress.type}</span>
+                </tr>
+                <div className="border-t border-gray-200 my-2" />
+                <tr className="font-bold">
+                  Firm Name : <span className="font-semibold">{billingAddress.firm_name}</span>
+                </tr>
+                <div className="border-t border-gray-200 my-2" />
+                <tr className="font-bold">
+                  Contact Name : <span className="font-semibold">{billingAddress.contactName}</span>
+                </tr>
+                <div className="border-t border-gray-200 my-2" />
+                <tr className="font-bold">
+                  ID : <span className="font-semibold">{billingAddress.id}</span>
+                </tr>
+                <div className="border-t border-gray-200 my-2" />
+                <tr className="font-bold">
+                  City : <span className="font-semibold">{billingAddress.city}</span>
+                </tr>
+                <div className="border-t border-gray-200 my-2" />
+                <tr className="font-bold">
+                  Country : <span className="font-semibold">{billingAddress.country}</span>
+                </tr>
+                <div className="border-t border-gray-200 my-2" />
+                <tr className="font-bold">
+                  Address : <span className="font-semibold">{billingAddress.address}</span>
+                </tr>
+                <div className="border-t border-gray-200 my-2" />
+                <tr className="font-bold">
+                  Zip Code : <span className="font-semibold">{billingAddress.zipCode}</span>
+                </tr>
+              </td>
+            </tr>{' '}
+          </>
+        )}
         {moneyExchanges.length > 0 && (
-          <table className="table-auto w-full">
+          <table className="table-auto mt-10">
             <thead>
               <tr>
                 <th className="px-4 py-2 text-xs text-gray-500">Operation</th>
