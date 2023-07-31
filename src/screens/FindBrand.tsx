@@ -1,10 +1,19 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { TAfindBrand } from '../services/brandAPI';
-import { BrandType, MoneyExchanges } from '../types/brandData';
+import { TAfindAllBrands, TAfindBrand } from '../services/brandAPI';
+import { AllBrandType, BrandType, MoneyExchanges } from '../types/brandData';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import BrandProfile from '../components/BrandProfile';
 import { selectToken } from '../redux/store/userSlice';
+
+const fetchData = async (token: string) => {
+  try {
+    const response = await TAfindAllBrands(token);
+    return response.brands;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
 
 const FindBrand = () => {
   const token = useSelector(selectToken);
@@ -12,11 +21,32 @@ const FindBrand = () => {
   useEffect(() => {
     dispatch(setPageTitle('Kampanya Bul'));
   });
+  const [userData, setUserData] = useState([] as AllBrandType[]);
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [brandname, setBrandname] = useState('');
   const [brandData, setbrandData] = useState<BrandType | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [searchEmailMatches, setSearchEmailMatches] = useState<AllBrandType[]>([]);
+  const [searchNameMatches, setSearchNameMatches] = useState<AllBrandType[]>([]);
+  const [isEmailDropdownOpen, setIsEmailDropdownOpen] = useState(false);
+  const [isNameDropdownOpen, setIsNameDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const data = await fetchData(token);
+        if (data !== undefined) {
+          setUserData(data);
+        } else {
+          setError('No data found');
+        }
+      } catch (error) {
+        setError('No data found');
+      }
+    };
+    getUserData();
+  }, []);
 
   const handleForm = async (e: any) => {
     e.preventDefault();
@@ -66,20 +96,69 @@ const FindBrand = () => {
 
         money_exchanges: Array.isArray(response.money_exchanges)
           ? response.money_exchanges.map((exchange: MoneyExchanges) => ({
-            operation: exchange?.operation ?? '',
-            amount: exchange?.amount ?? 0,
-            application_id: exchange?.application_id ?? '',
-            action_time: exchange?.action_time ?? '',
-          }))
+              operation: exchange?.operation ?? '',
+              amount: exchange?.amount ?? 0,
+              application_id: exchange?.application_id ?? '',
+              action_time: exchange?.action_time ?? '',
+            }))
           : [],
         notes: '',
-        _id: ''
+        _id: '',
       };
       setbrandData(object);
     } catch (error: any) {
       setError(error.message);
     }
   };
+
+  function searchBrandsEmail(text: string) {
+    let matches = userData.filter((brand: AllBrandType) => {
+      const regex = new RegExp(`^${text}`, 'gi');
+      setEmail(text);
+
+      return brand.email.match(regex);
+    });
+    if (matches.length === 0 || text.length === 0) {
+      setIsEmailDropdownOpen(false);
+    } else {
+      setIsEmailDropdownOpen(true);
+    }
+    setSearchEmailMatches(matches);
+  }
+
+  function searchBrandsName(text: string) {
+    let matches = userData.filter((brand: AllBrandType) => {
+      const regex = new RegExp(`^${text}`, 'gi');
+      setBrandname(text);
+
+      return brand.first_name.match(regex);
+    });
+    if (matches.length === 0 || text.length === 0) {
+      setIsNameDropdownOpen(false);
+    } else {
+      setIsNameDropdownOpen(true);
+    }
+    setSearchNameMatches(matches);
+  }
+
+  const handleBrandEmailSelect = (selectedBrand: any) => {
+    setEmail(selectedBrand.email);
+  };
+
+  const handleBrandNameSelect = (selectedBrand: any) => {
+    setBrandname(selectedBrand.brand_name);
+  };
+
+  useEffect(() => {
+    const handleClick = () => {
+      setIsNameDropdownOpen(false);
+      setIsEmailDropdownOpen(false);
+    };
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col lg:flex-row justify-between items-start min-h-screen bg-cover bg-center relative">
@@ -89,10 +168,25 @@ const FindBrand = () => {
           type="email"
           placeholder="email@mail.com"
           className="form-input text-sm"
+          value={email}
           onChange={(e) => {
-            setEmail(e.target.value);
+            const text = e.target.value;
+            searchBrandsEmail(text);
           }}
         />
+        {isEmailDropdownOpen && searchEmailMatches.length > 0 && (
+          <div className="absolute bg-white border border-gray-300 rounded mt-10 z-10">
+            {searchEmailMatches.slice(0, 4).map((match: AllBrandType) => (
+              <div
+                className="p-2 border-b border-gray-300 hover:bg-gray-100"
+                key={match.id}
+                onClick={() => handleBrandEmailSelect(match)}
+              >
+                {match.email}
+              </div>
+            ))}
+          </div>
+        )}
         <input
           type="tel"
           placeholder="phone number (ex: 905555555555)"
@@ -105,10 +199,25 @@ const FindBrand = () => {
           type="brandname"
           placeholder="brandname"
           className="form-input text-sm"
+          value={brandname}
           onChange={(e) => {
-            setBrandname(e.target.value);
+            const text = e.target.value;
+            searchBrandsName(text);
           }}
         />
+        {isNameDropdownOpen && searchNameMatches.length > 0 && (
+          <div className="absolute bg-white border border-gray-300 rounded mt-10 z-10">
+            {searchNameMatches.slice(0, 4).map((match: AllBrandType) => (
+              <div
+                className="p-2 border-b border-gray-300 hover:bg-gray-100"
+                key={match.id}
+                onClick={() => handleBrandNameSelect(match)}
+              >
+                {match.brand_name}
+              </div>
+            ))}
+          </div>
+        )}
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
         <div className="flex justify-center">
           <button type="button" onClick={handleForm} className="btn btn-primary mt-3">
