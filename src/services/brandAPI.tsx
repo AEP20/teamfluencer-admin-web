@@ -125,8 +125,6 @@ export const TAupdateBrandNote = async (id: string, notes: string, token: string
 };
 
 export const TAgetNote = async (id: any, token: string) => {
-  console.log('başaaa girdi');
-
   try {
     const response = await apiClient.get(`/brand/getnote/${id}`, {
       headers: {
@@ -134,22 +132,17 @@ export const TAgetNote = async (id: any, token: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('içeriii girdi');
-
     if (response.status === 200) {
       return response.data;
     } else {
       throw new Error('Get failed');
     }
   } catch (error) {
-    console.log('errorr aldııı');
     throw error;
   }
 };
 
 export const TAdeleteNote = async (id: any, token: string) => {
-  console.log('başaaa girdi');
-
   try {
     const response = await apiClient.delete(`/brand/deletenote/${id}`, {
       headers: {
@@ -157,15 +150,12 @@ export const TAdeleteNote = async (id: any, token: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('içeriii girdi');
-
     if (response.status === 200) {
       return response.data;
     } else {
       throw new Error('Delete failed');
     }
   } catch (error) {
-    console.log('errorrr aldııı');
     throw error;
   }
 };

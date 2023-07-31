@@ -88,7 +88,16 @@ const BrandProfile = (data: BrandType) => {
         alert('Note updated successfully');
       }
     } catch (error) {
-      console.log('ERRORR HATTII');
+      throw error;
+    }
+  }
+  async function DeleteNote(id: string, token: string) {
+    try {
+      const brand = await TAdeleteNote(id, token);
+      if (brand) {
+        alert('Note deleted successfully');
+      }
+    } catch (error) {
       throw error;
     }
   }
@@ -117,12 +126,17 @@ const BrandProfile = (data: BrandType) => {
               onChange={(e) => setNotes(e.target.value)}
             />
           </div>
-          <button
-            className="bg-blue-500 text-white rounded-md px-3 py-2 mt-2"
-            onClick={() => UpdateNote(_id, notes, token)}
-          >
-            Update Note
-          </button>
+          <div className='flex gap-12'>
+            <button
+              className="bg-blue-500 text-white rounded-md px-3 py-2 mt-2 w-full"
+              onClick={() => UpdateNote(_id, notes, token)}
+            >
+              Update Note
+            </button>
+            <button className="bg-blue-500 text-white rounded-md px-3 py-2 mt-2 w-full" onClick={() => DeleteNote(_id, token)}>
+              Delete Note
+            </button>
+          </div>
         </div>
         {(billingAddress.address ||
           billingAddress.city ||
