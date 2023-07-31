@@ -83,7 +83,6 @@ export const TAupdateBrand = async (id: any, data: any, token: string) => {
 };
 
 export const TAaddBrandNote = async (id: any, data: any, token: string) => {
-  console.log('başaaa girdi');
   try {
     const response = await apiClient.post(`/brand/addnote/${id}`, data, {
       headers: {
@@ -91,27 +90,28 @@ export const TAaddBrandNote = async (id: any, data: any, token: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('içeriii girdi');
     if (response.status === 200) {
       return response.data;
     } else {
       throw new Error('Add failed');
     }
   } catch (error) {
-    console.log('errorr aldııı');
     throw error;
   }
 };
 
-export const TAupdateNote = async (id: any, data: any, token: string) => {
-  console.log('başaaa girdi');
+export const TAupdateBrandNote = async (id: string, notes: string, token: string) => {
   try {
-    const response = await apiClient.put(`/brand/updatenote/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await apiClient.put(
+      `/brand/updatenote/${id}/${notes}`,
+      {},
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
-    console.log('içeriii girdi');
+    );
 
     if (response.status === 200) {
       return response.data;

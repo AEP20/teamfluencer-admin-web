@@ -3,7 +3,7 @@ import { MoneyExchanges, BillingAddress, BrandType, InfoType } from '../types/br
 import './styles/styles.css';
 import { selectToken } from '../redux/store/userSlice';
 import { useSelector } from 'react-redux';
-import { TAaddBrandNote, TAdeleteNote, TAupdateNote } from '../services/brandAPI';
+import { TAaddBrandNote, TAdeleteNote, TAupdateBrandNote } from '../services/brandAPI';
 
 const BrandProfile = (data: BrandType) => {
   const token = useSelector(selectToken);
@@ -81,49 +81,11 @@ const BrandProfile = (data: BrandType) => {
     { key: 'Balance', value: balance },
   ];
 
-  const billing_address: InfoType[] = [
-    { key: 'Type', value: billingAddress.type },
-    { key: 'Firm Name', value: billingAddress.firm_name },
-    { key: 'Contact Name', value: billingAddress.contactName },
-    { key: 'ID', value: billingAddress.id },
-    { key: 'City', value: billingAddress.city },
-    { key: 'Country', value: billingAddress.country },
-    { key: 'Address', value: billingAddress.address },
-    { key: 'Zip Code', value: billingAddress.zipCode },
-  ];
-
-  async function AddNote(id: string, data: string, token: string) {
+  async function UpdateNote(id: string, notes: string, token: string) {
     try {
-      console.log('id', id, 'notes', data);
-      const response = await TAaddBrandNote(id, data, token);
-      if (response.status === 200) {
-        alert('Note added successfully');
-        console.log('ADD NOTE KULLANILDI');
-      }
-    } catch (error) {
-      console.log('ERRORR HATTII');
-      throw error;
-    }
-  }
-
-  async function UpdateNote(id: string, data: string, token: string) {
-    try {
-      const response = await TAupdateNote(id, data, token);
-      if (response.status === 200) {
+      const brand = await TAupdateBrandNote(id, notes, token);
+      if (brand) {
         alert('Note updated successfully');
-        console.log('UPDATE NOTE KULLANILDI');
-      }
-    } catch (error) {
-      console.log('ERRORR HATTII');
-      throw error;
-    }
-  }
-  async function DeleteNote(id: string, token: string) {
-    try {
-      const response = await TAdeleteNote(id, token);
-      if (response.status === 200) {
-        alert('Note deleted successfully');
-        console.log('DELETE NOTE KULLANILDI');
       }
     } catch (error) {
       console.log('ERRORR HATTII');
