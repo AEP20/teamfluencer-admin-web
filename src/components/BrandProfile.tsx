@@ -3,7 +3,7 @@ import { MoneyExchanges, BillingAddress, BrandType, InfoType } from '../types/br
 import './styles/styles.css';
 import { selectToken } from '../redux/store/userSlice';
 import { useSelector } from 'react-redux';
-import { TAaddBrandNote, TAdeleteNote, TAupdateBrandNote } from '../services/brandAPI';
+import { TAdeleteNote, TAupdateBrandNote } from '../services/brandAPI';
 
 const BrandProfile = (data: BrandType) => {
   const token = useSelector(selectToken);
@@ -126,14 +126,17 @@ const BrandProfile = (data: BrandType) => {
               onChange={(e) => setNotes(e.target.value)}
             />
           </div>
-          <div className='flex gap-12'>
+          <div className="flex gap-12">
             <button
               className="bg-blue-500 text-white rounded-md px-3 py-2 mt-2 w-full"
               onClick={() => UpdateNote(_id, notes, token)}
             >
               Update Note
             </button>
-            <button className="bg-blue-500 text-white rounded-md px-3 py-2 mt-2 w-full" onClick={() => DeleteNote(_id, token)}>
+            <button
+              className="bg-blue-500 text-white rounded-md px-3 py-2 mt-2 w-full"
+              onClick={() => DeleteNote(_id, token)}
+            >
               Delete Note
             </button>
           </div>
