@@ -69,22 +69,19 @@ const AllBrands = () => {
   const [pageSize, setPageSize] = useState(PAGE_SIZES[3]);
   const [initialRecords, setInitialRecords] = useState(sortBy(userData, 'id'));
   const [recordsData, setRecordsData] = useState(initialRecords);
-  const [tempData, setTempData] = useState(initialRecords);
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [error, setError] = useState<string | null>(null);
-  const [search, setSearch] = useState('');
+  const [brandname, setBrandname] = useState('');
   const [searchMatches, setSearchMatches] = useState<AllBrandType[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [brandData, setBrandData] = useState<BrandType | null>(null);
-  const [showBrand, setShowBrand] = useState(false);
+  const [brandData, setbrandData] = useState<BrandType | null>(null);
 
   useEffect(() => {
     const loadBrands = async () => {
       try {
         const response = await fetchData(token);
         if (response !== undefined) {
-          setSearch(response.data);
-          setBrandData(response);
+          setBrandname(response.data);
           setInitialRecords(response);
         } else {
           setError('No data found');
@@ -96,14 +93,64 @@ const AllBrands = () => {
     loadBrands();
   }, []);
 
+  const handleForm = async (e: any) => {
+    e.preventDefault();
+    let data;
+    data = { brandname };
+    if (brandname === '') {
+      setError('Please provide brand name!');
+      return;
+    }
+    console.log('brandname', brandname);
+    try {
+      const res = await TAfindBrand(data, token);
+      const response = Array.isArray(res) ? res[0] : res;
+
+      const object: BrandType = {
+        balance: response.balance,
+        email: response.email,
+        brand_name: response.brand_name,
+        country: response.country,
+        first_name: response.first_name,
+        last_name: response.last_name,
+        phone: response.phone,
+        currency: response.currency,
+        language: response.language,
+        brand_logo: response.brand_logo,
+        job_title: response.job_title,
+        billing_address: {
+          type: response.billing_address?.type ?? '',
+          firm_name: response.billing_address?.firm_name ?? '',
+          contactName: response.billing_address?.contactName ?? '',
+          id: response.billing_address?.id ?? '',
+          city: response.billing_address?.city ?? '',
+          country: response.billing_address?.country ?? '',
+          address: response.billing_address?.address ?? '',
+          zipCode: response.billing_address?.zipCode ?? '',
+        },
+
+        money_exchanges: Array.isArray(response.money_exchanges)
+          ? response.money_exchanges.map((exchange: MoneyExchanges) => ({
+              operation: exchange?.operation ?? '',
+              amount: exchange?.amount ?? 0,
+              application_id: exchange?.application_id ?? '',
+              action_time: exchange?.action_time ?? '',
+            }))
+          : [],
+        notes: '',
+        _id: '',
+      };
+      setbrandData(object);
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
+
   const searchBrands = (text: string) => {
     let matches = userData.filter((brand: AllBrandType) => {
       const regex = new RegExp(`^${text}`, 'gi');
+      setBrandname(text);
 
-      if (text === '') {
-        setShowBrand(false);
-        return null;
-      }
       return brand.brand_name.match(regex);
     });
     if (matches.length === 0) {
@@ -141,6 +188,10 @@ const AllBrands = () => {
     setRecordsData([...initialRecords.slice(from, to)]);
   }, [page, pageSize, initialRecords]);
 
+  const handleBrandNameSelect = (selectedBrand: any) => {
+    setBrandname(selectedBrand.brand_name);
+  };
+
   useEffect(() => {
     const handleClick = () => {
       setIsDropdownOpen(false);
@@ -155,38 +206,13 @@ const AllBrands = () => {
     <div className="panel">
       <div className="mb-4.5 flex md:items-center md:flex-row flex-col gap-5">
         {error && <div className="bg-red-200 text-red-800 border border-red-600 p-2 rounded">{error}</div>}
-        <div className="flex flex-col w-full">
-          {showBrand &&
-            searchMatches.map((brand) => (
-              <BrandProfile
-                // balance={0}
-                country={''}
-                currency={''}
-                language={''}
-                brand_logo={''}
-                job_title={''}
-                billing_address={{
-                  type: '',
-                  firm_name: '',
-                  contactName: '',
-                  id: '',
-                  city: '',
-                  country: '',
-                  address: '',
-                  zipCode: '',
-                }}
-                money_exchanges={[]}
-                key={brand.first_name}
-                {...brand}
-              />
-            ))}
-        </div>
+        <div className="w-full ">{brandData && <BrandProfile {...brandData} />}</div>
         <div className="ltr:ml-auto rtl:mr-auto flex">
           <input
             type="text"
             className="form-input w-auto"
             placeholder="Search Brand Name"
-            value={search}
+            value={brandname}
             onChange={(e) => {
               const text = e.target.value;
               searchBrands(text);
@@ -195,14 +221,18 @@ const AllBrands = () => {
           {isDropdownOpen && searchMatches.length > 0 && (
             <div className="absolute bg-white border border-gray-300 rounded mt-10 z-10">
               {searchMatches.slice(0, 4).map((match: AllBrandType) => (
-                <div className="p-2 border-b border-gray-300 hover:bg-gray-100" key={match.id}>
+                <div
+                  className="p-2 border-b border-gray-300 hover:bg-gray-100"
+                  key={match.id}
+                  onClick={() => handleBrandNameSelect(match)}
+                >
                   {match.brand_name}
                 </div>
               ))}
             </div>
           )}
           <div className="flex justify-center">
-            <button type="button" onClick={() => setShowBrand(true)} className="btn btn-primary ml-3">
+            <button type="button" onClick={handleForm} className="btn btn-primary ml-3">
               Submit
             </button>
           </div>
@@ -229,14 +259,14 @@ const AllBrands = () => {
                 <div>
                   {balance > 0 ? (
                     <div>
-                      <p style={
-                        {
+                      <p
+                        style={{
                           color: '#009e1a',
                           display: 'inline-block',
                           marginRight: '5px',
-                          fontWeight: 'bold'
-                        }
-                      }>
+                          fontWeight: 'bold',
+                        }}
+                      >
                         {balance}
                       </p>
                       <FontAwesomeIcon icon={faDollarSign} style={{ color: '#009e1a' }} />

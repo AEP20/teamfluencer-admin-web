@@ -1,16 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { CampaignType, InfoType, Limitations, ApplicationCounts } from '../types/campaignsData';
 import './styles/styles.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { TAdoVisibleCampaign } from '../services/campaignsAPI';
-import { useSelector } from 'react-redux';
-import { selectToken } from '../redux/store/userSlice';
 
 const CampaignProfile = (data: CampaignType) => {
-  const token = useSelector(selectToken);
-
-  const [_id, setId] = useState('');
   const [name, setName] = useState('');
   const [country, setCountry] = useState('');
   const [description, setDescription] = useState('');
@@ -42,7 +34,6 @@ const CampaignProfile = (data: CampaignType) => {
   });
 
   useEffect(() => {
-    setId(data?._id ?? '');
     setName(data?.name ?? '');
     setCountry(data?.country ?? '');
     setDescription(data?.description ?? '');
@@ -79,25 +70,14 @@ const CampaignProfile = (data: CampaignType) => {
   }, [data]);
 
   const campaignInfo: InfoType[] = [
-    { key: 'ID:', value: _id},
     { key: 'Campaign Name:', value: name },
     { key: 'Country:', value: country },
     { key: 'Description:', value: description },
     { key: 'Platform:', value: platform },
+    { key: 'Visibility:', value: visibility === true ? 'true' : 'false' },
     { key: 'Is Verified:', value: isVerified === true ? 'true' : 'false' },
     { key: 'Rejected Reason:', value: rejectedReason === '' ? 'No rejected Reason' : rejectedReason },
   ];
-
-  async function toggleVisibility(_id: string, visibility: string, token: string) {
-    try {
-     const response = await TAdoVisibleCampaign(_id, visibility, token);
-      if (response){
-        setVisibility(visibility === 'true' ? true : false);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   return (
     <div className="profile-section bg-white p-3 shadow-md mb-3">
@@ -110,18 +90,6 @@ const CampaignProfile = (data: CampaignType) => {
               <td className="info-value">{info.value}</td>
             </tr>
           ))}
-          <tr>
-            <td className="info-key">Visibility:</td>
-            <div className="flex gap-12 items-center">
-              <td className="info-value">{visibility === true ? 'true' : 'false'}</td>
-              <button
-                className="btn btn-icon btn-primary"
-                onClick={() => toggleVisibility(_id, visibility ? 'false' : 'true', token)}
-              >
-                <FontAwesomeIcon icon={visibility ? faEye : faEyeSlash} />
-              </button>
-            </div>
-          </tr>
           <tr>
             <td className="info-key">Limitations:</td>
             <td className="info-value">

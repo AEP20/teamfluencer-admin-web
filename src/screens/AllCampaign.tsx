@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { selectToken } from '../redux/store/userSlice';
-import { TAfindAllCampaigns } from '../services/campaignsAPI';
+import { TAdoVisibleCampaign, TAfindAllCampaigns } from '../services/campaignsAPI';
 import {
   CampaignType,
   Campaign,
@@ -15,17 +15,16 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
-import CampaignProfile from '../components/CampaignProfile';
 import { faHeartPulse } from '@fortawesome/free-solid-svg-icons';
 
 const fetchData = async (token: string) => {
   try {
     const response = await TAfindAllCampaigns(token);
     if (response && Array.isArray(response.campaigns)) {
-      const totalLength = response.campaigns.length;
       const data = response.campaigns.map((item: any, index: any) => {
         return {
           id: index + 1,
+          _id: item.details._id,
           ...item,
         };
       });
@@ -52,10 +51,7 @@ function AllCampaign() {
   const [recordsData, setRecordsData] = useState(initialRecords);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [searchMatches, setSearchMatches] = useState<Campaign[]>([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [showCampaign, setShowCampaign] = useState(false);
-  const [tempData, setTempData] = useState(initialRecords);
+  const [visibility, setVisibility] = useState(Boolean);
 
   useEffect(() => {
     const loadCampaigns = async () => {
@@ -87,7 +83,7 @@ function AllCampaign() {
       }
     };
     getUserData();
-  }, []);
+  }, [token]);
 
   const defaultState: CampaignFilters = {
     is_verified: '',
@@ -135,16 +131,6 @@ function AllCampaign() {
     'platform',
     'max_cost',
   ];
-
-  useEffect(() => {
-    const handleClick = () => {
-      setIsDropdownOpen(false);
-    };
-    document.addEventListener('click', handleClick);
-    return () => {
-      document.removeEventListener('click', handleClick);
-    };
-  }, []);
 
   useEffect(() => {
     setPage(1);
@@ -208,7 +194,6 @@ function AllCampaign() {
     });
 
     setInitialRecords(dt);
-    setTempData(dt);
   }, [filters]);
 
   const searchCampaign = (text: string) => {
@@ -234,21 +219,21 @@ function AllCampaign() {
     }
   };
 
-  const renderDescriptionCell = ({ description }: CampaignType) => {
-    return (
-      <div className="tooltip" data-tooltip={description}>
-        <div className="text-container">
-          {description.length > 100 ? `${description.slice(0, 100)}...` : description}
-        </div>
-      </div>
-    );
-  };
+  async function toggleVisibility(_id: string, visibility: string, token: string) {
+    console.log('kullanıldı');
+    try {
+      const response = await TAdoVisibleCampaign(_id, visibility, token);
+      if (response) {
+        setVisibility(!visibility);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className="panel">
       {error && <div className="alert alert-danger">{error}</div>}
-      {showCampaign && searchMatches.map((campaign) => <CampaignProfile key={campaign._id} {...campaign} />)}
-
       <div className="flex md:items-center md:flex-row flex-col">
         <div className="flex flex-col justify-center text-center"></div>
         <div className="flex flex-col md:flex-row">
@@ -413,7 +398,7 @@ function AllCampaign() {
                 <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</div>
               ),
             },
-            { accessor: 'description', title: 'Description', sortable: true, render: renderDescriptionCell },
+            { accessor: 'description', title: 'Description', sortable: true },
             { accessor: 'country', title: 'Country', sortable: true },
             { accessor: 'platform', title: 'Platform', sortable: true },
             {
@@ -430,13 +415,17 @@ function AllCampaign() {
               accessor: 'visibility',
               title: 'active',
               sortable: true,
-              render: ({ visibility }) => (
-                <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  <FontAwesomeIcon
-                    icon={faHeartPulse}
-                    size="lg"
-                    style={{ color: visibility ? '#009e1a' : '#ff0000' }}
-                  />
+              render: ({ _id, visibility }) => (
+                <div className="flex">
+                  <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <button onClick={() => toggleVisibility(_id, visibility ? 'false' : 'true', token)}>
+                      <FontAwesomeIcon
+                        icon={faHeartPulse}
+                        size="lg"
+                        style={{ color: visibility ? '#009e1a' : '#ff0000' }}
+                      />
+                    </button>
+                  </div>
                 </div>
               ),
             },
