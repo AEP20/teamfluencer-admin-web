@@ -153,7 +153,7 @@ const AllBrands = () => {
 
       return brand.brand_name.match(regex);
     });
-    if (matches.length === 0) {
+    if (matches.length === 0 || text.length === 0) {
       setIsDropdownOpen(false);
     } else {
       setIsDropdownOpen(true);
