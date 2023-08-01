@@ -2,8 +2,22 @@ import React from 'react';
 
 function APIdocsScreen() {
   const rows = [
+    ///HEALTH
     { path: '/health', get: true, post: false, delete: false, put: false, summary: 'Check server health' },
+    ///AUTH
+    { path: '/admin/signin', get: false, post: true, delete: false, put: false, summary: 'Admin user sign in' },
+    { path: '/admin/signup', get: false, post: true, delete: false, put: false, summary: 'Admin user sign up' },
+    ///CAMPAIGN
+    { path: '/campaign/get', get: true, post: false, delete: false, put: false, summary: 'Get campaign by name' },
     { path: '/campaign/getall', get: true, post: false, delete: false, put: false, summary: 'Get all campaigns' },
+    {
+      path: '/campaign/getverifiedcampaign',
+      get: true,
+      post: false,
+      delete: false,
+      put: false,
+      summary: 'Get verified campaign',
+    },
     {
       path: '/campaign/get/:brand_id',
       get: true,
@@ -12,8 +26,31 @@ function APIdocsScreen() {
       put: false,
       summary: 'Get a specific campaign with id',
     },
-    { path: '/campaign/getverificationcampaign', get: true, post: false, delete: false, put: false, summary: 'Get all campaigns awaiting approval' },
-    { path: '/campaign/verificate', get: false, post: false, delete: false, put: true, summary: 'Verificate campaigns' },
+    {
+      path: '/campaign/getverificationcampaign',
+      get: true,
+      post: false,
+      delete: false,
+      put: false,
+      summary: 'Get all campaigns awaiting approval',
+    },
+    {
+      path: '/campaign/verificate',
+      get: false,
+      post: false,
+      delete: false,
+      put: true,
+      summary: 'Verificate campaigns',
+    },
+    {
+      path: '/campaign/visible',
+      get: false,
+      post: true,
+      delete: false,
+      put: false,
+      summary: 'Do visible campaigns',
+    },
+    ///BRAND
     { path: '/brand/getall', get: true, post: false, delete: false, put: false, summary: 'Get all brands' },
     {
       path: '/brand/get',
@@ -23,10 +60,31 @@ function APIdocsScreen() {
       put: false,
       summary: 'Get a specific brand using brand_name, email and phone',
     },
-
-    { path: '/admin/signin', get: false, post: true, delete: false, put: false, summary: 'Admin user sign in' },
-    { path: '/admin/signup', get: false, post: true, delete: false, put: false, summary: 'Admin user sign up' },
-
+    {
+      path: '/brand/get/:id',
+      get: true,
+      post: false,
+      delete: false,
+      put: false,
+      summary: 'Get brand by id',
+    },
+    {
+      path: '/brand/updatenote/:id/:notes',
+      get: false,
+      post: false,
+      delete: false,
+      put: true,
+      summary: 'Update brand notes',
+    },
+    {
+      path: '/brand/deletenote/:id',
+      get: false,
+      post: false,
+      delete: true,
+      put: false,
+      summary: 'Delete brand notes',
+    },
+    ///USER
     { path: '/user/getall', get: true, post: false, delete: false, put: false, summary: 'Get all filtered users' },
     {
       path: '/user/getuser',

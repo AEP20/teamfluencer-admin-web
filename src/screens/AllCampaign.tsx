@@ -51,7 +51,7 @@ function AllCampaign() {
   const [recordsData, setRecordsData] = useState(initialRecords);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [visibility, setVisibility] = useState(Boolean);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     const loadCampaigns = async () => {
@@ -199,9 +199,14 @@ function AllCampaign() {
   const searchCampaign = (text: string) => {
     let matches = userData.filter((campaign: Campaign) => {
       const regex = new RegExp(text, 'gi');
+      setSearch(text);
       return campaign.name.match(regex);
     });
-
+    if (matches.length === 0 || text.length === 0) {
+      setIsDropdownOpen(false);
+    } else {
+      setIsDropdownOpen(true);
+    }
     setInitialRecords(matches);
   };
 
@@ -223,13 +228,23 @@ function AllCampaign() {
     console.log('kullanıldı');
     try {
       const response = await TAdoVisibleCampaign(_id, visibility, token);
-      if (response) {
-        setVisibility(!visibility);
-      }
+      if (!response) return console.log('response yok');
     } catch (error) {
       console.log(error);
     }
   }
+  const handleCampaignSelect = (selectedCampaign: any) => {
+    setSearch(selectedCampaign.name);
+  };
+  useEffect(() => {
+    const handleClick = () => {
+      setIsDropdownOpen(false);
+    };
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  }, []);
 
   return (
     <div className="panel">
@@ -370,17 +385,32 @@ function AllCampaign() {
             }
           })}
         </div>
-        <input
-          type="text"
-          className="form-input w-auto absolute top-0 right-0 mt-8 mr-16"
-          placeholder="Search Campaign Name"
-          value={search}
-          onChange={(e) => {
-            const text = e.target.value;
-            setSearch(text);
-            searchCampaign(text);
-          }}
-        />
+        <div className='ml-auto mb-32 mr-16'>
+          <input
+            type="text"
+            className="form-input w-auto"
+            placeholder="Search Campaign Name"
+            value={search}
+            onChange={(e) => {
+              const text = e.target.value;
+              setSearch(text);
+              searchCampaign(text);
+            }}
+          />
+          {isDropdownOpen && initialRecords.length > 0 && (
+            <div className="w-auto absolute bg-white border border-gray-300 rounded z-10">
+              {initialRecords.slice(0, 4).map((match: CampaignType) => (
+                <div
+                  className="p-2 border-b border-gray-300 hover:bg-gray-100"
+                  key={match._id}
+                  onClick={() => handleCampaignSelect(match)}
+                >
+                  {match.name}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="datatables">
