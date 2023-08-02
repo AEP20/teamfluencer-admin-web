@@ -20,7 +20,7 @@ const FindUser = () => {
           const response = await TAfindUserById(id, token);
           setProfileData(response);
         } catch (error) {
-          console.log(error);
+          throw error;
         }
       };
       fetchData();
