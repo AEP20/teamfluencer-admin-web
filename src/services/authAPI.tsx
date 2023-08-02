@@ -28,7 +28,7 @@ export const TAlogin = async (email: string, password: string) => {
 
 export const TAsignup = async (email: string, password: string) => {
   try {
-    const response = await fetch(`${apiClient.baseURL}/admin-login`, {
+    const response = await fetch(`${apiClient.baseURL}/signup`, {
       method: 'POST',
       headers: apiClient.headers,
       credentials: 'include',

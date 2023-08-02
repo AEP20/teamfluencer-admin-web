@@ -33,11 +33,11 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/auth/*" element={!token ? <AuthLayout /> : <Navigate to="/user/getall" />} />
+        <Route path="/auth/*" element={token ? <MainLayout /> : <AuthLayout />} />
         <Route path="/*" element={token ? <MainLayout /> : <Navigate to="/auth/login" />} />
-        <Route path="/user/*" element={token ? <UserLayout /> : <Navigate to="/auth/login" />} />
-        <Route path="/brands/*" element={token ? <BrandsLayout /> : <Navigate to="/auth/login" />} />
-        <Route path="/campaigns/*" element={token ? <CampaignsLayout /> : <Navigate to="/auth/login" />} />
+        <Route path="/user/*" element={token ? <UserLayout /> : <AuthLayout />} />
+        <Route path="/brands/*" element={token ? <BrandsLayout /> : <AuthLayout />} />
+        <Route path="/campaigns/*" element={token ? <CampaignsLayout /> : <AuthLayout />} />
       </Routes>
     </BrowserRouter>
   );
