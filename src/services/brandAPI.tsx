@@ -11,7 +11,7 @@ export const TAfindBrand = async (data: any, token: string) => {
       query = `?brand_name=${data.brandname}`;
     }
 
-    const response = await apiClient.get(`/brand/get${query}`, {
+    const response = await apiClient.get(`/admin-brand/get${query}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -29,7 +29,7 @@ export const TAfindBrand = async (data: any, token: string) => {
 
 export const TAfindAllBrands = async (token: string) => {
   try {
-    const response = await apiClient.get(`/brand/getall`, {
+    const response = await apiClient.get(`/admin-brand/getall`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -47,7 +47,7 @@ export const TAfindAllBrands = async (token: string) => {
 
 export const TAfindBrandById = async (id: any, token: string) => {
   try {
-    const response = await apiClient.get(`/brand/getuser/${id}`, {
+    const response = await apiClient.get(`/admin-brand/getuser/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -65,7 +65,7 @@ export const TAfindBrandById = async (id: any, token: string) => {
 
 export const TAupdateBrand = async (id: any, data: any, token: string) => {
   try {
-    const response = await apiClient.put(`/brand/update/${id}`, data, {
+    const response = await apiClient.put(`/admin-brand/update/${id}`, data, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -85,7 +85,7 @@ export const TAupdateBrand = async (id: any, data: any, token: string) => {
 export const TAupdateBrandNote = async (id: string, notes: string, token: string) => {
   try {
     const response = await apiClient.put(
-      `/brand/updatenote/${id}/${notes}`,
+      `/admin-brand/updatenote/${id}/${notes}`,
       {},
       {
         headers: {
@@ -107,7 +107,7 @@ export const TAupdateBrandNote = async (id: string, notes: string, token: string
 
 export const TAdeleteNote = async (id: any, token: string) => {
   try {
-    const response = await apiClient.delete(`/brand/deletenote/${id}`, {
+    const response = await apiClient.delete(`/admin-brand/deletenote/${id}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,

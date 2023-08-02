@@ -6,7 +6,7 @@ export const logoutUser = () => {
 };
 
 const apiClient = axios.create({
-  baseURL: `${process.env.REACT_APP_AUTH_API_URL}/admin`,
+  baseURL: `${process.env.REACT_APP_AUTH_API_URL}`,
   timeout: 15000,
   withCredentials: true,
   headers: {
