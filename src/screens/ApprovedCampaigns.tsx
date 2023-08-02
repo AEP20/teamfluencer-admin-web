@@ -41,8 +41,10 @@ function ApprovedCampaigns() {
   const [pageSize, setPageSize] = useState(PAGE_SIZES[3]);
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [isExpanded, setIsExpanded] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     const loadCampaigns = async () => {
       try {
         const response = await fetchData(token);
@@ -53,6 +55,8 @@ function ApprovedCampaigns() {
         }
       } catch (error) {
         setError('No campaign found');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -103,28 +107,34 @@ function ApprovedCampaigns() {
         {error && <div className="bg-red-200 text-red-800 border border-red-600 p-2 rounded">{error}</div>}
       </div>
       <div className="datatables">
-        <DataTable
-          highlightOnHover
-          className="whitespace-nowrap table-hover"
-          records={recordsData}
-          columns={[
-            { accessor: 'id', title: 'Id', sortable: true },
-            { accessor: 'name', title: 'Name', sortable: true },
-            { accessor: 'description', title: 'Description', sortable: true, render: renderDescriptionCell },
-            { accessor: 'country', title: 'Country', sortable: true },
-            { accessor: 'platform', title: 'Platform', sortable: true },
-          ]}
-          totalRecords={initialRecords.length}
-          recordsPerPage={pageSize}
-          page={page}
-          onPageChange={(p) => setPage(p)}
-          recordsPerPageOptions={PAGE_SIZES}
-          onRecordsPerPageChange={setPageSize}
-          sortStatus={sortStatus}
-          onSortStatusChange={setSortStatus}
-          minHeight={200}
-          paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-        />
+        {loading ? (
+          <div className="flex items-center justify-center h-40">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-pink-600"></div>
+          </div>
+        ) : (
+          <DataTable
+            highlightOnHover
+            className="whitespace-nowrap table-hover"
+            records={recordsData}
+            columns={[
+              { accessor: 'id', title: 'Id', sortable: true },
+              { accessor: 'name', title: 'Name', sortable: true },
+              { accessor: 'description', title: 'Description', sortable: true, render: renderDescriptionCell },
+              { accessor: 'country', title: 'Country', sortable: true },
+              { accessor: 'platform', title: 'Platform', sortable: true },
+            ]}
+            totalRecords={initialRecords.length}
+            recordsPerPage={pageSize}
+            page={page}
+            onPageChange={(p) => setPage(p)}
+            recordsPerPageOptions={PAGE_SIZES}
+            onRecordsPerPageChange={setPageSize}
+            sortStatus={sortStatus}
+            onSortStatusChange={setSortStatus}
+            minHeight={200}
+            paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+          />
+        )}
       </div>
     </div>
   );

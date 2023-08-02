@@ -52,8 +52,10 @@ function AllCampaign() {
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     const loadCampaigns = async () => {
       try {
         const response = await fetchData(token);
@@ -62,6 +64,8 @@ function AllCampaign() {
         setSearch(response.data);
       } catch (error) {
         setError('No data found');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -385,7 +389,7 @@ function AllCampaign() {
             }
           })}
         </div>
-        <div className='ml-auto mb-32 mr-16'>
+        <div className="ml-auto mb-32 mr-16">
           <input
             type="text"
             className="form-input w-auto"
@@ -414,83 +418,89 @@ function AllCampaign() {
       </div>
 
       <div className="datatables">
-        <DataTable
-          highlightOnHover
-          className="whitespace-nowrap table-hover"
-          records={recordsData}
-          columns={[
-            { accessor: 'id', title: 'Id', sortable: true },
-            {
-              accessor: 'name',
-              title: 'Name',
-              sortable: true,
-              render: ({ name }) => (
-                <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</div>
-              ),
-            },
-            { accessor: 'description', title: 'Description', sortable: true },
-            { accessor: 'country', title: 'Country', sortable: true },
-            { accessor: 'platform', title: 'Platform', sortable: true },
-            {
-              accessor: 'is_verified',
-              title: 'Verified',
-              sortable: true,
-              render: ({ is_verified }) => (
-                <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {verifiedIcon(is_verified)}
-                </div>
-              ),
-            },
-            {
-              accessor: 'visibility',
-              title: 'active',
-              sortable: true,
-              render: ({ _id, visibility }) => (
-                <div className="flex">
+        {loading ? (
+          <div className="flex items-center justify-center h-40">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-pink-600"></div>
+          </div>
+        ) : (
+          <DataTable
+            highlightOnHover
+            className="whitespace-nowrap table-hover"
+            records={recordsData}
+            columns={[
+              { accessor: 'id', title: 'Id', sortable: true },
+              {
+                accessor: 'name',
+                title: 'Name',
+                sortable: true,
+                render: ({ name }) => (
+                  <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</div>
+                ),
+              },
+              { accessor: 'description', title: 'Description', sortable: true },
+              { accessor: 'country', title: 'Country', sortable: true },
+              { accessor: 'platform', title: 'Platform', sortable: true },
+              {
+                accessor: 'is_verified',
+                title: 'Verified',
+                sortable: true,
+                render: ({ is_verified }) => (
                   <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    <button onClick={() => toggleVisibility(_id, visibility ? 'false' : 'true', token)}>
-                      <FontAwesomeIcon
-                        icon={faHeartPulse}
-                        size="lg"
-                        style={{ color: visibility ? '#009e1a' : '#ff0000' }}
-                      />
-                    </button>
+                    {verifiedIcon(is_verified)}
                   </div>
-                </div>
-              ),
-            },
-            {
-              accessor: 'created_at',
-              title: 'Created At',
-              sortable: true,
-              render: ({ created_at }: any) => (
-                <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {new Date(created_at).toLocaleDateString()}
-                </div>
-              ),
-            },
-            {
-              accessor: 'max_cost',
-              title: 'Max Cost',
-              sortable: true,
-              render: ({ max_cost }: any) => (
-                <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {max_cost && max_cost.toLocaleString()}
-                </div>
-              ),
-            },
-          ]}
-          totalRecords={initialRecords.length}
-          recordsPerPage={pageSize}
-          page={page}
-          onPageChange={(p) => setPage(p)}
-          recordsPerPageOptions={PAGE_SIZES}
-          onRecordsPerPageChange={setPageSize}
-          sortStatus={{} as DataTableSortStatus}
-          onSortStatusChange={() => {}}
-          minHeight={200}
-          paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-        />
+                ),
+              },
+              {
+                accessor: 'visibility',
+                title: 'active',
+                sortable: true,
+                render: ({ _id, visibility }) => (
+                  <div className="flex">
+                    <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      <button onClick={() => toggleVisibility(_id, visibility ? 'false' : 'true', token)}>
+                        <FontAwesomeIcon
+                          icon={faHeartPulse}
+                          size="lg"
+                          style={{ color: visibility ? '#009e1a' : '#ff0000' }}
+                        />
+                      </button>
+                    </div>
+                  </div>
+                ),
+              },
+              {
+                accessor: 'created_at',
+                title: 'Created At',
+                sortable: true,
+                render: ({ created_at }: any) => (
+                  <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {new Date(created_at).toLocaleDateString()}
+                  </div>
+                ),
+              },
+              {
+                accessor: 'max_cost',
+                title: 'Max Cost',
+                sortable: true,
+                render: ({ max_cost }: any) => (
+                  <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {max_cost && max_cost.toLocaleString()}
+                  </div>
+                ),
+              },
+            ]}
+            totalRecords={initialRecords.length}
+            recordsPerPage={pageSize}
+            page={page}
+            onPageChange={(p) => setPage(p)}
+            recordsPerPageOptions={PAGE_SIZES}
+            onRecordsPerPageChange={setPageSize}
+            sortStatus={{} as DataTableSortStatus}
+            onSortStatusChange={() => {}}
+            minHeight={200}
+            paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+          />
+        )}
       </div>
     </div>
   );

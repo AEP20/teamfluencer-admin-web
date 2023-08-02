@@ -75,8 +75,10 @@ const AllBrands = () => {
   const [searchMatches, setSearchMatches] = useState<AllBrandType[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [brandData, setbrandData] = useState<BrandType | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     const loadBrands = async () => {
       try {
         const response = await fetchData(token);
@@ -88,6 +90,8 @@ const AllBrands = () => {
         }
       } catch (error) {
         setError('No data found');
+      } finally {
+        setLoading(false);
       }
     };
     loadBrands();
@@ -239,67 +243,73 @@ const AllBrands = () => {
         </div>
       </div>
       <div className="datatables">
-        <DataTable
-          highlightOnHover
-          className="whitespace-nowrap table-hover"
-          records={recordsData}
-          columns={[
-            { accessor: 'id', title: 'Id', sortable: true },
-            {
-              accessor: 'firstName',
-              title: 'Name',
-              render: ({ first_name, last_name }) => <div>{`${first_name} ${last_name}`}</div>,
-            },
-            //create a money accessor to show the balance in the table, if balance is more than 0 then show a money icon
-            {
-              accessor: 'balance',
-              title: 'Balance',
-              sortable: true,
-              render: ({ balance }: any) => (
-                <div>
-                  {balance > 0 ? (
-                    <div>
-                      <p
-                        style={{
-                          color: '#009e1a',
-                          display: 'inline-block',
-                          marginRight: '5px',
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        {balance}
-                      </p>
-                      <FontAwesomeIcon icon={faDollarSign} style={{ color: '#009e1a' }} />
-                    </div>
-                  ) : (
-                    <div>{balance}</div>
-                  )}
-                </div>
-              ),
-            },
-            { accessor: 'brand_name', title: 'Brand Name' },
-            { accessor: 'first_name', title: 'First Name' },
-            { accessor: 'last_name', title: 'Last Name' },
-            { accessor: 'email', title: 'Email' },
-            { accessor: 'phone', title: 'Phone' },
-            {
-              accessor: 'last_login',
-              title: 'Last Login',
-              sortable: true,
-              render: ({ last_login }: any) => <div>{new Date(last_login).toLocaleDateString()}</div>,
-            },
-          ]}
-          totalRecords={initialRecords.length}
-          recordsPerPage={pageSize}
-          page={page}
-          onPageChange={(p) => setPage(p)}
-          recordsPerPageOptions={PAGE_SIZES}
-          onRecordsPerPageChange={setPageSize}
-          sortStatus={sortStatus}
-          onSortStatusChange={setSortStatus}
-          minHeight={200}
-          paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-        />
+        {loading ? (
+          <div className="flex items-center justify-center h-40">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-pink-600"></div>
+          </div>
+        ) : (
+          <DataTable
+            highlightOnHover
+            className="whitespace-nowrap table-hover"
+            records={recordsData}
+            columns={[
+              { accessor: 'id', title: 'Id', sortable: true },
+              {
+                accessor: 'firstName',
+                title: 'Name',
+                render: ({ first_name, last_name }) => <div>{`${first_name} ${last_name}`}</div>,
+              },
+              //create a money accessor to show the balance in the table, if balance is more than 0 then show a money icon
+              {
+                accessor: 'balance',
+                title: 'Balance',
+                sortable: true,
+                render: ({ balance }: any) => (
+                  <div>
+                    {balance > 0 ? (
+                      <div>
+                        <p
+                          style={{
+                            color: '#009e1a',
+                            display: 'inline-block',
+                            marginRight: '5px',
+                            fontWeight: 'bold',
+                          }}
+                        >
+                          {balance}
+                        </p>
+                        <FontAwesomeIcon icon={faDollarSign} style={{ color: '#009e1a' }} />
+                      </div>
+                    ) : (
+                      <div>{balance}</div>
+                    )}
+                  </div>
+                ),
+              },
+              { accessor: 'brand_name', title: 'Brand Name' },
+              { accessor: 'first_name', title: 'First Name' },
+              { accessor: 'last_name', title: 'Last Name' },
+              { accessor: 'email', title: 'Email' },
+              { accessor: 'phone', title: 'Phone' },
+              {
+                accessor: 'last_login',
+                title: 'Last Login',
+                sortable: true,
+                render: ({ last_login }: any) => <div>{new Date(last_login).toLocaleDateString()}</div>,
+              },
+            ]}
+            totalRecords={initialRecords.length}
+            recordsPerPage={pageSize}
+            page={page}
+            onPageChange={(p) => setPage(p)}
+            recordsPerPageOptions={PAGE_SIZES}
+            onRecordsPerPageChange={setPageSize}
+            sortStatus={sortStatus}
+            onSortStatusChange={setSortStatus}
+            minHeight={200}
+            paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+          />
+        )}
       </div>
     </div>
   );
