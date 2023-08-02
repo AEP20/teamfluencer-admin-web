@@ -229,12 +229,11 @@ function AllCampaign() {
   };
 
   async function toggleVisibility(_id: string, visibility: string, token: string) {
-    console.log('kullanıldı');
     try {
       const response = await TAdoVisibleCampaign(_id, visibility, token);
       if (!response) return console.log('response yok');
     } catch (error) {
-      console.log(error);
+      throw(error);
     }
   }
   const handleCampaignSelect = (selectedCampaign: any) => {

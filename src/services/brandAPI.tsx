@@ -101,7 +101,6 @@ export const TAupdateBrandNote = async (id: string, notes: string, token: string
       throw new Error('Update failed');
     }
   } catch (error) {
-    console.log('errorrrr girdi');
     throw error;
   }
 };

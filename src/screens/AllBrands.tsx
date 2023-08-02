@@ -105,7 +105,6 @@ const AllBrands = () => {
       setError('Please provide brand name!');
       return;
     }
-    console.log('brandname', brandname);
     try {
       const res = await TAfindBrand(data, token);
       const response = Array.isArray(res) ? res[0] : res;
