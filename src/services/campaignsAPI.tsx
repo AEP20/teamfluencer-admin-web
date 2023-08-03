@@ -8,7 +8,7 @@ export const TAdoVisibleCampaign = async (id: string, visibility: any, token: st
 
   try {
     const response = await apiClient.post(
-      `/admin-campaign/visible?${query}`,
+      `/admin/campaign/visible?${query}`,
       {},
       {
         headers: {
@@ -31,7 +31,7 @@ export const TAfindCampaign = async (data: any, token: string) => {
   }
 
   try {
-    const response = await apiClient.get(`/admin-campaign/get${query}`, {
+    const response = await apiClient.get(`/admin/campaign/get${query}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -49,7 +49,7 @@ export const TAfindCampaign = async (data: any, token: string) => {
 
 export const TAfindApprovedCampaigns = async (token: string) => {
   try {
-    const response = await apiClient.get(`/admin-campaign/getverifiedcampaign`, {
+    const response = await apiClient.get(`/admin/campaign/getverifiedcampaign`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -67,7 +67,7 @@ export const TAfindApprovedCampaigns = async (token: string) => {
 
 export const TAfindAllCampaigns = async (token: string) => {
   try {
-    const response = await apiClient.get(`/admin-campaign/getall`, {
+    const response = await apiClient.get(`/admin/campaign/getall`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -85,7 +85,7 @@ export const TAfindAllCampaigns = async (token: string) => {
 
 export const TAfindApprovalCampaign = async (token: string) => {
   try {
-    const response = await apiClient.get(`/admin-campaign/getverificationcampaign`, {
+    const response = await apiClient.get(`/admin/campaign/getverificationcampaign`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -110,7 +110,7 @@ export const TAdoApprovalCampaign = async (status: string, rejected_reason: stri
 
   try {
     const response = await apiClient.post(
-      `/admin-campaign/verificate?${query}`,
+      `/admin/campaign/verificate?${query}`,
       {},
       {
         headers: {

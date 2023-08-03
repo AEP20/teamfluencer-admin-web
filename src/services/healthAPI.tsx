@@ -2,7 +2,7 @@ import apiClient from './axiosInstance';
 
 export const TAhealth = async () => {
   try {
-    const response = await apiClient.get('/admin-healthcheck');
+    const response = await apiClient.get('/admin/healthcheck');
 
     if (response.status === 200) {
       const responseData = response.data;

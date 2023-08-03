@@ -8,7 +8,7 @@ export const TAfindUser = async (data: any, token: string) => {
       ? `_username=${data.username}`
       : `_phone=${data.phone}`;
 
-    const response = await apiClient.get(`/admin-user/getuser?${query}`, {
+    const response = await apiClient.get(`/admin/user/getuser?${query}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -26,7 +26,7 @@ export const TAfindUser = async (data: any, token: string) => {
 
 export const TAfindAllUser = async (params: any, token: string) => {
   try {
-    const response = await apiClient.get(`/admin-user/getall?${params}`, {
+    const response = await apiClient.get(`/admin/user/getall?${params}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -44,7 +44,7 @@ export const TAfindAllUser = async (params: any, token: string) => {
 
 export const TAfindApprovalUser = async (token: string) => {
   try {
-    const response = await apiClient.get(`/admin-user/getverificationprofiles`, {
+    const response = await apiClient.get(`/admin/user/getverificationprofiles`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -62,7 +62,7 @@ export const TAfindApprovalUser = async (token: string) => {
 
 export const TAfindAllApprovalUser = async (token: string) => {
   try {
-    const response = await apiClient.get(`/admin-user/getallverificationprofiles`, {
+    const response = await apiClient.get(`/admin/user/getallverificationprofiles`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -81,7 +81,7 @@ export const TAfindAllApprovalUser = async (token: string) => {
 export const TAverifyUser = async (id: string, status: string, token: string) => {
   try {
     const response = await apiClient.post(
-      `/admin-user/verificateuser/${id}/${status}`,
+      `/admin/user/verificateuser/${id}/${status}`,
       {},
       {
         headers: {
@@ -101,7 +101,7 @@ export const TAverifyUser = async (id: string, status: string, token: string) =>
 
 export const TAapprovedUser = async (token: string) => {
   try {
-    const response = await apiClient.get(`/admin-user/getverifiedprofiles`, {
+    const response = await apiClient.get(`/admin/user/getverifiedprofiles`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -119,7 +119,7 @@ export const TAapprovedUser = async (token: string) => {
 
 export const TAfindUserById = async (id: any, token: string) => {
   try {
-    const response = await apiClient.get(`/admin-user/getuser/${id}`, {
+    const response = await apiClient.get(`/admin/user/getuser/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
