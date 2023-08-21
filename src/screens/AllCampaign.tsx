@@ -45,7 +45,7 @@ function AllCampaign() {
   const [userData, setUserData] = useState([] as Campaign[]);
   const [campaignData, setCampaignData] = useState([] as CampaignType[]);
   const [page, setPage] = useState(1);
-  const PAGE_SIZES = [10, 20, 30, 50, 100, 500];
+  const PAGE_SIZES = [10, 20, 30, 50, 100];
   const [pageSize, setPageSize] = useState(PAGE_SIZES[4]);
   const [initialRecords, setInitialRecords] = useState(sortBy(campaignData, 'id'));
   const [recordsData, setRecordsData] = useState(initialRecords);

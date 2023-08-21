@@ -65,7 +65,7 @@ const AllBrands = () => {
   });
   const [userData, setUserData] = useState([] as AllBrandType[]);
   const [page, setPage] = useState(1);
-  const PAGE_SIZES = [10, 20, 30, 50, 100, 500];
+  const PAGE_SIZES = [10, 20, 30, 50, 100];
   const [pageSize, setPageSize] = useState(PAGE_SIZES[3]);
   const [initialRecords, setInitialRecords] = useState(sortBy(userData, 'id'));
   const [recordsData, setRecordsData] = useState(initialRecords);

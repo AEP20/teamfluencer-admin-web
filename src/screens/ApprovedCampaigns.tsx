@@ -37,7 +37,7 @@ function ApprovedCampaigns() {
   const [recordsData, setRecordsData] = useState(initialRecords);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const PAGE_SIZES = [10, 20, 30, 50, 100, 500];
+  const PAGE_SIZES = [10, 20, 30, 50, 100];
   const [pageSize, setPageSize] = useState(PAGE_SIZES[3]);
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [isExpanded, setIsExpanded] = useState(false);
