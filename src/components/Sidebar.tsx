@@ -168,6 +168,7 @@ const Sidebar = () => {
               </h2>
 
               <li className="nav-item">
+                <h2 className="flex justify-center font-extrabold mt-3 mb-2 font-xl">User</h2>
                 <ul>
                   <li className="nav-item">
                     <NavLink to="/user/find" className="group">
@@ -199,6 +200,133 @@ const Sidebar = () => {
                     </NavLink>
                   </li>
                   <li className="nav-item">
+                    <NavLink to="/user/getall" className="group">
+                      <div className="flex items-center">
+                        <svg
+                          className="group-hover:!text-primary"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            opacity="0.5"
+                            d="M19.7165 20.3624C21.143 19.5846 22 18.5873 22 17.5C22 16.3475 21.0372 15.2961 19.4537 14.5C17.6226 13.5794 14.9617 13 12 13C9.03833 13 6.37738 13.5794 4.54631 14.5C2.96285 15.2961 2 16.3475 2 17.5C2 18.6525 2.96285 19.7039 4.54631 20.5C6.37738 21.4206 9.03833 22 12 22C15.1066 22 17.8823 21.3625 19.7165 20.3624Z"
+                            fill="currentColor"
+                          />
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M5 8.51464C5 4.9167 8.13401 2 12 2C15.866 2 19 4.9167 19 8.51464C19 12.0844 16.7658 16.2499 13.2801 17.7396C12.4675 18.0868 11.5325 18.0868 10.7199 17.7396C7.23416 16.2499 5 12.0844 5 8.51464ZM12 11C13.1046 11 14 10.1046 14 9C14 7.89543 13.1046 7 12 7C10.8954 7 10 7.89543 10 9C10 10.1046 10.8954 11 12 11Z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                          Kullanıcıları Listele
+                        </span>
+                      </div>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/user/do-approval" className="group">
+                      <div className="flex items-center">
+                        <svg
+                          className="group-hover:!text-primary"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            opacity="0.5"
+                            d="M21 15.9983V9.99826C21 7.16983 21 5.75562 20.1213 4.87694C19.3529 4.10856 18.175 4.01211 16 4H8C5.82497 4.01211 4.64706 4.10856 3.87868 4.87694C3 5.75562 3 7.16983 3 9.99826V15.9983C3 18.8267 3 20.2409 3.87868 21.1196C4.75736 21.9983 6.17157 21.9983 9 21.9983H15C17.8284 21.9983 19.2426 21.9983 20.1213 21.1196C21 20.2409 21 18.8267 21 15.9983Z"
+                            fill="currentColor"
+                          />
+                          <path
+                            d="M8 3.5C8 2.67157 8.67157 2 9.5 2H14.5C15.3284 2 16 2.67157 16 3.5V4.5C16 5.32843 15.3284 6 14.5 6H9.5C8.67157 6 8 5.32843 8 4.5V3.5Z"
+                            fill="currentColor"
+                          />
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M12 9.25C12.4142 9.25 12.75 9.58579 12.75 10V12.25L15 12.25C15.4142 12.25 15.75 12.5858 15.75 13C15.75 13.4142 15.4142 13.75 15 13.75L12.75 13.75L12.75 16C12.75 16.4142 12.4142 16.75 12 16.75C11.5858 16.75 11.25 16.4142 11.25 16L11.25 13.75H9C8.58579 13.75 8.25 13.4142 8.25 13C8.25 12.5858 8.58579 12.25 9 12.25L11.25 12.25L11.25 10C11.25 9.58579 11.5858 9.25 12 9.25Z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                          Profilleri Onayla
+                        </span>
+                      </div>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/user/find-waiting-approval" className="group">
+                      <div className="flex items-center">
+                        <svg
+                          className="group-hover:!text-primary"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            opacity="0.5"
+                            d="M3 10C3 6.22876 3 4.34315 4.17157 3.17157C5.34315 2 7.22876 2 11 2H13C16.7712 2 18.6569 2 19.8284 3.17157C21 4.34315 21 6.22876 21 10V14C21 17.7712 21 19.6569 19.8284 20.8284C18.6569 22 16.7712 22 13 22H11C7.22876 22 5.34315 22 4.17157 20.8284C3 19.6569 3 17.7712 3 14V10Z"
+                            fill="currentColor"
+                          />
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M12 5.25C12.4142 5.25 12.75 5.58579 12.75 6V7.25H14C14.4142 7.25 14.75 7.58579 14.75 8C14.75 8.41421 14.4142 8.75 14 8.75L12.75 8.75L12.75 10C12.75 10.4142 12.4142 10.75 12 10.75C11.5858 10.75 11.25 10.4142 11.25 10L11.25 8.75H9.99997C9.58575 8.75 9.24997 8.41421 9.24997 8C9.24997 7.58579 9.58575 7.25 9.99997 7.25H11.25L11.25 6C11.25 5.58579 11.5858 5.25 12 5.25ZM7.25 14C7.25 13.5858 7.58579 13.25 8 13.25H16C16.4142 13.25 16.75 13.5858 16.75 14C16.75 14.4142 16.4142 14.75 16 14.75H8C7.58579 14.75 7.25 14.4142 7.25 14ZM8.25 18C8.25 17.5858 8.58579 17.25 9 17.25H15C15.4142 17.25 15.75 17.5858 15.75 18C15.75 18.4142 15.4142 18.75 15 18.75H9C8.58579 18.75 8.25 18.4142 8.25 18Z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                          Onay Bekleyen Profiller
+                        </span>
+                      </div>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/user/find-approved-users" className="group">
+                      <div className="flex items-center">
+                        <svg
+                          className="group-hover:!text-primary"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            opacity="0.5"
+                            d="M21 15.9983V9.99826C21 7.16983 21 5.75562 20.1213 4.87694C19.3529 4.10856 18.175 4.01211 16 4H8C5.82497 4.01211 4.64706 4.10856 3.87868 4.87694C3 5.75562 3 7.16983 3 9.99826V15.9983C3 18.8267 3 20.2409 3.87868 21.1196C4.75736 21.9983 6.17157 21.9983 9 21.9983H15C17.8284 21.9983 19.2426 21.9983 20.1213 21.1196C21 20.2409 21 18.8267 21 15.9983Z"
+                            fill="currentColor"
+                          />
+                          <path
+                            d="M8 3.5C8 2.67157 8.67157 2 9.5 2H14.5C15.3284 2 16 2.67157 16 3.5V4.5C16 5.32843 15.3284 6 14.5 6H9.5C8.67157 6 8 5.32843 8 4.5V3.5Z"
+                            fill="currentColor"
+                          />
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M12 9.25C12.4142 9.25 12.75 9.58579 12.75 10V12.25L15 12.25C15.4142 12.25 15.75 12.5858 15.75 13C15.75 13.4142 15.4142 13.75 15 13.75L12.75 13.75L12.75 16C12.75 16.4142 12.4142 16.75 12 16.75C11.5858 16.75 11.25 16.4142 11.25 16L11.25 13.75H9C8.58579 13.75 8.25 13.4142 8.25 13C8.25 12.5858 8.58579 12.25 9 12.25L11.25 12.25L11.25 10C11.25 9.58579 11.5858 9.25 12 9.25Z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                          Onaylanmış Profiller
+                        </span>
+                      </div>
+                    </NavLink>
+                  </li>
+                  <div className="border-t border-gray-300"></div>
+
+                  <h2 className="flex justify-center font-extrabold mt-3 mb-2 font-xl">Brand</h2>
+                  <li className="nav-item">
                     <NavLink to="/brands/find" className="group">
                       <div className="flex items-center">
                         <svg
@@ -229,35 +357,6 @@ const Sidebar = () => {
                         </svg>
                         <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
                           Marka Bul
-                        </span>
-                      </div>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink to="/user/find-waiting-approval" className="group">
-                      <div className="flex items-center">
-                        <svg
-                          className="group-hover:!text-primary"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            opacity="0.5"
-                            d="M3 10C3 6.22876 3 4.34315 4.17157 3.17157C5.34315 2 7.22876 2 11 2H13C16.7712 2 18.6569 2 19.8284 3.17157C21 4.34315 21 6.22876 21 10V14C21 17.7712 21 19.6569 19.8284 20.8284C18.6569 22 16.7712 22 13 22H11C7.22876 22 5.34315 22 4.17157 20.8284C3 19.6569 3 17.7712 3 14V10Z"
-                            fill="currentColor"
-                          />
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M12 5.25C12.4142 5.25 12.75 5.58579 12.75 6V7.25H14C14.4142 7.25 14.75 7.58579 14.75 8C14.75 8.41421 14.4142 8.75 14 8.75L12.75 8.75L12.75 10C12.75 10.4142 12.4142 10.75 12 10.75C11.5858 10.75 11.25 10.4142 11.25 10L11.25 8.75H9.99997C9.58575 8.75 9.24997 8.41421 9.24997 8C9.24997 7.58579 9.58575 7.25 9.99997 7.25H11.25L11.25 6C11.25 5.58579 11.5858 5.25 12 5.25ZM7.25 14C7.25 13.5858 7.58579 13.25 8 13.25H16C16.4142 13.25 16.75 13.5858 16.75 14C16.75 14.4142 16.4142 14.75 16 14.75H8C7.58579 14.75 7.25 14.4142 7.25 14ZM8.25 18C8.25 17.5858 8.58579 17.25 9 17.25H15C15.4142 17.25 15.75 17.5858 15.75 18C15.75 18.4142 15.4142 18.75 15 18.75H9C8.58579 18.75 8.25 18.4142 8.25 18Z"
-                            fill="currentColor"
-                          />
-                        </svg>
-                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                          Onay Bekleyen Profiller
                         </span>
                       </div>
                     </NavLink>
@@ -303,6 +402,9 @@ const Sidebar = () => {
                       </div>
                     </NavLink>
                   </li>
+                  <div className="border-t border-gray-300"></div>
+
+                  <h2 className="flex justify-center font-extrabold mt-3 mb-2 font-xl">Campaign</h2>
                   <li className="nav-item">
                     <NavLink to="/campaigns/find-all-campaigns" className="group">
                       <div className="flex items-center">
@@ -384,7 +486,7 @@ const Sidebar = () => {
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/user/do-approval" className="group">
+                    <NavLink to="/campaigns/do-approval" className="group">
                       <div className="flex items-center">
                         <svg
                           className="group-hover:!text-primary"
@@ -411,41 +513,14 @@ const Sidebar = () => {
                           />
                         </svg>
                         <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                          Profilleri Onayla
+                          Kampanyaları Onayla
                         </span>
                       </div>
                     </NavLink>
                   </li>
-                  <li className="nav-item">
-                    <NavLink to="/user/getall" className="group">
-                      <div className="flex items-center">
-                        <svg
-                          className="group-hover:!text-primary"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            opacity="0.5"
-                            d="M19.7165 20.3624C21.143 19.5846 22 18.5873 22 17.5C22 16.3475 21.0372 15.2961 19.4537 14.5C17.6226 13.5794 14.9617 13 12 13C9.03833 13 6.37738 13.5794 4.54631 14.5C2.96285 15.2961 2 16.3475 2 17.5C2 18.6525 2.96285 19.7039 4.54631 20.5C6.37738 21.4206 9.03833 22 12 22C15.1066 22 17.8823 21.3625 19.7165 20.3624Z"
-                            fill="currentColor"
-                          />
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M5 8.51464C5 4.9167 8.13401 2 12 2C15.866 2 19 4.9167 19 8.51464C19 12.0844 16.7658 16.2499 13.2801 17.7396C12.4675 18.0868 11.5325 18.0868 10.7199 17.7396C7.23416 16.2499 5 12.0844 5 8.51464ZM12 11C13.1046 11 14 10.1046 14 9C14 7.89543 13.1046 7 12 7C10.8954 7 10 7.89543 10 9C10 10.1046 10.8954 11 12 11Z"
-                            fill="currentColor"
-                          />
-                        </svg>
-                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                          Kullanıcıları Listele
-                        </span>
-                      </div>
-                    </NavLink>
-                  </li>
+                  <div className="border-t border-gray-300"></div>
 
+                  <h2 className="flex justify-center font-extrabold mt-3 mb-2 font-xl">API Docs</h2>
                   <li className="menu nav-item">
                     <NavLink to="/api-docs" className="group">
                       <div className="flex items-center">
@@ -476,74 +551,6 @@ const Sidebar = () => {
                         </span>
                       </div>
                     </NavLink>
-
-                    <li className="nav-item">
-                      <NavLink to="/campaigns/do-approval" className="group">
-                        <div className="flex items-center">
-                          <svg
-                            className="group-hover:!text-primary"
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              opacity="0.5"
-                              d="M21 15.9983V9.99826C21 7.16983 21 5.75562 20.1213 4.87694C19.3529 4.10856 18.175 4.01211 16 4H8C5.82497 4.01211 4.64706 4.10856 3.87868 4.87694C3 5.75562 3 7.16983 3 9.99826V15.9983C3 18.8267 3 20.2409 3.87868 21.1196C4.75736 21.9983 6.17157 21.9983 9 21.9983H15C17.8284 21.9983 19.2426 21.9983 20.1213 21.1196C21 20.2409 21 18.8267 21 15.9983Z"
-                              fill="currentColor"
-                            />
-                            <path
-                              d="M8 3.5C8 2.67157 8.67157 2 9.5 2H14.5C15.3284 2 16 2.67157 16 3.5V4.5C16 5.32843 15.3284 6 14.5 6H9.5C8.67157 6 8 5.32843 8 4.5V3.5Z"
-                              fill="currentColor"
-                            />
-                            <path
-                              fillRule="evenodd"
-                              clipRule="evenodd"
-                              d="M12 9.25C12.4142 9.25 12.75 9.58579 12.75 10V12.25L15 12.25C15.4142 12.25 15.75 12.5858 15.75 13C15.75 13.4142 15.4142 13.75 15 13.75L12.75 13.75L12.75 16C12.75 16.4142 12.4142 16.75 12 16.75C11.5858 16.75 11.25 16.4142 11.25 16L11.25 13.75H9C8.58579 13.75 8.25 13.4142 8.25 13C8.25 12.5858 8.58579 12.25 9 12.25L11.25 12.25L11.25 10C11.25 9.58579 11.5858 9.25 12 9.25Z"
-                              fill="currentColor"
-                            />
-                          </svg>
-                          <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                            Kampanyaları Onayla
-                          </span>
-                        </div>
-                      </NavLink>
-                    </li>
-
-                    <li className="nav-item">
-                      <NavLink to="/user/find-approved-users" className="group">
-                        <div className="flex items-center">
-                          <svg
-                            className="group-hover:!text-primary"
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              opacity="0.5"
-                              d="M21 15.9983V9.99826C21 7.16983 21 5.75562 20.1213 4.87694C19.3529 4.10856 18.175 4.01211 16 4H8C5.82497 4.01211 4.64706 4.10856 3.87868 4.87694C3 5.75562 3 7.16983 3 9.99826V15.9983C3 18.8267 3 20.2409 3.87868 21.1196C4.75736 21.9983 6.17157 21.9983 9 21.9983H15C17.8284 21.9983 19.2426 21.9983 20.1213 21.1196C21 20.2409 21 18.8267 21 15.9983Z"
-                              fill="currentColor"
-                            />
-                            <path
-                              d="M8 3.5C8 2.67157 8.67157 2 9.5 2H14.5C15.3284 2 16 2.67157 16 3.5V4.5C16 5.32843 15.3284 6 14.5 6H9.5C8.67157 6 8 5.32843 8 4.5V3.5Z"
-                              fill="currentColor"
-                            />
-                            <path
-                              fillRule="evenodd"
-                              clipRule="evenodd"
-                              d="M12 9.25C12.4142 9.25 12.75 9.58579 12.75 10V12.25L15 12.25C15.4142 12.25 15.75 12.5858 15.75 13C15.75 13.4142 15.4142 13.75 15 13.75L12.75 13.75L12.75 16C12.75 16.4142 12.4142 16.75 12 16.75C11.5858 16.75 11.25 16.4142 11.25 16L11.25 13.75H9C8.58579 13.75 8.25 13.4142 8.25 13C8.25 12.5858 8.58579 12.25 9 12.25L11.25 12.25L11.25 10C11.25 9.58579 11.5858 9.25 12 9.25Z"
-                              fill="currentColor"
-                            />
-                          </svg>
-                          <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                            Onaylanmış Profiller
-                          </span>
-                        </div>
-                      </NavLink>
-                    </li>
 
                     {/* <AnimateHeight duration={300} height={currentMenu === 'invoice' ? 'auto' : 0}>
                       <ul className="sub-menu text-gray-500">

@@ -163,7 +163,8 @@ const FindBrand = () => {
   return (
     <div className="flex flex-col lg:flex-row justify-between items-start min-h-screen bg-cover bg-center relative">
       <div className="w-full ">{brandData && <BrandProfile {...brandData} />}</div>
-      <form className="space-y-2 w-1/4 absolute top-5 right-6">
+      <form className="w-1/4 absolute top-5 right-6">
+        <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Brand Mail</h2>
         <input
           type="email"
           placeholder="email@mail.com"
@@ -187,14 +188,8 @@ const FindBrand = () => {
             ))}
           </div>
         )}
-        <input
-          type="tel"
-          placeholder="phone number (ex: 905555555555)"
-          className="form-input text-sm"
-          onChange={(e) => {
-            setPhone(e.target.value);
-          }}
-        />
+
+        <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Brand Name</h2>
         <input
           type="brandname"
           placeholder="brandname"
@@ -206,7 +201,7 @@ const FindBrand = () => {
           }}
         />
         {isNameDropdownOpen && searchNameMatches.length > 0 && (
-          <div className="absolute bg-white border border-gray-300 rounded mt-10 z-10">
+          <div className="absolute bg-white border border-gray-300 rounded z-10">
             {searchNameMatches.slice(0, 4).map((match: AllBrandType) => (
               <div
                 className="p-2 border-b border-gray-300 hover:bg-gray-100"
@@ -218,6 +213,16 @@ const FindBrand = () => {
             ))}
           </div>
         )}
+
+        <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Brand No</h2>
+        <input
+          type="tel"
+          placeholder="phone number (ex: 905555555555)"
+          className="form-input text-sm"
+          onChange={(e) => {
+            setPhone(e.target.value);
+          }}
+        />
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
         <div className="flex justify-center">
           <button type="button" onClick={handleForm} className="btn btn-primary mt-3">

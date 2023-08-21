@@ -85,7 +85,8 @@ const FindUser = () => {
   return (
     <div className="flex flex-col lg:flex-row justify-between items-start min-h-screen bg-cover bg-center relative">
       <div className="w-full">{profileData && <UserProfile {...profileData} />}</div>
-      <form className="space-y-2 w-1/4 absolute top-5 right-6 ">
+      <form className="w-1/4 absolute top-5 right-6 ">
+        <h2 className="text-sm font-bold mb-1 mt-3 ml-2">User Mail</h2>
         <input
           type="email"
           placeholder="email@mail.com"
@@ -94,6 +95,8 @@ const FindUser = () => {
             setEmail(e.target.value);
           }}
         />
+
+        <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Username</h2>
         <input
           type="username"
           placeholder="username"
@@ -103,6 +106,7 @@ const FindUser = () => {
           }}
         />
 
+        <h2 className="text-sm font-bold mb-1 mt-3 ml-2">User No</h2>
         <input
           type="tel"
           placeholder="phone number (ex: 905555555555)"

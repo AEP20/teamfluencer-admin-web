@@ -203,18 +203,40 @@ const WaitingApprovalUser = () => {
     'country',
   ];
 
+  const formatKey = (key: string) => {
+    switch (key) {
+      case 'age':
+        return 'Age';
+      case 'followers':
+        return 'Followers';
+      case 'average_like':
+        return 'Average Like';
+      case 'tiktok_followers':
+        return 'TikTok Followers';
+      case 'tiktok_average_like':
+        return 'TikTok Average Like';
+      case 'tiktok_engagement_rate':
+        return 'TikTok Engagement Rate';
+      case 'country':
+        return 'Country';
+      default:
+        return key;
+    }
+  };
+
   return (
     <div className="panel">
       <div className=" flex md:items-center md:flex-row flex-col gap-5">
-        <div className="flex flex-col justify-center text-center">
+        {/* <div className="flex flex-col justify-center text-center">
           <p className="mb-7 font-bold">MIN</p>
           <p className="mb-2 font-bold">MAX</p>
-        </div>
+        </div> */}
         <div className="md:flex md:flex-row w-full">
           {filterKeys.map((key) => {
             if (key !== 'country') {
               return (
                 <div key={key} className="md:flex md:flex-col flex-1 mb-1 mr-2">
+                  <h2 className="text-sm font-bold ml-2 mb-1">{formatKey(key)}</h2>
                   <input
                     type="text"
                     value={filters[key].min}
@@ -222,7 +244,7 @@ const WaitingApprovalUser = () => {
                       setFilter(key, 'min', e.target.value);
                     }}
                     className="form-input w-full mb-2"
-                    placeholder={`${key} min`}
+                    placeholder={`min. ${key}`}
                   />
 
                   <input
@@ -232,7 +254,7 @@ const WaitingApprovalUser = () => {
                       setFilter(key, 'max', e.target.value);
                     }}
                     className="form-input w-full"
-                    placeholder={`${key} max`}
+                    placeholder={`max. ${key}`}
                   />
                 </div>
               );
@@ -240,14 +262,15 @@ const WaitingApprovalUser = () => {
           })}
         </div>
       </div>
-      <div className="flex w-full justify-between text-center flex-end">
-        <div className="flex flex-row w-1/3 items-center">
-          <div className="ltr:ml-auto rtl:mr-auto mr-2">
+      <div className="flex w-full justify-between flex-end">
+        <div className="flex flex-row items-center w-1/3">
+          <div className="ltr:ml-auto rtl:mr-auto mr-2 mb-4 mt-3">
+            <h2 className="text-sm font-bold ml-2 mb-1">Keywords</h2>
             <input
               type="text"
               className="form-input w-auto"
-              placeholder="Keywords"
               value={search}
+              placeholder="Keywords"
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
@@ -255,7 +278,8 @@ const WaitingApprovalUser = () => {
             {filterKeys.map((key) => {
               if (key === 'country') {
                 return (
-                  <div key={key} className="md:flex md:flex-col flex-1">
+                  <div key={key} className="md:flex md:flex-col flex-1 mb-4 mt-3">
+                    <h2 className="text-sm font-bold ml-2 mb-1">Country Name</h2>
                     <input
                       type="text"
                       value={filters[key].value}
@@ -263,7 +287,7 @@ const WaitingApprovalUser = () => {
                         setFilter(key, 'value', e.target.value);
                       }}
                       className="form-input w-full"
-                      placeholder={`${key} value`}
+                      placeholder={`Country name`}
                     />
                   </div>
                 );
@@ -272,7 +296,7 @@ const WaitingApprovalUser = () => {
           </div>
         </div>
 
-        <div className="flex flex-row justify-end text-center w-1/3 mb-4 mr-2">
+        <div className="flex flex-row justify-end text-center w-1/3 mt-2 mb-6 mr-2">
           <DownloadPdfButton
             className=" inline-flex items-center justify-center px-2 py-2 mt-3 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 "
             userData={initialRecords}

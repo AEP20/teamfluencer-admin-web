@@ -53,6 +53,7 @@ function AllCampaign() {
   const [search, setSearch] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -233,7 +234,7 @@ function AllCampaign() {
       const response = await TAdoVisibleCampaign(_id, visibility, token);
       if (!response) return console.log('response yok');
     } catch (error) {
-      throw(error);
+      throw error;
     }
   }
   const handleCampaignSelect = (selectedCampaign: any) => {
@@ -249,6 +250,47 @@ function AllCampaign() {
     };
   }, []);
 
+  const formatKey = (key: string) => {
+    switch (key) {
+      case 'is_verified':
+        return 'Is Verified';
+      case 'visibility':
+        return 'Visibility';
+      case 'active_campaigns':
+        return 'Active Campaigns';
+      default:
+        return key;
+    }
+  };
+
+  const renderDescriptionCell = ({ description }: CampaignType) => {
+    const toggleExpandedRow = () => {
+      setIsExpanded(!isExpanded);
+    };
+
+    if (isExpanded) {
+      return (
+        <div>
+          {description}
+          <button type="button" onClick={toggleExpandedRow} className="text-blue-500 hover:underline">
+            Less
+          </button>
+        </div>
+      );
+    } else if (description.length > 50) {
+      return (
+        <div>
+          {`${description.slice(0, 50)}... `}
+          <button type="button" onClick={toggleExpandedRow} className="text-blue-500 hover:underline">
+            More
+          </button>
+        </div>
+      );
+    } else {
+      return <div>{description}</div>;
+    }
+  };
+
   return (
     <div className="panel">
       {error && <div className="alert alert-danger">{error}</div>}
@@ -259,7 +301,7 @@ function AllCampaign() {
             if (key === 'is_verified' || key === 'visibility' || key === 'active_campaigns') {
               return (
                 <div key={key} className="flex flex-col mr-4 ml-2">
-                  <h2 className="text-sm font-bold mb-2">{key.charAt(0).toUpperCase() + key.slice(1)}</h2>
+                  <h2 className="text-sm font-bold mb-2">{formatKey(key)}</h2>
                   <label className="inline-flex items-center mb-2">
                     <input
                       type="radio"
@@ -320,7 +362,7 @@ function AllCampaign() {
                 </div>
               );
             } else if (key === 'platform') {
-              const platforms = ['insta-post', 'insta-story', 'insta-reels', 'tiktok', ''];
+              const platforms = ['Insta-post', 'Insta-story', 'Insta-reels', 'Tiktok', ''];
               return (
                 <div key={key} className="flex flex-col mr-8 ml-2">
                   <h2 className="text-sm font-bold mb-2">{key.charAt(0).toUpperCase() + key.slice(1)}</h2>
@@ -341,10 +383,10 @@ function AllCampaign() {
                 </div>
               );
             } else if (key === 'created_at') {
-              const creationDates = ['last_week', 'last_month', 'last_three_months', ''];
+              const creationDates = ['Last week', 'Last month', 'Last three months', ''];
               return (
                 <div key={key} className="flex flex-col mr-4 ml-2">
-                  <h2 className="text-sm font-bold mb-2">{key.charAt(0).toUpperCase() + key.slice(1)}</h2>
+                  <h2 className="text-sm font-bold mb-2">Created at</h2>
                   {creationDates.map((date) => (
                     <label key={date} className="inline-flex items-center mb-2">
                       <input
@@ -364,6 +406,7 @@ function AllCampaign() {
             } else if (key === 'max_cost') {
               return (
                 <div key={key} className="flex flex-col flex-1/2 mr-4">
+                  <h2 className="text-sm font-bold mb-2 ml-1">Max Cost</h2>
                   <input
                     type="text"
                     value={filters[key].min}
@@ -371,7 +414,7 @@ function AllCampaign() {
                       setFilter(key, 'min', e.target.value);
                     }}
                     className="form-input w-full mb-2"
-                    placeholder={`${key} min`}
+                    placeholder={`min. max cost`}
                   />
 
                   <input
@@ -381,7 +424,7 @@ function AllCampaign() {
                       setFilter(key, 'max', e.target.value);
                     }}
                     className="form-input w-full"
-                    placeholder={`${key} max`}
+                    placeholder={`max. max cost`}
                   />
                 </div>
               );
@@ -436,7 +479,7 @@ function AllCampaign() {
                   <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</div>
                 ),
               },
-              { accessor: 'description', title: 'Description', sortable: true },
+              { accessor: 'description', title: 'Description', sortable: true, render: renderDescriptionCell },
               { accessor: 'country', title: 'Country', sortable: true },
               { accessor: 'platform', title: 'Platform', sortable: true },
               {
