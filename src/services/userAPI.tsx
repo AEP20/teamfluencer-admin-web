@@ -24,9 +24,9 @@ export const TAfindUser = async (data: any, token: string) => {
   }
 };
 
-export const TAfindAllUser = async (page: number, perPage: number, params: any, token: string) => {
+export const TAfindAllUser = async (page: number, params: any, token: string) => {
   try {
-    const response = await apiClient.get(`/admin/user/getall?${params}&page=${page}&perPage=${perPage}`, {
+    const response = await apiClient.get(`/admin/user/getall?${params}&page=${page}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

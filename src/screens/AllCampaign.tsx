@@ -20,8 +20,8 @@ import { faHeartPulse } from '@fortawesome/free-solid-svg-icons';
 const fetchData = async (token: string) => {
   try {
     const response = await TAfindAllCampaigns(token);
-    if (response && Array.isArray(response.campaigns)) {
-      const data = response.campaigns.map((item: any, index: any) => {
+    if (response && Array.isArray(response)) {
+      const data = response.map((item: any, index: any) => {
         return {
           id: index + 1,
           _id: item.details._id,
@@ -46,11 +46,11 @@ function AllCampaign() {
   const [campaignData, setCampaignData] = useState([] as CampaignType[]);
   const [page, setPage] = useState(1);
   const PAGE_SIZES = [10, 20, 30, 50, 100];
-  const [pageSize, setPageSize] = useState(PAGE_SIZES[4]);
+  const [pageSize, setPageSize] = useState(PAGE_SIZES[2]);
   const [initialRecords, setInitialRecords] = useState(sortBy(campaignData, 'id'));
-  const [recordsData, setRecordsData] = useState(initialRecords);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -60,9 +60,11 @@ function AllCampaign() {
     const loadCampaigns = async () => {
       try {
         const response = await fetchData(token);
-        setCampaignData(response);
-        setInitialRecords(response);
-        setSearch(response.data);
+        if (response !== undefined) {
+          setCampaignData(response);
+          setInitialRecords(response);
+          setError(null);
+        }
       } catch (error) {
         setError('No data found');
       } finally {
@@ -148,12 +150,14 @@ function AllCampaign() {
       if (key === 'country') {
         const countryValue = value as CountryFilterValue;
         if (countryValue.value) {
-          if (countryValue.value === 'TR') {
-            dt = dt.filter((d) => d[key as keyof typeof d] === 'TR');
-          } else if (countryValue.value === 'Other') {
-            dt = dt.filter((d) => d[key as keyof typeof d] !== 'TR');
+          const normalizedCountryValue = countryValue.value.toLowerCase(); // Normalize the input value to lowercase
+
+          if (normalizedCountryValue === 'tr' || normalizedCountryValue === 'turkey') {
+            dt = dt.filter((d) => d[key as keyof typeof d] === 'TR' || d[key as keyof typeof d] === 'Turkey'); // Use uppercase for 'Turkey'
+          } else if (normalizedCountryValue === 'other') {
+            dt = dt.filter((d) => d[key as keyof typeof d] !== 'TR' && d[key as keyof typeof d] !== 'Turkey'); // Use uppercase for 'Turkey'
           } else {
-            dt = dt.filter((d) => d[key as keyof typeof d] === countryValue.value);
+            dt = dt.filter((d) => d[key as keyof typeof d] === normalizedCountryValue);
           }
         }
       } else if (key === 'is_verified' || key === 'visibility' || key === 'active_campaigns') {
@@ -214,12 +218,6 @@ function AllCampaign() {
     }
     setInitialRecords(matches);
   };
-
-  useEffect(() => {
-    const from = (page - 1) * pageSize;
-    const to = from + pageSize;
-    setRecordsData([...initialRecords.slice(from, to)]);
-  }, [page, pageSize, initialRecords]);
 
   const verifiedIcon = (visibility: boolean) => {
     if (visibility) {
@@ -289,6 +287,13 @@ function AllCampaign() {
     } else {
       return <div>{description}</div>;
     }
+  };
+
+  const renderBrandId = (record: any, index: any) => {
+    const itemsPerPage = page * pageSize;
+    const recordIndex = itemsPerPage + index;
+    const brandId = recordIndex - pageSize + 1;
+    return <div>{brandId}</div>;
   };
 
   return (
@@ -362,7 +367,7 @@ function AllCampaign() {
                 </div>
               );
             } else if (key === 'platform') {
-              const platforms = ['Insta-post', 'Insta-story', 'Insta-reels', 'Tiktok', ''];
+              const platforms = ['insta-post', 'insta-story', 'insta-reels', 'tiktok', ''];
               return (
                 <div key={key} className="flex flex-col mr-8 ml-2">
                   <h2 className="text-sm font-bold mb-2">{key.charAt(0).toUpperCase() + key.slice(1)}</h2>
@@ -468,9 +473,9 @@ function AllCampaign() {
           <DataTable
             highlightOnHover
             className="whitespace-nowrap table-hover"
-            records={recordsData}
+            records={initialRecords.slice((page - 1) * pageSize, page * pageSize)}
             columns={[
-              { accessor: 'id', title: 'Id', sortable: true },
+              { accessor: 'id', title: 'Id', sortable: true, render: renderBrandId },
               {
                 accessor: 'name',
                 title: 'Name',
@@ -537,8 +542,8 @@ function AllCampaign() {
             onPageChange={(p) => setPage(p)}
             recordsPerPageOptions={PAGE_SIZES}
             onRecordsPerPageChange={setPageSize}
-            sortStatus={{} as DataTableSortStatus}
-            onSortStatusChange={() => {}}
+            sortStatus={sortStatus}
+            onSortStatusChange={setSortStatus}
             minHeight={200}
             paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
           />
