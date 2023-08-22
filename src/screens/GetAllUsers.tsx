@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { TAfindAllUser } from '../services/userAPI';
@@ -43,55 +43,56 @@ const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
   return tiktokEngagementRate;
 };
 
-const fetchData = async (query: any, token: string) => {
+const fetchData = async (page: number, perPage: number, query: any, token: string) => {
   try {
-    const response = await TAfindAllUser(query, token);
-    if (response && Array.isArray(response)) {
-      const data = response.map((item: any, index: any) => ({
-        id: index + 1,
-        name: item.name,
-        email: item.email,
-        age: item.age,
-        city: item.city,
-        country: item.country,
-        phone: phoneNumberFixer(item.phone),
-        gender: item.gender,
-        profile_complete: item.profile_complete,
-        followers: item.insta?.followers,
-        insta_post_number: item.post_number,
-        average_like: instaAverageLikeFixer(item.insta?.average_like),
-        tiktok_followers: tiktokFollowersFixer(item.tiktok?.followers),
-        tiktok_videos: item.videos,
-        tiktok_average_like: tiktokAverageLikeFixer(item.tiktok?.tiktok_average_like),
-        tiktok_engagement_rate: engagementRateFixer(item.tiktok?.tiktok_engagement_rate),
-        keywords: item.insta?.keywords,
-        _id: item._id,
-        verification: item.verification,
-      }));
-      return data;
+    const response = await TAfindAllUser(page, perPage, query, token);
+    if (response && Array.isArray(response.users)) {
+      const totalPages = response.totalPages;
+      const data = response.users.map((item: any, index: any) => {
+        return {
+          id: index + 1,
+          name: item.name,
+          email: item.email,
+          age: item.age,
+          city: item.city,
+          country: item.country,
+          phone: phoneNumberFixer(item.phone),
+          gender: item.gender,
+          profile_complete: item.profile_complete,
+          instaUsername: item.insta?.username,
+          tiktokUsername: item.tiktok?.username,
+          followers: item.insta?.followers,
+          insta_post_number: item.post_number,
+          average_like: instaAverageLikeFixer(item.insta?.average_like),
+          tiktok_followers: tiktokFollowersFixer(item.tiktok?.followers),
+          tiktok_videos: item.videos,
+          tiktok_average_like: tiktokAverageLikeFixer(item.tiktok?.tiktok_average_like),
+          tiktok_engagement_rate: engagementRateFixer(item.tiktok?.tiktok_engagement_rate),
+          keywords: item.insta?.keywords,
+          _id: item._id,
+          verification: item.verification,
+          ...item,
+        };
+      });
+      return { data, totalPages };
     }
   } catch (error: any) {
     throw new Error(error);
   }
 };
-interface AppProps {
-  keywords: string[];
-}
 
 const GetAllUsers = () => {
   const token = useSelector(selectToken);
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setPageTitle('Range Search Table'));
   });
   const [userData, setUserData] = useState([] as WaitingApprovalUserData[]);
-  const [page, setPage] = useState(3);
-  const PAGE_SIZES = [10, 20, 30, 50, 100, 500];
+  const [page, setPage] = useState(1);
+  const PAGE_SIZES = [10, 20, 30, 50, 100];
   const [pageSize, setPageSize] = useState(PAGE_SIZES[2]);
+  const [totalPages, setTotalPages] = useState(0);
   const [initialRecords, setInitialRecords] = useState(sortBy(userData, 'id'));
-  const [recordsData, setRecordsData] = useState(initialRecords);
-  const [tempData, setTempData] = useState(initialRecords);
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [error, setError] = useState<string | null>(null);
   const [keywords, setKeywords] = useState('');
@@ -103,16 +104,9 @@ const GetAllUsers = () => {
   }, [pageSize]);
 
   useEffect(() => {
-    const from = (page - 1) * pageSize;
-    const to = from + pageSize;
-    setRecordsData([...initialRecords.slice(from, to)]);
-  }, [page, pageSize, initialRecords]);
-
-  useEffect(() => {
     const data = sortBy(initialRecords, sortStatus.columnAccessor);
     setInitialRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
-    setPage(1);
-  }, [sortStatus]);
+  }, [sortStatus, initialRecords]);
 
   const defaultState: Filters = {
     age: { min: '', max: '' },
@@ -144,6 +138,50 @@ const GetAllUsers = () => {
     }
   };
 
+  useEffect(() => {
+    const getUserData = async () => {
+      const flattenFilters = Object.entries(filters).reduce((acc, [key, filter]) => {
+        if (key === 'keywords') {
+        } else if (key === 'gender' && typeof filter === 'string') {
+          acc[key] = filter;
+        } else if (key === 'verification' && typeof filter === 'string') {
+          acc[key] = filter;
+        } else if (key === 'country') {
+          acc[key] = (filter as CountryFilterValue).value;
+        } else {
+          const { min, max } = filter as FilterValue;
+          if (min) acc[`min_${key}`] = min;
+          if (max) acc[`max_${key}`] = max;
+        }
+
+        return acc;
+      }, {} as { [key: string]: string });
+
+      const params = new URLSearchParams(flattenFilters);
+
+      const keywords = (filters.keywords as string[]).map(
+        (keyword) => keyword.charAt(0).toUpperCase() + keyword.slice(1),
+      );
+      keywords.forEach((keywords) => {
+        params.append('keywords', keywords);
+      });
+      try {
+        const data = await fetchData(page, pageSize, params, token);
+        if (data !== undefined) {
+          console.log('data', data);
+          setInitialRecords(data.data);
+          setUserData(data.data);
+          setTotalPages(data.totalPages);
+        } else {
+          setError('No data found');
+        }
+      } catch (error) {
+        setError('No data found');
+      }
+    };
+    getUserData();
+  }, [page, pageSize, token]);
+
   const handleFetchData = async () => {
     setLoading(true);
 
@@ -174,18 +212,19 @@ const GetAllUsers = () => {
     });
 
     try {
-      const data: any = await fetchData(params, token);
+      const data: any = await fetchData(page, pageSize, params, token);
       if (data !== undefined) {
-        setInitialRecords(data);
-        setUserData(data);
+        setUserData(data.data);
+        setInitialRecords(data.data);
+        setTotalPages(data.totalPages);
       } else {
         setError('No data found');
       }
+      setLoading(false);
+
     } catch (error) {
       setError('No data found');
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   const filterKeys: (keyof Filters)[] = [
@@ -235,6 +274,34 @@ const GetAllUsers = () => {
       document.removeEventListener('click', handleClick);
     };
   }, []);
+
+  const formatKey = (key: string) => {
+    switch (key) {
+      case 'age':
+        return 'Age';
+      case 'followers':
+        return 'Followers';
+      case 'average_like':
+        return 'Average Like';
+      case 'tiktok_followers':
+        return 'TikTok Followers';
+      case 'tiktok_average_like':
+        return 'TikTok Average Like';
+      case 'tiktok_engagement_rate':
+        return 'TikTok Engagement Rate';
+      case 'country':
+        return 'Country';
+      default:
+        return key;
+    }
+  };
+
+  const renderBrandId = (record: any, index: any) => {
+    const itemsPerPage = page * pageSize;
+    const recordIndex = itemsPerPage + index;
+    const brandId = recordIndex - pageSize + 1;
+    return <div>{brandId}</div>;
+  };
 
   return (
     <div className="panel">
@@ -329,6 +396,7 @@ const GetAllUsers = () => {
             } else if (key !== 'country' && key !== 'keywords') {
               return (
                 <div key={key} className="md:flex md:flex-col flex-1 mr-2">
+                  <h2 className="text-sm font-bold mb-2 ml-2">{formatKey(key)}</h2>
                   <input
                     type="text"
                     value={(filters[key] as FilterValue).min}
@@ -336,7 +404,7 @@ const GetAllUsers = () => {
                       setFilter(key, 'min', e.target.value);
                     }}
                     className="form-input w-full mb-2"
-                    placeholder={`${key} min`}
+                    placeholder={`min. ${key}`}
                   />
 
                   <input
@@ -346,7 +414,7 @@ const GetAllUsers = () => {
                       setFilter(key, 'max', e.target.value);
                     }}
                     className="form-input w-full"
-                    placeholder={`${key} max`}
+                    placeholder={`max. ${key}`}
                   />
                 </div>
               );
@@ -354,27 +422,29 @@ const GetAllUsers = () => {
           })}
         </div>
       </div>
-      <div className="flex w-full justify-between text-center flex-end">
+      <div className="flex w-full justify-between flex-end">
         <div className="flex flex-row w-2/3 items-center">
-          <div className="md:flex md:flex-row w-full">
+          <div className="md:flex md:flex-row">
             {filterKeys.map((key) => {
               if (key === 'country') {
                 return (
-                  <div key={key} className="md:flex md:flex-col flex-1 pl-1">
+                  <div key={key} className="md:flex md:flex-col flex-1 mb-4">
+                    <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Country Name</h2>
                     <input
                       type="text"
                       value={filters[key].value}
                       onChange={(e) => {
                         setFilter(key, 'value', e.target.value);
                       }}
-                      className="form-input w-full"
-                      placeholder={`${key} value`}
+                      className="form-input"
+                      placeholder={`${key.charAt(0).toUpperCase() + key.slice(1)} name`}
                     />
                   </div>
                 );
               } else if (key === 'keywords') {
                 return (
-                  <div key={key} className="md:flex md:flex-col flex-1 mb-1 mr-2 ml-5">
+                  <div key={key} className="md:flex md:flex-col flex-1 mb-4 mr-2 ml-5">
+                    <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Keywords</h2>
                     <input
                       type="text"
                       value={filters[key].join(',')}
@@ -386,8 +456,8 @@ const GetAllUsers = () => {
                         setFilter(key, 'value', keywords);
                         handleInputChange(e);
                       }}
-                      className="form-input w-full"
-                      placeholder={`keywords`}
+                      className="form-input"
+                      placeholder={`Keywords`}
                     />
                     {isDropdownOpen && keywords.length > 0 && (
                       <div className="dropdown pt-10 " style={{ position: 'fixed', zIndex: 999 }}>
@@ -407,17 +477,17 @@ const GetAllUsers = () => {
 
         <div className="flex flex-row justify-end text-center w-1/3 mb-4 mr-2">
           <button
-            className=" inline-flex items-center justify-center mr-2 px-2 py-2 mt-3 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 "
+            className=" inline-flex items-center justify-center mr-2 px-2 py-2 mt-6 mb-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 "
             onClick={handleFetchData}
           >
             Fetch Data
           </button>
           <DownloadPdfButton
-            className=" inline-flex items-center justify-center px-2 py-2 mt-3 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 "
+            className=" inline-flex items-center justify-center px-2 py-2 mt-6 mb-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 "
             userData={initialRecords}
           />
           <DownloadCSVButton
-            className=" inline-flex items-center justify-center ml-2 px-2 py-2 mt-3 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 "
+            className=" inline-flex items-center justify-center ml-2 px-2 py-2 mt-6 mb-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 "
             userData={initialRecords}
           />
         </div>
@@ -432,9 +502,9 @@ const GetAllUsers = () => {
           <DataTable
             highlightOnHover
             className="whitespace-nowrap table-hover"
-            records={recordsData}
+            records={initialRecords}
             columns={[
-              { accessor: 'id', title: 'Id', sortable: true },
+              { accessor: 'id', title: 'Id', sortable: true, render: renderBrandId },
               {
                 accessor: 'verification',
                 title: 'Verified',
@@ -463,9 +533,10 @@ const GetAllUsers = () => {
                 sortable: true,
                 render: ({ name }) => <div>{name}</div>,
               },
-              // { accessor: 'email', title: 'Email', sortable: true },
               { accessor: 'phone', title: 'Phone', sortable: true },
               { accessor: 'age', title: 'Age', sortable: true },
+              { accessor: 'instaUsername', title: 'Insta Username', sortable: true },
+              { accessor: 'tiktokUsername', title: 'Tiktok Username', sortable: true },
               {
                 accessor: 'gender',
                 title: 'Gender',
@@ -487,7 +558,7 @@ const GetAllUsers = () => {
               { accessor: 'tiktok_average_like', title: 'Tiktok Average Like', sortable: true },
               { accessor: 'tiktok_engagement_rate', title: 'Tiktok Engagement Rate', sortable: true },
             ]}
-            totalRecords={initialRecords.length}
+            totalRecords={totalPages * pageSize}
             recordsPerPage={pageSize}
             page={page}
             onPageChange={(p) => setPage(p)}
