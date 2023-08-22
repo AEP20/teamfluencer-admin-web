@@ -99,14 +99,14 @@ const GetAllUsers = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    setPage(1);
-  }, [pageSize]);
+  // useEffect(() => {
+  //   setPage(1);
+  // }, [pageSize]);
 
-  useEffect(() => {
-    const data = sortBy(initialRecords, sortStatus.columnAccessor);
-    setInitialRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
-  }, [sortStatus, initialRecords]);
+  // useEffect(() => {
+  //   const data = sortBy(initialRecords, sortStatus.columnAccessor);
+  //   setInitialRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
+  // }, [sortStatus, initialRecords]);
 
   const defaultState: Filters = {
     age: { min: '', max: '' },
@@ -179,8 +179,10 @@ const GetAllUsers = () => {
         setError('No data found');
       }
     };
-    getUserData();
-  }, [page, pageSize, token]);
+    // getUserData();
+  }, [
+    // page, pageSize, 
+    token]);
 
   const handleFetchData = async () => {
     setLoading(true);
