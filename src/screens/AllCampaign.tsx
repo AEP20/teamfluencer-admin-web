@@ -128,6 +128,9 @@ function AllCampaign() {
       setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
     }
   };
+  useEffect(() => {
+    setPage(1);
+  }, [pageSize, filters]);
 
   const filterKeys: (keyof CampaignFilters)[] = [
     'is_verified',

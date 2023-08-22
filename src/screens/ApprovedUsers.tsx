@@ -92,10 +92,6 @@ const ApprovedUsers = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setPage(1);
-  }, [pageSize]);
-
-  useEffect(() => {
     setLoading(true);
 
     const getUserData = async () => {
@@ -233,6 +229,9 @@ const ApprovedUsers = () => {
   const setFilter = (key: keyof Filters, type: FilterType, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value } }));
   };
+  useEffect(() => {
+    setPage(1);
+  }, [pageSize, filters]);
 
   useEffect(() => {
     let dt = userData;
