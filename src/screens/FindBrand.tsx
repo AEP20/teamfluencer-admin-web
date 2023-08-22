@@ -6,9 +6,9 @@ import { setPageTitle } from '../redux/store/themeConfigSlice';
 import BrandProfile from '../components/BrandProfile';
 import { selectToken } from '../redux/store/userSlice';
 
-const fetchData = async (token: string) => {
+const fetchData = async (page: number, perPage: number, token: string) => {
   try {
-    const response = await TAfindAllBrands(token);
+    const response = await TAfindAllBrands(1, 1, token);
     return response.brands;
   } catch (error: any) {
     throw new Error(error);
@@ -35,7 +35,7 @@ const FindBrand = () => {
   useEffect(() => {
     const getUserData = async () => {
       try {
-        const data = await fetchData(token);
+        const data = await fetchData(1, 1, token);
         if (data !== undefined) {
           setUserData(data);
         } else {
@@ -46,7 +46,7 @@ const FindBrand = () => {
       }
     };
     getUserData();
-  }, []);
+  }, [token]);
 
   const handleForm = async (e: any) => {
     e.preventDefault();

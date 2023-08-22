@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { TAfindAllUser } from '../services/userAPI';
@@ -43,55 +43,56 @@ const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
   return tiktokEngagementRate;
 };
 
-const fetchData = async (query: any, token: string) => {
+const fetchData = async (page: number, perPage: number, query: any, token: string) => {
   try {
-    const response = await TAfindAllUser(query, token);
-    if (response && Array.isArray(response)) {
-      const data = response.map((item: any, index: any) => ({
-        id: index + 1,
-        name: item.name,
-        email: item.email,
-        age: item.age,
-        city: item.city,
-        country: item.country,
-        phone: phoneNumberFixer(item.phone),
-        gender: item.gender,
-        profile_complete: item.profile_complete,
-        followers: item.insta?.followers,
-        insta_post_number: item.post_number,
-        average_like: instaAverageLikeFixer(item.insta?.average_like),
-        tiktok_followers: tiktokFollowersFixer(item.tiktok?.followers),
-        tiktok_videos: item.videos,
-        tiktok_average_like: tiktokAverageLikeFixer(item.tiktok?.tiktok_average_like),
-        tiktok_engagement_rate: engagementRateFixer(item.tiktok?.tiktok_engagement_rate),
-        keywords: item.insta?.keywords,
-        _id: item._id,
-        verification: item.verification,
-      }));
-      return data;
+    const response = await TAfindAllUser(page, perPage, query, token);
+    if (response && Array.isArray(response.users)) {
+      const totalPages = response.totalPages;
+      const data = response.users.map((item: any, index: any) => {
+        return {
+          id: index + 1,
+          name: item.name,
+          email: item.email,
+          age: item.age,
+          city: item.city,
+          country: item.country,
+          phone: phoneNumberFixer(item.phone),
+          gender: item.gender,
+          profile_complete: item.profile_complete,
+          instaUsername: item.insta?.username,
+          tiktokUsername: item.tiktok?.username,
+          followers: item.insta?.followers,
+          insta_post_number: item.post_number,
+          average_like: instaAverageLikeFixer(item.insta?.average_like),
+          tiktok_followers: tiktokFollowersFixer(item.tiktok?.followers),
+          tiktok_videos: item.videos,
+          tiktok_average_like: tiktokAverageLikeFixer(item.tiktok?.tiktok_average_like),
+          tiktok_engagement_rate: engagementRateFixer(item.tiktok?.tiktok_engagement_rate),
+          keywords: item.insta?.keywords,
+          _id: item._id,
+          verification: item.verification,
+          ...item,
+        };
+      });
+      return { data, totalPages };
     }
   } catch (error: any) {
     throw new Error(error);
   }
 };
-interface AppProps {
-  keywords: string[];
-}
 
 const GetAllUsers = () => {
   const token = useSelector(selectToken);
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setPageTitle('Range Search Table'));
   });
   const [userData, setUserData] = useState([] as WaitingApprovalUserData[]);
-  const [page, setPage] = useState(3);
+  const [page, setPage] = useState(1);
   const PAGE_SIZES = [10, 20, 30, 50, 100];
   const [pageSize, setPageSize] = useState(PAGE_SIZES[2]);
+  const [totalPages, setTotalPages] = useState(0);
   const [initialRecords, setInitialRecords] = useState(sortBy(userData, 'id'));
-  const [recordsData, setRecordsData] = useState(initialRecords);
-  const [tempData, setTempData] = useState(initialRecords);
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [error, setError] = useState<string | null>(null);
   const [keywords, setKeywords] = useState('');
@@ -103,16 +104,9 @@ const GetAllUsers = () => {
   }, [pageSize]);
 
   useEffect(() => {
-    const from = (page - 1) * pageSize;
-    const to = from + pageSize;
-    setRecordsData([...initialRecords.slice(from, to)]);
-  }, [page, pageSize, initialRecords]);
-
-  useEffect(() => {
     const data = sortBy(initialRecords, sortStatus.columnAccessor);
     setInitialRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
-    setPage(1);
-  }, [sortStatus]);
+  }, [sortStatus, initialRecords]);
 
   const defaultState: Filters = {
     age: { min: '', max: '' },
@@ -144,6 +138,50 @@ const GetAllUsers = () => {
     }
   };
 
+  useEffect(() => {
+    const getUserData = async () => {
+      const flattenFilters = Object.entries(filters).reduce((acc, [key, filter]) => {
+        if (key === 'keywords') {
+        } else if (key === 'gender' && typeof filter === 'string') {
+          acc[key] = filter;
+        } else if (key === 'verification' && typeof filter === 'string') {
+          acc[key] = filter;
+        } else if (key === 'country') {
+          acc[key] = (filter as CountryFilterValue).value;
+        } else {
+          const { min, max } = filter as FilterValue;
+          if (min) acc[`min_${key}`] = min;
+          if (max) acc[`max_${key}`] = max;
+        }
+
+        return acc;
+      }, {} as { [key: string]: string });
+
+      const params = new URLSearchParams(flattenFilters);
+
+      const keywords = (filters.keywords as string[]).map(
+        (keyword) => keyword.charAt(0).toUpperCase() + keyword.slice(1),
+      );
+      keywords.forEach((keywords) => {
+        params.append('keywords', keywords);
+      });
+      try {
+        const data = await fetchData(page, pageSize, params, token);
+        if (data !== undefined) {
+          console.log('data', data);
+          setInitialRecords(data.data);
+          setUserData(data.data);
+          setTotalPages(data.totalPages);
+        } else {
+          setError('No data found');
+        }
+      } catch (error) {
+        setError('No data found');
+      }
+    };
+    getUserData();
+  }, [page, pageSize, token]);
+
   const handleFetchData = async () => {
     setLoading(true);
 
@@ -174,18 +212,19 @@ const GetAllUsers = () => {
     });
 
     try {
-      const data: any = await fetchData(params, token);
+      const data: any = await fetchData(page, pageSize, params, token);
       if (data !== undefined) {
-        setInitialRecords(data);
-        setUserData(data);
+        setUserData(data.data);
+        setInitialRecords(data.data);
+        setTotalPages(data.totalPages);
       } else {
         setError('No data found');
       }
+      setLoading(false);
+
     } catch (error) {
       setError('No data found');
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   const filterKeys: (keyof Filters)[] = [
@@ -255,6 +294,13 @@ const GetAllUsers = () => {
       default:
         return key;
     }
+  };
+
+  const renderBrandId = (record: any, index: any) => {
+    const itemsPerPage = page * pageSize;
+    const recordIndex = itemsPerPage + index;
+    const brandId = recordIndex - pageSize + 1;
+    return <div>{brandId}</div>;
   };
 
   return (
@@ -456,9 +502,9 @@ const GetAllUsers = () => {
           <DataTable
             highlightOnHover
             className="whitespace-nowrap table-hover"
-            records={recordsData}
+            records={initialRecords}
             columns={[
-              { accessor: 'id', title: 'Id', sortable: true },
+              { accessor: 'id', title: 'Id', sortable: true, render: renderBrandId },
               {
                 accessor: 'verification',
                 title: 'Verified',
@@ -487,9 +533,10 @@ const GetAllUsers = () => {
                 sortable: true,
                 render: ({ name }) => <div>{name}</div>,
               },
-              // { accessor: 'email', title: 'Email', sortable: true },
               { accessor: 'phone', title: 'Phone', sortable: true },
               { accessor: 'age', title: 'Age', sortable: true },
+              { accessor: 'instaUsername', title: 'Insta Username', sortable: true },
+              { accessor: 'tiktokUsername', title: 'Tiktok Username', sortable: true },
               {
                 accessor: 'gender',
                 title: 'Gender',
@@ -511,7 +558,7 @@ const GetAllUsers = () => {
               { accessor: 'tiktok_average_like', title: 'Tiktok Average Like', sortable: true },
               { accessor: 'tiktok_engagement_rate', title: 'Tiktok Engagement Rate', sortable: true },
             ]}
-            totalRecords={initialRecords.length}
+            totalRecords={totalPages * pageSize}
             recordsPerPage={pageSize}
             page={page}
             onPageChange={(p) => setPage(p)}

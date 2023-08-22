@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { TAfindApprovedCampaigns, TAfindAllCampaigns } from '../services/campaignsAPI';
+import { TAfindApprovedCampaigns } from '../services/campaignsAPI';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { selectToken } from '../redux/store/userSlice';
-import { ApplicationCounts, Campaign, CampaignType } from '../types/campaignsData';
+import { CampaignType } from '../types/campaignsData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import CampaignProfile from '../components/CampaignProfile';
 import sortBy from 'lodash/sortBy';
 
-const fetchData = async (token: string) => {
+const fetchData = async (page: number, perPage: number, token: string) => {
   try {
-    const response = await TAfindApprovedCampaigns(token);
-    if (response && Array.isArray(response)) {
-      const data = response.map((item: CampaignType, index: number) => {
+    const response = await TAfindApprovedCampaigns(page, perPage, token);
+    console.log('response', response);
+    const totalPages = response.totalPages;
+    console.log('totalPages', totalPages);
+    if (response && Array.isArray(response.campaign)) {
+      const totalLength = response.campaign.length;
+      const data = response.campaign.map((item: any, index: any) => {
         return {
           ...item,
-          id: index + 1,
+          id: totalLength - index,
         };
       });
-      return data;
+      console.log('data', data);
+      return { data, totalPages };
     }
   } catch (error: any) {
     throw new Error(error);
@@ -39,6 +43,7 @@ function ApprovedCampaigns() {
   const [page, setPage] = useState(1);
   const PAGE_SIZES = [10, 20, 30, 50, 100];
   const [pageSize, setPageSize] = useState(PAGE_SIZES[3]);
+  const [totalPages, setTotalPages] = useState(0);
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [isExpanded, setIsExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -47,10 +52,11 @@ function ApprovedCampaigns() {
     setLoading(true);
     const loadCampaigns = async () => {
       try {
-        const response = await fetchData(token);
-        if (response && Array.isArray(response) && response.length > 0) {
-          setCampaignData(response);
-          setInitialRecords(response);
+        const response = await fetchData(page, pageSize, token);
+        if (response !== undefined) {
+          setTotalPages(response.totalPages);
+          setCampaignData(response.data);
+          setInitialRecords(response.data);
           setError(null);
         }
       } catch (error) {
@@ -61,17 +67,11 @@ function ApprovedCampaigns() {
     };
 
     loadCampaigns();
-  }, [token]);
+  }, [page, pageSize, token]);
 
   useEffect(() => {
     setPage(1);
   }, [pageSize]);
-
-  useEffect(() => {
-    const from = (page - 1) * pageSize;
-    const to = from + pageSize;
-    setRecordsData([...initialRecords.slice(from, to)]);
-  }, [page, pageSize, initialRecords]);
 
   const renderDescriptionCell = ({ description }: CampaignType) => {
     const toggleExpandedRow = () => {
@@ -115,7 +115,7 @@ function ApprovedCampaigns() {
           <DataTable
             highlightOnHover
             className="whitespace-nowrap table-hover"
-            records={recordsData}
+            records={initialRecords}
             columns={[
               { accessor: 'id', title: 'Id', sortable: true },
               { accessor: 'name', title: 'Name', sortable: true },
@@ -123,7 +123,7 @@ function ApprovedCampaigns() {
               { accessor: 'country', title: 'Country', sortable: true },
               { accessor: 'platform', title: 'Platform', sortable: true },
             ]}
-            totalRecords={initialRecords.length}
+            totalRecords={totalPages * pageSize}
             recordsPerPage={pageSize}
             page={page}
             onPageChange={(p) => setPage(p)}

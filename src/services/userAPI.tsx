@@ -24,14 +24,13 @@ export const TAfindUser = async (data: any, token: string) => {
   }
 };
 
-export const TAfindAllUser = async (params: any, token: string) => {
+export const TAfindAllUser = async (page: number, perPage: number, params: any, token: string) => {
   try {
-    const response = await apiClient.get(`/admin/user/getall?${params}`, {
+    const response = await apiClient.get(`/admin/user/getall?${params}&page=${page}&perPage=${perPage}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-
     if (response.status === 200) {
       return response.data;
     } else {
@@ -60,14 +59,13 @@ export const TAfindApprovalUser = async (token: string) => {
   }
 };
 
-export const TAfindAllApprovalUser = async (token: string) => {
+export const TAfindAllApprovalUser = async (page: number, perPage: number, token: string) => {
   try {
-    const response = await apiClient.get(`/admin/user/getallverificationprofiles`, {
+    const response = await apiClient.get(`/admin/user/getallverificationprofiles?page=${page}&perPage=${perPage}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-
     if (response.status === 200) {
       return response.data;
     } else {
@@ -99,9 +97,9 @@ export const TAverifyUser = async (id: string, status: string, token: string) =>
   }
 };
 
-export const TAapprovedUser = async (token: string) => {
+export const TAapprovedUser = async (page: number, perPage: number, token: string) => {
   try {
-    const response = await apiClient.get(`/admin/user/getverifiedprofiles`, {
+    const response = await apiClient.get(`/admin/user/getverifiedprofiles?page=${page}&perPage=${perPage}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { TAfindAllBrands, TAupdateBrand, TAfindBrand } from '../services/brandAPI';
+import { TAfindAllBrands, TAfindBrand } from '../services/brandAPI';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
@@ -11,11 +11,12 @@ import BrandProfile from '../components/BrandProfile';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollarSign } from '@fortawesome/free-solid-svg-icons';
 
-const fetchData = async (token: string) => {
+const fetchData = async (page: number, perPage: number, token: string) => {
   try {
-    const response = await TAfindAllBrands(token);
+    const response = await TAfindAllBrands(page, perPage, token);
     if (response && Array.isArray(response.brands)) {
       const totalLength = response.brands.length;
+      const totalPages = response.totalPages;
       const data = response.brands
         .map((item: any, index: any) => {
           return {
@@ -24,38 +25,12 @@ const fetchData = async (token: string) => {
           };
         })
         .reverse();
-      return data;
+      return { data, totalPages };
     }
   } catch (error: any) {
     throw new Error(error);
   }
 };
-
-// const updateBrand = async (id: any, data: any, token: string) => {
-//   try {
-//     const response = await TAupdateBrand(id, data, token);
-//     if (response && Array.isArray(response.brands)) {
-//       const totalLength = response.brands.length;
-//       const data = response.brands
-//         .map((item: any, index: any) => {
-//           const formattedDate = new Date(item.last_login).toISOString().split('T')[0];
-//           return {
-//             id: totalLength - index,
-//             brand_name: item.brand_name,
-//             first_name: item.first_name,
-//             last_name: item.last_name,
-//             email: item.email,
-//             phone: item.phone,
-//             last_login: formattedDate,
-//           };
-//         })
-//         .reverse();
-//       return data;
-//     }
-//   } catch (error: any) {
-//     throw new Error(error);
-//   }
-// };
 
 const AllBrands = () => {
   const dispatch = useDispatch();
@@ -66,9 +41,9 @@ const AllBrands = () => {
   const [userData, setUserData] = useState([] as AllBrandType[]);
   const [page, setPage] = useState(1);
   const PAGE_SIZES = [10, 20, 30, 50, 100];
+  const [totalPages, setTotalPages] = useState(0);
   const [pageSize, setPageSize] = useState(PAGE_SIZES[3]);
   const [initialRecords, setInitialRecords] = useState(sortBy(userData, 'id'));
-  const [recordsData, setRecordsData] = useState(initialRecords);
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [error, setError] = useState<string | null>(null);
   const [brandname, setBrandname] = useState('');
@@ -81,21 +56,20 @@ const AllBrands = () => {
     setLoading(true);
     const loadBrands = async () => {
       try {
-        const response = await fetchData(token);
+        const response = await fetchData(page, pageSize, token);
         if (response !== undefined) {
-          setBrandname(response.data);
-          setInitialRecords(response);
+          setInitialRecords(response.data);
+          setTotalPages(response.totalPages);
+          setLoading(false);
         } else {
           setError('No data found');
         }
       } catch (error) {
-        setError('No data found');
-      } finally {
-        setLoading(false);
+        setError('Error fetching data');
       }
     };
     loadBrands();
-  }, []);
+  }, [page, pageSize, token]);
 
   const handleForm = async (e: any) => {
     e.preventDefault();
@@ -171,10 +145,10 @@ const AllBrands = () => {
   useEffect(() => {
     const getUserData = async () => {
       try {
-        const data = await fetchData(token);
+        const data = await fetchData(page, pageSize, token);
         if (data !== undefined) {
-          setInitialRecords(data);
-          setUserData(data);
+          setInitialRecords(data.data);
+          setUserData(data.data);
         } else {
           setError('No data found');
         }
@@ -183,13 +157,7 @@ const AllBrands = () => {
       }
     };
     getUserData();
-  }, []);
-
-  useEffect(() => {
-    const from = (page - 1) * pageSize;
-    const to = from + pageSize;
-    setRecordsData([...initialRecords.slice(from, to)]);
-  }, [page, pageSize, initialRecords]);
+  }, [page, pageSize, token]);
 
   const handleBrandNameSelect = (selectedBrand: any) => {
     setBrandname(selectedBrand.brand_name);
@@ -204,6 +172,13 @@ const AllBrands = () => {
       document.removeEventListener('click', handleClick);
     };
   }, []);
+
+  const renderBrandId = (record: any, index: number) => {
+    const itemsPerPage = page * pageSize;
+    const recordIndex = itemsPerPage + index;
+    const brandId = recordIndex - pageSize + 1;
+    return <div>{brandId}</div>;
+  };
 
   return (
     <div className="panel">
@@ -250,9 +225,9 @@ const AllBrands = () => {
           <DataTable
             highlightOnHover
             className="whitespace-nowrap table-hover"
-            records={recordsData}
+            records={initialRecords}
             columns={[
-              { accessor: 'id', title: 'Id', sortable: true },
+              { accessor: 'id', title: 'Id', sortable: true, render: renderBrandId },
               {
                 accessor: 'firstName',
                 title: 'Name',
@@ -297,7 +272,7 @@ const AllBrands = () => {
                 render: ({ last_login }: any) => <div>{new Date(last_login).toLocaleDateString()}</div>,
               },
             ]}
-            totalRecords={initialRecords.length}
+            totalRecords={totalPages * pageSize}
             recordsPerPage={pageSize}
             page={page}
             onPageChange={(p) => setPage(p)}

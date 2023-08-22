@@ -47,14 +47,13 @@ export const TAfindCampaign = async (data: any, token: string) => {
   }
 };
 
-export const TAfindApprovedCampaigns = async (token: string) => {
+export const TAfindApprovedCampaigns = async (page: number, perPage: number, token: string) => {
   try {
-    const response = await apiClient.get(`/admin/campaign/getverifiedcampaign`, {
+    const response = await apiClient.get(`/admin/campaign/getverifiedcampaign?page=${page}&perPage=${perPage}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-
     if (response.status === 200) {
       return response.data;
     } else {
