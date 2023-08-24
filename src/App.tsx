@@ -18,6 +18,7 @@ import DoApprovalCampaigns from './screens/DoApprovalCampaigns';
 import { selectToken } from './redux/store/userSlice';
 import ApprovedUsers from './screens/ApprovedUsers';
 import ApprovedCampaigns from './screens/ApprovedCampaigns';
+import Dashboard from './screens/Dashboard';
 
 function App() {
   const token = useSelector(selectToken);
@@ -33,11 +34,12 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/auth/*" element={token ? <MainLayout /> : <AuthLayout />} />
+        <Route path="/auth/*" element={token ? <Navigate to="/statistics/dashboard" /> : <AuthLayout />} />
         <Route path="/*" element={token ? <MainLayout /> : <Navigate to="/auth/login" />} />
         <Route path="/user/*" element={token ? <UserLayout /> : <AuthLayout />} />
         <Route path="/brands/*" element={token ? <BrandsLayout /> : <AuthLayout />} />
         <Route path="/campaigns/*" element={token ? <CampaignsLayout /> : <AuthLayout />} />
+        <Route path="/statistics/*" element={token ? <StatisticsLayout /> : <AuthLayout />} />
       </Routes>
     </BrowserRouter>
   );
@@ -114,6 +116,20 @@ function CampaignsLayout() {
             <Route path="/do-approval" element={<DoApprovalCampaigns />} />
             <Route path="/find-all-campaigns" element={<AllCampaign />} />
             <Route path="/approved-campaigns" element={<ApprovedCampaigns />} />
+          </Routes>
+        </CommonLayout>
+      </Suspense>
+    </>
+  );
+}
+
+function StatisticsLayout() {
+  return (
+    <>
+      <Suspense fallback={<div>Loading...</div>}>
+        <CommonLayout>
+          <Routes>
+            <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </CommonLayout>
       </Suspense>
