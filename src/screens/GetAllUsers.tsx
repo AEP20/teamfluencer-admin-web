@@ -43,9 +43,9 @@ const tiktokFollowersFixer = (tiktokEngagementRate: number) => {
   return tiktokEngagementRate;
 };
 
-const fetchData = async (page: number, perPage: number, query: any, token: string) => {
+const fetchData = async (page: number, query: any, token: string) => {
   try {
-    const response = await TAfindAllUser(page, perPage, query, token);
+    const response = await TAfindAllUser(page, query, token);
     if (response && Array.isArray(response.users)) {
       const totalPages = response.totalPages;
       const data = response.users.map((item: any, index: any) => {
@@ -166,7 +166,7 @@ const GetAllUsers = () => {
         params.append('keywords', keywords);
       });
       try {
-        const data = await fetchData(page, pageSize, params, token);
+        const data = await fetchData(page, params, token);
         if (data !== undefined) {
           console.log('data', data);
           setInitialRecords(data.data);
@@ -181,8 +181,9 @@ const GetAllUsers = () => {
     };
     // getUserData();
   }, [
-    // page, pageSize, 
-    token]);
+    // page, pageSize,
+    token,
+  ]);
 
   const handleFetchData = async () => {
     setLoading(true);
@@ -214,7 +215,7 @@ const GetAllUsers = () => {
     });
 
     try {
-      const data: any = await fetchData(page, pageSize, params, token);
+      const data: any = await fetchData(page, params, token);
       if (data !== undefined) {
         setUserData(data.data);
         setInitialRecords(data.data);
@@ -223,10 +224,9 @@ const GetAllUsers = () => {
         setError('No data found');
       }
       setLoading(false);
-
     } catch (error) {
       setError('No data found');
-    } 
+    }
   };
 
   const filterKeys: (keyof Filters)[] = [
@@ -462,7 +462,7 @@ const GetAllUsers = () => {
                       placeholder={`Keywords`}
                     />
                     {isDropdownOpen && keywords.length > 0 && (
-                      <div className="dropdown pt-10 " style={{ position: 'fixed', zIndex: 999 }}>
+                      <div className="dropdown pt-20 pl-2" style={{ position: 'fixed', zIndex: 999 }}>
                         <ul>
                           {autoCompleteKeyword.map((keyword, index) => (
                             <li key={index}>{keyword}</li>
@@ -504,7 +504,7 @@ const GetAllUsers = () => {
           <DataTable
             highlightOnHover
             className="whitespace-nowrap table-hover"
-            records={initialRecords}
+            records={initialRecords.slice((page - 1) * pageSize, page * pageSize)}
             columns={[
               { accessor: 'id', title: 'Id', sortable: true, render: renderBrandId },
               {
@@ -560,7 +560,7 @@ const GetAllUsers = () => {
               { accessor: 'tiktok_average_like', title: 'Tiktok Average Like', sortable: true },
               { accessor: 'tiktok_engagement_rate', title: 'Tiktok Engagement Rate', sortable: true },
             ]}
-            totalRecords={totalPages * pageSize}
+            totalRecords={initialRecords.length}
             recordsPerPage={pageSize}
             page={page}
             onPageChange={(p) => setPage(p)}

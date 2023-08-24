@@ -10,18 +10,14 @@ import sortBy from 'lodash/sortBy';
 const fetchData = async (page: number, perPage: number, token: string) => {
   try {
     const response = await TAfindApprovedCampaigns(page, perPage, token);
-    console.log('response', response);
     const totalPages = response.totalPages;
-    console.log('totalPages', totalPages);
     if (response && Array.isArray(response.campaign)) {
-      const totalLength = response.campaign.length;
       const data = response.campaign.map((item: any, index: any) => {
         return {
           ...item,
-          id: totalLength - index,
+          id: index + 1,
         };
       });
-      console.log('data', data);
       return { data, totalPages };
     }
   } catch (error: any) {
@@ -38,11 +34,10 @@ function ApprovedCampaigns() {
 
   const [campaignData, setCampaignData] = useState<CampaignType[]>([]);
   const [initialRecords, setInitialRecords] = useState(sortBy(campaignData, 'id'));
-  const [recordsData, setRecordsData] = useState(initialRecords);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const PAGE_SIZES = [10, 20, 30, 50, 100];
-  const [pageSize, setPageSize] = useState(PAGE_SIZES[3]);
+  const [pageSize, setPageSize] = useState(PAGE_SIZES[2]);
   const [totalPages, setTotalPages] = useState(0);
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [isExpanded, setIsExpanded] = useState(false);
@@ -54,6 +49,7 @@ function ApprovedCampaigns() {
       try {
         const response = await fetchData(page, pageSize, token);
         if (response !== undefined) {
+          console.log('response', response);
           setTotalPages(response.totalPages);
           setCampaignData(response.data);
           setInitialRecords(response.data);
@@ -101,6 +97,13 @@ function ApprovedCampaigns() {
     }
   };
 
+  const renderBrandId = (record: any, index: any) => {
+    const itemsPerPage = page * pageSize;
+    const recordIndex = itemsPerPage + index;
+    const brandId = recordIndex - pageSize + 1;
+    return <div>{brandId}</div>;
+  };
+
   return (
     <div className="panel">
       <div className="mb-4.5 flex md:items-center md:flex-row flex-col gap-5">
@@ -117,7 +120,7 @@ function ApprovedCampaigns() {
             className="whitespace-nowrap table-hover"
             records={initialRecords}
             columns={[
-              { accessor: 'id', title: 'Id', sortable: true },
+              { accessor: 'id', title: 'Id', sortable: true, render: renderBrandId },
               { accessor: 'name', title: 'Name', sortable: true },
               { accessor: 'description', title: 'Description', sortable: true, render: renderDescriptionCell },
               { accessor: 'country', title: 'Country', sortable: true },

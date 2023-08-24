@@ -108,7 +108,7 @@ type FilterValue = {
 type FilterType = 'min' | 'max' | 'value';
 
 type CountryFilterValue = {
-  value: 'TR' | 'Other' | '' ;
+  value: 'TR' | 'turkey' | 'Other' | '';
 };
 
 type CampaignFilters = {
