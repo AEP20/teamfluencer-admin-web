@@ -291,28 +291,6 @@ const Dashboard = () => {
                   </span>
                 </div>
               </div>
-              <div className="border-t border-white-light dark:border-white/10">
-                <Link
-                  to="/"
-                  className=" font-semibold group hover:text-primary p-4 flex items-center justify-center group"
-                >
-                  View All
-                  <svg
-                    className="w-4 h-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition duration-300 ltr:ml-1 rtl:mr-1"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M4 12H20M20 12L14 6M20 12L14 18"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </Link>
-              </div>
             </div>
 
             <div className="panel h-full">
