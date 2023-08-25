@@ -1,4 +1,5 @@
 type ProfileData = {
+  _id: string;
   birthday: string;
   name: string;
   email: string;
@@ -11,6 +12,7 @@ type ProfileData = {
   city: string;
   gender: string;
   isWaitingVerification: boolean;
+  deleted: string;
 };
 
 type InstagramData = {

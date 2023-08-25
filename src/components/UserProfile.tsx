@@ -4,8 +4,14 @@ import TiktokProfilePicture from './TiktokProfilePicture';
 import InstagramProfilePicture from './InstagramProfilePicture';
 import ReadMore from './ReadMore';
 import './styles/styles.css';
+import { TAchangePhone, TArecoverAccount } from '../services/userAPI';
+import { useSelector } from 'react-redux';
+import { selectToken } from '../redux/store/userSlice';
 
 const UserProfile = (data: ProfileData) => {
+  const token = useSelector(selectToken);
+
+  const [_id, setId] = useState('');
   const [birthday, setBirthday] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -50,12 +56,17 @@ const UserProfile = (data: ProfileData) => {
   const [city, setCity] = useState('');
   const [gender, setGender] = useState('');
   const [isWaitingVerification, setIsWaitingVerification] = useState(false);
+  const [deleted, setDeleted] = useState('');
+  const [notification, setNotification] = useState('');
+  const [editor, setEditor] = useState(false);
 
   useEffect(() => {
+    setId(data?._id ?? '');
     setBirthday(data?.birthday ?? '');
     setName(data?.name ?? '');
     setEmail(data?.email ?? '');
     setPhone(data?.phone ?? '');
+    setDeleted(data?.deleted ?? '');
     setIsWaitingVerification(data?.isWaitingVerification ?? false);
     setInstagramData(
       data?.instagram ?? {
@@ -114,14 +125,13 @@ const UserProfile = (data: ProfileData) => {
     { key: 'Name:', value: name },
     { key: 'Birthday:', value: birthday },
     { key: 'Email:', value: email },
-    { key: 'Phone:', value: phone },
     { key: 'Job:', value: job },
     { key: 'Country:', value: country },
     { key: 'City:', value: city },
-    { key: 'Gender', value: gender },
-    { key: 'Papara Account No', value: moneyData.paparaAccountNo },
-    { key: 'Monet', value: moneyData.current },
-    { key: 'Waiting Verification', value: isWaitingVerification },
+    { key: 'Gender:', value: gender },
+    { key: 'Papara Account No:', value: moneyData.paparaAccountNo },
+    { key: 'Money:', value: moneyData.current },
+    { key: 'Waiting Verification:', value: isWaitingVerification },
   ];
 
   const instagramInfo: InfoType[] = [
@@ -148,9 +158,34 @@ const UserProfile = (data: ProfileData) => {
     { key: 'Keywords:', value: tiktokData.keywords.join(' ') },
   ];
 
+  const recoverAccount = (id: any, status: any, token: any) => {
+    TArecoverAccount(id, status, token);
+    setNotification('Account Recovered (refresh page)');
+  };
+
+  const changePhone = (id: any, phone: any, token: any) => {
+    TAchangePhone(id, phone, token);
+    setNotification('Phone Number Changed (refresh page)');
+  };
+
+  useEffect(() => {
+    if (notification) {
+      const notificationTimeout = setTimeout(() => {
+        setNotification('');
+      }, 5000);
+
+      return () => clearTimeout(notificationTimeout);
+    }
+  }, [notification]);
+
+  const handleChangePhone = (e: any) => {
+    const value = e.target.value.replace(/[^0-9]/g, ''); // Sadece rakamları al
+    setPhone(`+${value}`);
+  };
+
   return (
     <>
-      <div className="profile-container p-4 rounded-lg  w-2/3">
+      <div className="profile-container p-14 rounded-lg  w-2/3">
         <div className="flex items-center mb-20">
           <div className="flex flex-row items-center mr-16">
             <InstagramProfilePicture instagramData={instagramData} />
@@ -159,6 +194,11 @@ const UserProfile = (data: ProfileData) => {
         </div>
       </div>
       <div className="profile-section bg-white p-3 shadow-md mb-3">
+        {notification && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-3">
+            <span className="flex items-center block sm:inline">{notification}</span>
+          </div>
+        )}
         <h3 className="section-title text-lg font-semibold mb-3">Personal Information</h3>
         <table className="table-responsive">
           <tbody>
@@ -168,6 +208,47 @@ const UserProfile = (data: ProfileData) => {
                 <td>{info.value}</td>
               </tr>
             ))}
+          </tbody>
+          <tbody>
+            <tr>
+              <td>Phone:</td>
+              <td>{phone}</td>
+              <button className="text-indigo-600 hover:text-indigo-900 pt-1 pb-1" onClick={() => setEditor(!editor)}>
+                Edit Phone Number
+              </button>
+              {editor && (
+                <div className="flex flex-col space-y-2 pb-2">
+                  <div className="flex flex-row space-x-1">
+                    <input
+                      id="phone"
+                      type="tel"
+                      placeholder="(ex: 905555555555)"
+                      value={phone}
+                      className="form-input text-sm border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 w-60 pt-1 pb-1"
+                      onChange={handleChangePhone}
+                    />
+                    <button
+                      className="text-sm font-medium text-indigo-600 hover:text-indigo-900"
+                      onClick={() => changePhone(_id, phone, token)}
+                    >
+                      Change
+                    </button>
+                  </div>
+                </div>
+              )}
+            </tr>
+            <tr>
+              <td>Deleted:</td>
+              <td>{deleted}</td>
+              {deleted === 'true' && (
+                <button
+                  className="text-indigo-600 hover:text-indigo-900 pt-3"
+                  onClick={() => recoverAccount(_id, false, token)}
+                >
+                  Recover Account
+                </button>
+              )}
+            </tr>
           </tbody>
         </table>
       </div>
