@@ -132,3 +132,41 @@ export const TAfindUserById = async (id: any, token: string) => {
     throw error;
   }
 };
+
+export const TArecoverAccount = async (id: string, status: string, token: string) => {
+  try {
+    const response = await apiClient.post(`/admin/user/recoveraccount/${id}/${status}`,{},
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAchangePhone = async (id: string, phone: string, token: string) => {
+  try {
+    const response = await apiClient.post(`/admin/user/changephone/${id}/${phone}`,{},
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+    throw error;
+  }
+};

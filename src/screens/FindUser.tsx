@@ -58,6 +58,7 @@ const FindUser = () => {
     try {
       const response = await TAfindUser(data, token);
       const object = {
+        _id: response._id,
         username: response.username,
         email: response.email,
         phone: response.phone,
@@ -71,6 +72,7 @@ const FindUser = () => {
         city: response.city,
         gender: response.gender,
         isWaitingVerification: response.isWaitingVerification,
+        deleted: response.deleted,
       };
       setProfileData(object);
     } catch (error: any) {
@@ -85,7 +87,7 @@ const FindUser = () => {
   return (
     <div className="flex flex-col lg:flex-row justify-between items-start min-h-screen bg-cover bg-center relative">
       <div className="w-full">{profileData && <UserProfile {...profileData} />}</div>
-      <form className="w-1/4 absolute top-5 right-6 ">
+      <form className="w-1/4 absolute right-6 ">
         <h2 className="text-sm font-bold mb-1 mt-3 ml-2">User Mail</h2>
         <input
           type="email"
