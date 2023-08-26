@@ -1,19 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { TAfindAllBrands, TAfindBrand } from '../services/brandAPI';
+import { TAfindBrand } from '../services/brandAPI';
 import { AllBrandType, BrandType, MoneyExchanges } from '../types/brandData';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import BrandProfile from '../components/BrandProfile';
 import { selectToken } from '../redux/store/userSlice';
-
-const fetchData = async (page: number, perPage: number, token: string) => {
-  try {
-    const response = await TAfindAllBrands(1, 1, token);
-    return response.brands;
-  } catch (error: any) {
-    throw new Error(error);
-  }
-};
 
 const FindBrand = () => {
   const token = useSelector(selectToken);
@@ -31,22 +22,6 @@ const FindBrand = () => {
   const [searchNameMatches, setSearchNameMatches] = useState<AllBrandType[]>([]);
   const [isEmailDropdownOpen, setIsEmailDropdownOpen] = useState(false);
   const [isNameDropdownOpen, setIsNameDropdownOpen] = useState(false);
-
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const data = await fetchData(1, 1, token);
-        if (data !== undefined) {
-          setUserData(data);
-        } else {
-          setError('No data found');
-        }
-      } catch (error) {
-        setError('No data found');
-      }
-    };
-    getUserData();
-  }, [token]);
 
   const handleForm = async (e: any) => {
     e.preventDefault();
@@ -111,55 +86,6 @@ const FindBrand = () => {
     }
   };
 
-  function searchBrandsEmail(text: string) {
-    let matches = userData.filter((brand: AllBrandType) => {
-      const regex = new RegExp(`^${text}`, 'gi');
-      setEmail(text);
-
-      return brand.email.match(regex);
-    });
-    if (matches.length === 0 || text.length === 0) {
-      setIsEmailDropdownOpen(false);
-    } else {
-      setIsEmailDropdownOpen(true);
-    }
-    setSearchEmailMatches(matches);
-  }
-
-  function searchBrandsName(text: string) {
-    let matches = userData.filter((brand: AllBrandType) => {
-      const regex = new RegExp(`^${text}`, 'gi');
-      setBrandname(text);
-
-      return brand.first_name.match(regex);
-    });
-    if (matches.length === 0 || text.length === 0) {
-      setIsNameDropdownOpen(false);
-    } else {
-      setIsNameDropdownOpen(true);
-    }
-    setSearchNameMatches(matches);
-  }
-
-  const handleBrandEmailSelect = (selectedBrand: any) => {
-    setEmail(selectedBrand.email);
-  };
-
-  const handleBrandNameSelect = (selectedBrand: any) => {
-    setBrandname(selectedBrand.brand_name);
-  };
-
-  useEffect(() => {
-    const handleClick = () => {
-      setIsNameDropdownOpen(false);
-      setIsEmailDropdownOpen(false);
-    };
-    document.addEventListener('click', handleClick);
-    return () => {
-      document.removeEventListener('click', handleClick);
-    };
-  }, []);
-
   return (
     <div className="flex flex-col lg:flex-row justify-between items-start min-h-screen bg-cover bg-center relative">
       <div className="w-full ">{brandData && <BrandProfile {...brandData} />}</div>
@@ -171,23 +97,9 @@ const FindBrand = () => {
           className="form-input text-sm"
           value={email}
           onChange={(e) => {
-            const text = e.target.value;
-            searchBrandsEmail(text);
+            setEmail(e.target.value)
           }}
         />
-        {isEmailDropdownOpen && searchEmailMatches.length > 0 && (
-          <div className="absolute bg-white border border-gray-300 rounded mt-10 z-10">
-            {searchEmailMatches.slice(0, 4).map((match: AllBrandType) => (
-              <div
-                className="p-2 border-b border-gray-300 hover:bg-gray-100"
-                key={match.id}
-                onClick={() => handleBrandEmailSelect(match)}
-              >
-                {match.email}
-              </div>
-            ))}
-          </div>
-        )}
 
         <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Brand Name</h2>
         <input
@@ -196,23 +108,9 @@ const FindBrand = () => {
           className="form-input text-sm"
           value={brandname}
           onChange={(e) => {
-            const text = e.target.value;
-            searchBrandsName(text);
+            setBrandname(e.target.value)
           }}
         />
-        {isNameDropdownOpen && searchNameMatches.length > 0 && (
-          <div className="absolute bg-white border border-gray-300 rounded z-10">
-            {searchNameMatches.slice(0, 4).map((match: AllBrandType) => (
-              <div
-                className="p-2 border-b border-gray-300 hover:bg-gray-100"
-                key={match.id}
-                onClick={() => handleBrandNameSelect(match)}
-              >
-                {match.brand_name}
-              </div>
-            ))}
-          </div>
-        )}
 
         <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Brand No</h2>
         <input
