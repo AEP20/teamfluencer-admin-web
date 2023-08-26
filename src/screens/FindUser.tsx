@@ -25,7 +25,7 @@ const FindUser = () => {
       };
       fetchData();
     }
-  }, [id]);
+  }, [id, token]);
 
   useEffect(() => {
     dispatch(setPageTitle('Kullanıcı Bul'));
