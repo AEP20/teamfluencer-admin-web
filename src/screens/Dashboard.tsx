@@ -33,6 +33,14 @@ const Dashboard = () => {
   const [paidBrands, setPaidBrands] = useState<number>(0);
   const [inTurkeys, setInTurkeys] = useState<number>(0);
   const [outOfTurkeys, setOutOfTurkeys] = useState<number>(0);
+  const [totalCampaigns, setTotalCampaigns] = useState<number>(0);
+  const [activeCampaigns, setActiveCampaigns] = useState<number>(0);
+  const [waitingApprovalCampaigns, setWaitingApprovalCampaigns] = useState<number>(0);
+  const [totalUsers, setTotalUsers] = useState<number>(0);
+  const [waitingApprovalUsers, setWaitingApprovalUsers] = useState<number>(0);
+  const [approvedUsers, setApprovedUsers] = useState<number>(0);
+  const [deletedUsers, setDeletedUsers] = useState<number>(0);
+  const [totalCooperations, setTotalCooperations] = useState<number>(0);
   const [buttonClicked, setButtonClicked] = useState<boolean>(false);
   const [buttonClicked2, setButtonClicked2] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
@@ -49,6 +57,14 @@ const Dashboard = () => {
           setPaidBrands(response.paidBrands);
           setInTurkeys(response.inTurkey);
           setOutOfTurkeys(response.outOfTurkey);
+          setTotalCampaigns(response.totalCampaigns);
+          setActiveCampaigns(response.activeCampaigns);
+          setWaitingApprovalCampaigns(response.waitingApprovalCampaigns);
+          setTotalUsers(response.totalUsers);
+          setWaitingApprovalUsers(response.waitingApprovalUsers);
+          setApprovedUsers(response.approvedUsers);
+          setDeletedUsers(response.deletedUsers);
+          setTotalCooperations(response.totalCooperations);
         } else {
           setError('No Data Found');
         }
@@ -79,8 +95,8 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Sessions */}
-          <div className="flex flex-col panel bg-gradient-to-r from-violet-500 to-violet-400">
+          {/* Paid Brands */}
+          <div className="flex flex-col panel bg-gradient-to-r from-cyan-500 to-cyan-400">
             <div className="flex">
               <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Paid Brands</div>
             </div>
@@ -89,13 +105,13 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/*  Time On-Site */}
-          <div className="flex flex-col panel bg-gradient-to-r from-blue-500 to-blue-400">
+          {/*  Brands in TR / out of TR  */}
+          <div className="flex flex-col panel bg-gradient-to-r from-cyan-500 to-cyan-400">
             <div className="flex justify-between">
               {buttonClicked === false ? (
-                <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold">Brands in Turkey</div>
+                <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold">Brands in TR</div>
               ) : (
-                <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold">Brands out of Turkey</div>
+                <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold">Brands out of TR</div>
               )}
               <div className="dropdown">
                 <Dropdown
@@ -117,12 +133,12 @@ const Dashboard = () => {
                   <ul className="text-black dark:text-white-dark">
                     <li>
                       <button type="button" onClick={() => setButtonClicked(false)}>
-                        in Turkey
+                        in TR
                       </button>
                     </li>
                     <li>
                       <button type="button" onClick={() => setButtonClicked(true)}>
-                        out of Turkey
+                        out of TR
                       </button>
                     </li>
                   </ul>
@@ -140,8 +156,8 @@ const Dashboard = () => {
             )}
           </div>
 
-          {/* Bounce Rate */}
-          <div className="flex flex-col panel bg-gradient-to-r from-fuchsia-500 to-fuchsia-400">
+          {/* Active Brands */}
+          <div className="flex flex-col panel bg-gradient-to-r from-cyan-500 to-cyan-400">
             <div className="flex justify-between">
               {buttonClicked2 === 0 ? (
                 <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold">Active brands in the last 30 days</div>
@@ -200,6 +216,86 @@ const Dashboard = () => {
                 <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{activeBrands7}</div>
               </div>
             )}
+          </div>
+
+          {/* Total Campaigns */}
+          <div className="flex flex-col panel bg-gradient-to-r from-violet-500 to-violet-400">
+            <div className="flex">
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Total Campaigns</div>
+            </div>
+            <div className="flex justify-center mt-7">
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{totalCampaigns}</div>
+            </div>
+          </div>
+
+          {/* Active Campaigns */}
+          <div className="flex flex-col panel bg-gradient-to-r from-violet-500 to-violet-400">
+            <div className="flex">
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Active Campaigns</div>
+            </div>
+            <div className="flex justify-center mt-7">
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{activeCampaigns}</div>
+            </div>
+          </div>
+
+          {/* Waiting Approval Campaigns */}
+          <div className="flex flex-col panel bg-gradient-to-r from-violet-500 to-violet-400">
+            <div className="flex">
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Waiting Approval Campaigns</div>
+            </div>
+            <div className="flex justify-center mt-7">
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{waitingApprovalCampaigns}</div>
+            </div>
+          </div>
+
+          {/* Total Cooperations */}
+          <div className="flex flex-col panel bg-gradient-to-r from-blue-500 to-blue-400">
+            <div className="flex">
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Total Cooperations (done)</div>
+            </div>
+            <div className="flex justify-center mt-7">
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{totalCooperations}</div>
+            </div>
+          </div>
+
+          {/* Total Users */}
+          <div className="flex flex-col panel bg-gradient-to-r from-fuchsia-500 to-fuchsia-400">
+            <div className="flex">
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Total Users</div>
+            </div>
+            <div className="flex justify-center mt-7">
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{totalUsers}</div>
+            </div>
+          </div>
+
+          {/* Approved Users */}
+          <div className="flex flex-col panel bg-gradient-to-r from-fuchsia-500 to-fuchsia-400">
+            <div className="flex">
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Approved Users</div>
+            </div>
+            <div className="flex justify-center mt-7">
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{approvedUsers}</div>
+            </div>
+          </div>
+
+          {/* Waiting Approval Users */}
+          <div className="flex flex-col panel bg-gradient-to-r from-fuchsia-500 to-fuchsia-400">
+            <div className="flex">
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Waiting Approval Users</div>
+            </div>
+            <div className="flex justify-center mt-7">
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{waitingApprovalUsers}</div>
+            </div>
+          </div>
+
+          {/* Deleted Users */}
+          <div className="flex flex-col panel bg-gradient-to-r from-fuchsia-500 to-fuchsia-400">
+            <div className="flex">
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Deleted Users</div>
+            </div>
+            <div className="flex justify-center mt-7">
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{deletedUsers}</div>
+            </div>
           </div>
         </div>
 
