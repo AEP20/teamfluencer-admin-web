@@ -9,7 +9,8 @@ import { AllBrandType, BrandType, MoneyExchanges } from '../types/brandData';
 import { selectToken } from '../redux/store/userSlice';
 import BrandProfile from '../components/BrandProfile';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDollarSign } from '@fortawesome/free-solid-svg-icons';
+import { faDollarSign, faEye } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 const fetchData = async (page: number, perPage: number, token: string) => {
   try {
@@ -227,6 +228,18 @@ const AllBrands = () => {
             className="whitespace-nowrap table-hover"
             records={initialRecords}
             columns={[
+              {
+                accessor: 'brand',
+                title: 'Details',
+                sortable: false,
+                render: ({ _id }: any) => (
+                  <Link to={`/brands/find/${_id}`}>
+                    <div className="text-center items-center mr-4">
+                      <FontAwesomeIcon icon={faEye} style={{ color: '#005eff' }} />
+                    </div>
+                  </Link>
+                ),
+              },
               { accessor: 'id', title: 'Id', sortable: true, render: renderBrandId },
               {
                 accessor: 'firstName',
