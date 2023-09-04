@@ -6,6 +6,9 @@ import { selectToken } from '../redux/store/userSlice';
 import { CampaignType } from '../types/campaignsData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
 
 const fetchData = async (page: number, perPage: number, token: string) => {
   try {
@@ -119,6 +122,18 @@ function ApprovedCampaigns() {
             className="whitespace-nowrap table-hover"
             records={initialRecords}
             columns={[
+              {
+                accessor: 'brand',
+                title: 'Brand',
+                sortable: false,
+                render: ({ brand }: any) => (
+                  <Link to={`/brands/find/${brand}`}>
+                    <div className="text-center items-center mr-4">
+                      <FontAwesomeIcon icon={faEye} style={{ color: '#005eff' }} />
+                    </div>
+                  </Link>
+                ),
+              },
               { accessor: 'id', title: 'Id', sortable: true, render: renderBrandId },
               { accessor: 'name', title: 'Name', sortable: true },
               { accessor: 'description', title: 'Description', sortable: true, render: renderDescriptionCell },
