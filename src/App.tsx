@@ -98,6 +98,7 @@ function BrandsLayout() {
           <Routes>
             <Route path="/find" element={<FindBrand />} />
             <Route path="/find-all" element={<AllBrands />} />
+            <Route path="/find/:id" element={<FindBrand />} />
           </Routes>
         </CommonLayout>
       </Suspense>

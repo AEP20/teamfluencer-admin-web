@@ -14,8 +14,9 @@ import {
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faEye, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faHeartPulse } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 const fetchData = async (token: string) => {
   try {
@@ -292,7 +293,7 @@ function AllCampaign() {
     }
   };
 
-  const renderBrandId = (record: any, index: any) => {
+  const renderCampaignId = (record: any, index: any) => {
     const itemsPerPage = page * pageSize;
     const recordIndex = itemsPerPage + index;
     const brandId = recordIndex - pageSize + 1;
@@ -478,7 +479,19 @@ function AllCampaign() {
             className="whitespace-nowrap table-hover"
             records={initialRecords.slice((page - 1) * pageSize, page * pageSize)}
             columns={[
-              { accessor: 'id', title: 'Id', sortable: true, render: renderBrandId },
+              {
+                accessor: 'brand',
+                title: 'Brand',
+                sortable: false,
+                render: ({ brand }: any) => (
+                  <Link to={`/brands/find/${brand}`}>
+                    <div className="text-center items-center mr-4">
+                      <FontAwesomeIcon icon={faEye} style={{ color: '#005eff' }} />
+                    </div>
+                  </Link>
+                ),
+              },
+              { accessor: 'id', title: 'Id', sortable: true, render: renderCampaignId },
               {
                 accessor: 'name',
                 title: 'Name',

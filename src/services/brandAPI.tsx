@@ -47,12 +47,11 @@ export const TAfindAllBrands = async (page: number, perPage: number, token: stri
 
 export const TAfindBrandById = async (id: any, token: string) => {
   try {
-    const response = await apiClient.get(`/admin/brand/getuser/${id}`, {
+    const response = await apiClient.get(`/admin/brand/get/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-
     if (response.status === 200) {
       return response.data;
     } else {

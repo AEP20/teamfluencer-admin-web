@@ -1,27 +1,41 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { TAfindBrand } from '../services/brandAPI';
-import { AllBrandType, BrandType, MoneyExchanges } from '../types/brandData';
+import { TAfindBrand, TAfindBrandById } from '../services/brandAPI';
+import { BrandType, MoneyExchanges } from '../types/brandData';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import BrandProfile from '../components/BrandProfile';
 import { selectToken } from '../redux/store/userSlice';
+import { useParams } from 'react-router-dom';
 
 const FindBrand = () => {
+  const { id } = useParams<{ id: string }>();
   const token = useSelector(selectToken);
-  const dispatch = useDispatch();
+
   useEffect(() => {
-    dispatch(setPageTitle('Kampanya Bul'));
+    dispatch(setPageTitle('Find Brands'));
   });
-  const [userData, setUserData] = useState([] as AllBrandType[]);
+
+  useEffect(() => {
+    if (id) {
+      const fetchData = async () => {
+        try {
+          const response = await TAfindBrandById(id, token);
+          setbrandData(response);
+        } catch (error) {
+          throw error;
+        }
+      };
+      fetchData();
+    }
+  }, [id, token]);
+
+  const dispatch = useDispatch();
+
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [brandname, setBrandname] = useState('');
   const [brandData, setbrandData] = useState<BrandType | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [searchEmailMatches, setSearchEmailMatches] = useState<AllBrandType[]>([]);
-  const [searchNameMatches, setSearchNameMatches] = useState<AllBrandType[]>([]);
-  const [isEmailDropdownOpen, setIsEmailDropdownOpen] = useState(false);
-  const [isNameDropdownOpen, setIsNameDropdownOpen] = useState(false);
 
   const handleForm = async (e: any) => {
     e.preventDefault();
@@ -97,7 +111,7 @@ const FindBrand = () => {
           className="form-input text-sm"
           value={email}
           onChange={(e) => {
-            setEmail(e.target.value)
+            setEmail(e.target.value);
           }}
         />
 
@@ -108,7 +122,7 @@ const FindBrand = () => {
           className="form-input text-sm"
           value={brandname}
           onChange={(e) => {
-            setBrandname(e.target.value)
+            setBrandname(e.target.value);
           }}
         />
 
