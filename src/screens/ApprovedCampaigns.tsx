@@ -49,7 +49,6 @@ function ApprovedCampaigns() {
       try {
         const response = await fetchData(page, pageSize, token);
         if (response !== undefined) {
-          console.log('response', response);
           setTotalPages(response.totalPages);
           setCampaignData(response.data);
           setInitialRecords(response.data);

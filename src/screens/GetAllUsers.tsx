@@ -168,7 +168,6 @@ const GetAllUsers = () => {
       try {
         const data = await fetchData(page, params, token);
         if (data !== undefined) {
-          console.log('data', data);
           setInitialRecords(data.data);
           setUserData(data.data);
           setTotalPages(data.totalPages);
