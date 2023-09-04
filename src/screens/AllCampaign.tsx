@@ -154,12 +154,12 @@ function AllCampaign() {
       if (key === 'country') {
         const countryValue = value as CountryFilterValue;
         if (countryValue.value) {
-          const normalizedCountryValue = countryValue.value.toLowerCase(); // Normalize the input value to lowercase
+          const normalizedCountryValue = countryValue.value.toLowerCase();
 
           if (normalizedCountryValue === 'tr' || normalizedCountryValue === 'turkey') {
-            dt = dt.filter((d) => d[key as keyof typeof d] === 'TR' || d[key as keyof typeof d] === 'Turkey'); // Use uppercase for 'Turkey'
+            dt = dt.filter((d) => d[key as keyof typeof d] === 'TR' || d[key as keyof typeof d] === 'turkey');
           } else if (normalizedCountryValue === 'other') {
-            dt = dt.filter((d) => d[key as keyof typeof d] !== 'TR' && d[key as keyof typeof d] !== 'Turkey'); // Use uppercase for 'Turkey'
+            dt = dt.filter((d) => d[key as keyof typeof d] !== 'TR' && d[key as keyof typeof d] !== 'turkey');
           } else {
             dt = dt.filter((d) => d[key as keyof typeof d] === normalizedCountryValue);
           }
