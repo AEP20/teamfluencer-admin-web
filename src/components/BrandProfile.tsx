@@ -3,7 +3,7 @@ import { MoneyExchanges, BillingAddress, BrandType, InfoType } from '../types/br
 import './styles/styles.css';
 import { selectToken } from '../redux/store/userSlice';
 import { useSelector } from 'react-redux';
-import { TAdeleteNote, TAupdateBrandNote } from '../services/brandAPI';
+import { TAaddBalance, TAdeleteNote, TAupdateBrandNote } from '../services/brandAPI';
 
 const BrandProfile = (data: BrandType) => {
   const token = useSelector(selectToken);
@@ -21,7 +21,6 @@ const BrandProfile = (data: BrandType) => {
   const [jobTitle, setJobTitle] = useState('');
   const [notes, setNotes] = useState('');
   const [moneyExchanges, setMoneyExchanges] = useState<MoneyExchanges[]>([]);
-
   const [billingAddress, setBillingAddress] = useState<BillingAddress>({
     type: '',
     firm_name: '',
@@ -32,6 +31,8 @@ const BrandProfile = (data: BrandType) => {
     address: '',
     zipCode: '',
   });
+  const [editor, setEditor] = useState(false);
+  const [notification, setNotification] = useState('');
 
   useEffect(() => {
     setId(data?._id ?? '');
@@ -78,7 +79,6 @@ const BrandProfile = (data: BrandType) => {
     { key: 'Currency', value: currency },
     { key: 'Language', value: language },
     { key: 'Job Title', value: jobTitle },
-    { key: 'Balance', value: balance },
   ];
 
   async function UpdateNote(id: string, notes: string, token: string) {
@@ -102,9 +102,33 @@ const BrandProfile = (data: BrandType) => {
     }
   }
 
+  const changeBalance = (id: any, phone: any, token: any) => {
+    TAaddBalance(id, phone, token);
+    setNotification('Phone Number Changed (refresh page)');
+  };
+
+  useEffect(() => {
+    if (notification) {
+      const notificationTimeout = setTimeout(() => {
+        setNotification('');
+      }, 5000);
+
+      return () => clearTimeout(notificationTimeout);
+    }
+  }, [notification]);
+
+  const handleChangeBalance = (e: any) => {
+    setBalance(e.target.value);
+  };
+
   return (
     <>
       <div className="profile-section bg-white p-3 shadow-md mb-3 w-3/5">
+        {notification && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-3">
+            <span className="flex items-center block sm:inline">{notification}</span>
+          </div>
+        )}
         <h3 className="section-title text-xl font-bold mb-3">Brand Information</h3>
         <table className="table-responsive">
           <tbody>
@@ -115,6 +139,41 @@ const BrandProfile = (data: BrandType) => {
                 <td className="font-semibold">{info.value}</td>
               </tr>
             ))}
+          </tbody>
+        </table>
+        <table className="table-responsive">
+          <tbody>
+            <tr>
+              <td className="font-bold text-md">Balance</td>
+              <td className="font-semibold">=</td>
+              <td className="font-semibold">{balance}</td>
+              <button
+                className="text-indigo-600 hover:text-indigo-900 pt-1 pb-1 ml-28"
+                onClick={() => setEditor(!editor)}
+              >
+                Add Balance
+              </button>
+              {editor && (
+                <div className="flex flex-col items-center space-y-2 pb-2">
+                  <div className="flex flex-row space-x-1">
+                    <input
+                      id="balance"
+                      type="integer"
+                      placeholder="(ex: 700)"
+                      value={balance}
+                      className="form-input text-sm border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 w-60 pt-1 pb-1"
+                      onChange={handleChangeBalance}
+                    />
+                    <button
+                      className="text-sm font-medium text-indigo-600 hover:text-indigo-900"
+                      onClick={() => changeBalance(_id, balance, token)}
+                    >
+                      Change
+                    </button>
+                  </div>
+                </div>
+              )}
+            </tr>
           </tbody>
         </table>
         <div className="flex flex-col">

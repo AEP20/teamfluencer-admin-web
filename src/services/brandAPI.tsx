@@ -121,3 +121,22 @@ export const TAdeleteNote = async (id: any, token: string) => {
     throw error;
   }
 };
+
+export const TAaddBalance = async (id: any, balance: number, token: string) => {
+  try {
+    const response = await apiClient.put(`/admin/brand/addbalance/${id}/${balance}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Update failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
