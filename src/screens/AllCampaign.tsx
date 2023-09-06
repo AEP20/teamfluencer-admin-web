@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { selectToken } from '../redux/store/userSlice';
-import { TAdoVisibleCampaign, TAfindAllCampaigns } from '../services/campaignsAPI';
+import { TAdoVisibleCampaign, TAfindAllCampaigns, TAsetVisibility } from '../services/campaignsAPI';
 import {
   CampaignType,
   Campaign,
@@ -56,6 +56,14 @@ function AllCampaign() {
   const [loading, setLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  const handleToggleVisibility = async (_id: string, value: string, token: string) => {
+    setIsLoading(true);
+    await toggleVisibility(_id, value, token);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     setLoading(true);
     const loadCampaigns = async () => {
@@ -74,7 +82,7 @@ function AllCampaign() {
     };
 
     loadCampaigns();
-  }, [token]);
+  }, [token, isLoading]);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -515,21 +523,45 @@ function AllCampaign() {
               },
               {
                 accessor: 'visibility',
-                title: 'active',
+                title: 'Visibility Status',
                 sortable: true,
                 render: ({ _id, visibility }) => (
                   <div className="flex">
-                    <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      <button onClick={() => toggleVisibility(_id, visibility ? 'false' : 'true', token)}>
-                        <FontAwesomeIcon
-                          icon={faHeartPulse}
-                          size="lg"
-                          style={{ color: visibility ? '#009e1a' : '#ff0000' }}
-                        />
-                      </button>
-                    </div>
+                    <FontAwesomeIcon
+                      icon={faHeartPulse}
+                      size="lg"
+                      style={{ color: visibility ? '#009e1a' : '#ff0000' }}
+                    />
+                    <p className="ml-2">{visibility ? 'Aktif' : 'Görünür Değil'}</p>
                   </div>
                 ),
+              },
+              {
+                accessor: 'visibility',
+                title: 'Set Visibility',
+                sortable: true,
+                render: ({ _id, visibility }) => {
+                  // 1. Add a state to determine if the spinner is showing for each item
+
+                  return (
+                    <div className="flex">
+                      <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <button
+                          onClick={() => handleToggleVisibility(_id, visibility ? 'false' : 'true', token)}
+                          className="bg-blue-500 text-white rounded-md px-3 py-2 w-full hover:bg-blue-600"
+                        >
+                          {isLoading ? (
+                            <span className="spinner"></span> // 4. Replace the button text with spinner if loading
+                          ) : visibility ? (
+                            'Yayından Kaldır'
+                          ) : (
+                            'Aktifleştir'
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                },
               },
               {
                 accessor: 'created_at',

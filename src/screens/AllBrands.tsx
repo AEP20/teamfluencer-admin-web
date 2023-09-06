@@ -18,14 +18,13 @@ const fetchData = async (page: number, perPage: number, token: string) => {
     if (response && Array.isArray(response.brands)) {
       const totalLength = response.brands.length;
       const totalPages = response.totalPages;
-      const data = response.brands
-        .map((item: any, index: any) => {
-          return {
-            id: totalLength - index,
-            ...item,
-          };
-        })
-        .reverse();
+      const data = response.brands.map((item: any, index: any) => {
+        return {
+          id: totalLength - index,
+          ...item,
+        };
+      });
+
       return { data, totalPages };
     }
   } catch (error: any) {
@@ -115,8 +114,8 @@ const AllBrands = () => {
               action_time: exchange?.action_time ?? '',
             }))
           : [],
-        notes: '',
-        _id: '',
+        notes: response.notes ? response.notes : '',
+        _id: response._id,
       };
       setbrandData(object);
     } catch (error: any) {
@@ -284,6 +283,7 @@ const AllBrands = () => {
                 sortable: true,
                 render: ({ last_login }: any) => <div>{new Date(last_login).toLocaleDateString()}</div>,
               },
+              { accessor: 'notes', title: 'Notes' },
             ]}
             totalRecords={totalPages * pageSize}
             recordsPerPage={pageSize}

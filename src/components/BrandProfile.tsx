@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { MoneyExchanges, BillingAddress, BrandType, InfoType } from '../types/brandData';
 import './styles/styles.css';
-import { selectToken } from '../redux/store/userSlice';
 import { useSelector } from 'react-redux';
 import { TAaddBalance, TAdeleteNote, TAupdateBrandNote } from '../services/brandAPI';
 
-const BrandProfile = (data: BrandType) => {
+const BrandProfile = ({ _id, email, phone, country, first_name, last_name, currency, language, job_title, brand_name, balance, billing_address, money_exchanges, notes }: BrandType) => {
   const token = useSelector(selectToken);
 
   const [_id, setId] = useState('');
@@ -24,83 +23,45 @@ const BrandProfile = (data: BrandType) => {
   const [billingAddress, setBillingAddress] = useState<BillingAddress>({
     type: '',
     firm_name: '',
-    contactName: '',
+    contact_name: '',
     id: '',
     city: '',
     country: '',
     address: '',
-    zipCode: '',
+    zip_code: '',
   });
   const [editor, setEditor] = useState(false);
   const [notification, setNotification] = useState('');
 
-  useEffect(() => {
-    setId(data?._id ?? '');
-    setEmail(data?.email ?? '');
-    setPhone(data?.phone ?? '');
-    setCountry(data?.country ?? '');
-    setFirstName(data?.first_name ?? '');
-    setLastName(data?.last_name ?? '');
-    setCurrency(data?.currency ?? '');
-    setLanguage(data?.language ?? '');
-    setJobTitle(data?.job_title ?? '');
-    setBrandName(data?.brand_name ?? '');
-    setBalance(data?.balance ?? 0);
-    setBillingAddress(
-      data?.billing_address ?? {
-        type: '',
-        firm_name: '',
-        contact_name: '',
-        id: '',
-        city: '',
-        country: '',
-        address: '',
-        zip_code: '',
-      },
-    );
-    setMoneyExchanges(
-      data?.money_exchanges ?? {
-        operation: '',
-        amount: 0,
-        application_id: '',
-        action_time: '',
-      },
-    );
-    setNotes(data?.notes ?? '');
-  }, [data]);
-
   const brandInfo: InfoType[] = [
-    { key: 'Brand Name', value: brandName },
+    { key: 'Brand Name', value: brand_name },
     { key: 'Email', value: email },
     { key: 'Phone', value: phone },
     { key: 'Country', value: country },
-    { key: 'First Name', value: firstName },
-    { key: 'Last Name', value: lastName },
+    { key: 'First Name', value: first_name },
+    { key: 'Last Name', value: last_name },
     { key: 'Currency', value: currency },
     { key: 'Language', value: language },
     { key: 'Job Title', value: jobTitle },
   ];
 
-  async function UpdateNote(id: string, notes: string, token: string) {
+  const handleUpdateNote = async () => {
     try {
-      const brand = await TAupdateBrandNote(id, notes, token);
-      if (brand) {
-        alert('Note updated successfully');
-      }
+      const brand = await TAupdateBrandNote(_id, brandNotes, token);
+      if (brand) alert('Note updated successfully');
     } catch (error) {
-      throw error;
+      console.error(error);
     }
-  }
-  async function DeleteNote(id: string, token: string) {
+  };
+
+  const handleDeleteNote = async () => {
     try {
-      const brand = await TAdeleteNote(id, token);
-      if (brand) {
-        alert('Note deleted successfully');
-      }
+      const brand = await TAdeleteNote(_id, token);
+      if (brand) alert('Note deleted successfully');
     } catch (error) {
-      throw error;
+      console.error(error);
     }
-  }
+  };
 
   const changeBalance = (id: any, phone: any, token: any) => {
     TAaddBalance(id, phone, token);
@@ -132,11 +93,12 @@ const BrandProfile = (data: BrandType) => {
         <h3 className="section-title text-xl font-bold mb-3">Brand Information</h3>
         <table className="table-responsive">
           <tbody>
-            {brandInfo.map((info: InfoType) => (
-              <tr>
-                <td className="font-bold text-md">{info.key}</td>
-                <td className="font-semibold">=</td>
-                <td className="font-semibold">{info.value}</td>
+            {moneyExchanges.map((exchange, index) => (
+              <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                <td className="px-4 py-2 text-sm">{exchange.operation}</td>
+                <td className="px-4 py-2 text-sm">{exchange.amount}</td>
+                <td className="px-4 py-2 text-sm">{exchange.application_id}</td>
+                <td className="px-4 py-2 text-sm">{new Date(exchange.action_time).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>

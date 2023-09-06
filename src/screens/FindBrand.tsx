@@ -61,6 +61,7 @@ const FindBrand = () => {
       const response = Array.isArray(res) ? res[0] : res;
 
       const object: BrandType = {
+        _id: response._id,
         balance: response.balance,
         email: response.email,
         brand_name: response.brand_name,
@@ -91,8 +92,7 @@ const FindBrand = () => {
               action_time: exchange?.action_time ?? '',
             }))
           : [],
-        notes: '',
-        _id: '',
+        notes: response.notes ? response.notes : '',
       };
       setbrandData(object);
     } catch (error: any) {
