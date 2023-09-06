@@ -86,7 +86,7 @@ const Dashboard = () => {
       <div className="pt-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-6 text-white">
           {/* Total Brands */}
-          <div className="flex flex-col panel bg-gradient-to-r from-cyan-500 to-cyan-400">
+          <div className="flex flex-col panel bg-gray-500">
             <div className="flex">
               <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Total Brands</div>
             </div>
@@ -96,7 +96,7 @@ const Dashboard = () => {
           </div>
 
           {/* Paid Brands */}
-          <div className="flex flex-col panel bg-gradient-to-r from-cyan-500 to-cyan-400">
+          <div className="flex flex-col panel bg-gray-500">
             <div className="flex">
               <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Paid Brands</div>
             </div>
@@ -106,7 +106,7 @@ const Dashboard = () => {
           </div>
 
           {/*  Brands in TR / out of TR  */}
-          <div className="flex flex-col panel bg-gradient-to-r from-cyan-500 to-cyan-400">
+          <div className="flex flex-col panel bg-gray-500">
             <div className="flex justify-between">
               {buttonClicked === false ? (
                 <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold">Brands in TR</div>
@@ -157,7 +157,7 @@ const Dashboard = () => {
           </div>
 
           {/* Active Brands */}
-          <div className="flex flex-col panel bg-gradient-to-r from-cyan-500 to-cyan-400">
+          <div className="flex flex-col panel bg-gray-500">
             <div className="flex justify-between">
               {buttonClicked2 === 0 ? (
                 <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold">Active brands in the last 30 days</div>
@@ -219,7 +219,7 @@ const Dashboard = () => {
           </div>
 
           {/* Total Campaigns */}
-          <div className="flex flex-col panel bg-gradient-to-r from-violet-500 to-violet-400">
+          <div className="flex flex-col panel bg-gray-500">
             <div className="flex">
               <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Total Campaigns</div>
             </div>
@@ -229,7 +229,7 @@ const Dashboard = () => {
           </div>
 
           {/* Active Campaigns */}
-          <div className="flex flex-col panel bg-gradient-to-r from-violet-500 to-violet-400">
+          <div className="flex flex-col panel bg-gray-500">
             <div className="flex">
               <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Active Campaigns</div>
             </div>
@@ -239,7 +239,7 @@ const Dashboard = () => {
           </div>
 
           {/* Waiting Approval Campaigns */}
-          <div className="flex flex-col panel bg-gradient-to-r from-violet-500 to-violet-400">
+          <div className="flex flex-col panel bg-gray-500">
             <div className="flex">
               <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Waiting Approval Campaigns</div>
             </div>
@@ -249,7 +249,7 @@ const Dashboard = () => {
           </div>
 
           {/* Total Cooperations */}
-          <div className="flex flex-col panel bg-gradient-to-r from-blue-500 to-blue-400">
+          <div className="flex flex-col panel bg-gray-500">
             <div className="flex">
               <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Total Cooperations (done)</div>
             </div>
@@ -259,7 +259,7 @@ const Dashboard = () => {
           </div>
 
           {/* Total Users */}
-          <div className="flex flex-col panel bg-gradient-to-r from-fuchsia-500 to-fuchsia-400">
+          <div className="flex flex-col panel bg-gray-500">
             <div className="flex">
               <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Total Users</div>
             </div>
@@ -269,7 +269,7 @@ const Dashboard = () => {
           </div>
 
           {/* Approved Users */}
-          <div className="flex flex-col panel bg-gradient-to-r from-fuchsia-500 to-fuchsia-400">
+          <div className="flex flex-col panel bg-gray-500">
             <div className="flex">
               <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Approved Users</div>
             </div>
@@ -279,7 +279,7 @@ const Dashboard = () => {
           </div>
 
           {/* Waiting Approval Users */}
-          <div className="flex flex-col panel bg-gradient-to-r from-fuchsia-500 to-fuchsia-400">
+          <div className="flex flex-col panel bg-gray-500">
             <div className="flex">
               <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Waiting Approval Users</div>
             </div>
@@ -289,7 +289,7 @@ const Dashboard = () => {
           </div>
 
           {/* Deleted Users */}
-          <div className="flex flex-col panel bg-gradient-to-r from-fuchsia-500 to-fuchsia-400">
+          <div className="flex flex-col panel bg-gray-500">
             <div className="flex">
               <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Deleted Users</div>
             </div>
