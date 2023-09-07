@@ -5,7 +5,7 @@ import { toggleSidebar } from '../redux/store/themeConfigSlice';
 import { IRootState } from '../redux/store';
 import { useEffect } from 'react';
 import React, { useState } from 'react';
-import { TAbrandEmailPassword, TAbrandLogin } from '../services/testAPI';
+import { TAbrandEmailPassword, TAbrandLogin, TAuserAuth, TAuserEngagementRate } from '../services/testAPI';
 
 const Sidebar = () => {
   const [pending, setPending] = useState(false);
@@ -45,10 +45,11 @@ const Sidebar = () => {
     setDone(false);
     setFailed(false);
 
-    const email = 'ogokcekoca1@gmail.com';
-    const password = '123456789';
-    const response1 = await TAbrandLogin(email, password);
-    const response2 = await TAbrandEmailPassword(email);
+    const response1 = await TAbrandLogin();
+    const response2 = await TAbrandEmailPassword();
+    // const token = await TAuserAuth();
+    // console.log('token', token);
+    // const response4 = await TAuserEngagementRate(token);
 
     if (response1.status === 200 && response2.status === 200) {
       setPending(false);
