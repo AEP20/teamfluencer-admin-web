@@ -5,7 +5,15 @@ import { toggleSidebar } from '../redux/store/themeConfigSlice';
 import { IRootState } from '../redux/store';
 import { useEffect } from 'react';
 import React, { useState } from 'react';
-import { TAbrandEmailPassword, TAbrandLogin, TAuserAuth, TAuserEngagementRate } from '../services/testAPI';
+import {
+  TAbrandEmailPassword,
+  TAbrandLogin,
+  TAcreateCampaign,
+  TAuserAuth,
+  TAuserEngagementRate,
+} from '../services/testAPI';
+import { TAdoApprovalCampaign, TAdoVisibleCampaign } from '../services/campaignsAPI';
+import { selectToken } from '../redux/store/userSlice';
 
 const Sidebar = () => {
   const [pending, setPending] = useState(false);
@@ -15,6 +23,7 @@ const Sidebar = () => {
   const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
   const location = useLocation();
   const dispatch = useDispatch();
+  const token = useSelector(selectToken);
 
   useEffect(() => {
     const selector = document.querySelector('.sidebar ul a[href="' + window.location.pathname + '"]');
@@ -45,13 +54,23 @@ const Sidebar = () => {
     setDone(false);
     setFailed(false);
 
-    const response1 = await TAbrandLogin();
-    const response2 = await TAbrandEmailPassword();
-    // const token = await TAuserAuth();
-    // console.log('token', token);
-    // const response4 = await TAuserEngagementRate(token);
+    const brandLogin = await TAbrandLogin();
+    const brandEmailPassword = await TAbrandEmailPassword();
+    const data = await TAuserAuth();
+    // const response4 = await TAuserEngagementRate(data.token); // auth hatası alıyor düzeltilecek (middleware'i kapatınca normal çalışıyor)
+    // const createCampaign = await TAcreateCampaign(); // auth hatası alıyor düzeltilecek (middleware'i kapatınca normal çalışıyor)
+    const visible = await TAdoVisibleCampaign('5f5b1f3a8d1d5c1860945370', 'true', token);
+    const doApproval = await TAdoApprovalCampaign('verified', undefined, '5f5b1f3a8d1d5c1860945370', token);
 
-    if (response1.status === 200 && response2.status === 200) {
+    if (
+      brandLogin.status === 200 &&
+      brandEmailPassword.status === 200 &&
+      data &&
+      // response4 &&
+      // createCampaign &&
+      doApproval &&
+      visible
+    ) {
       setPending(false);
       setDone(true);
     } else {

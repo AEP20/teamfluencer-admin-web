@@ -47,9 +47,11 @@ export const TAbrandEmailPassword = async () => {
 };
 
 export const TAuserAuth = async () => {
-  const phone = '+905516321224';
-  const firebase_id = 'wGgYYpfPSjPB2jV1IkkBhQr6dZD3';
-  const language = 'tr';
+  const user = {
+    phone: '+905516321224',
+    firebase_id: 'wGgYYpfPSjPB2jV1IkkBhQr6dZD3',
+    language: 'tr',
+  };
   try {
     const response = await fetch(`${apiClient.baseURL}/user/auth`, {
       method: 'POST',
@@ -57,12 +59,13 @@ export const TAuserAuth = async () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ phone, firebase_id, language }),
+      body: JSON.stringify(user),
     });
+
     const data = await response.json();
-    const token = data.token;
+
     if (response.status === 200) {
-      return token;
+      return data;
     } else {
       throw new Error('Login failed');
     }
@@ -71,7 +74,7 @@ export const TAuserAuth = async () => {
   }
 };
 
-export const TAuserEngagementRate = async (token: any) => {
+export const TAuserEngagementRate = async (token: string) => {
   const user_id = '5f92c6dbdff25a7f3dccd175';
   try {
     const response = await fetch(`${apiClient.baseURL}/user/engagement`, {
@@ -84,6 +87,35 @@ export const TAuserEngagementRate = async (token: any) => {
       body: JSON.stringify({ user_id }),
     });
     const data = await response.json();
+    if (response.status === 200) {
+      return data;
+    } else {
+      throw new Error('Login failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAcreateCampaign = async () => {
+  const country = 'turkey';
+  const name = 'Kampanya adı';
+  const cover_photo = 'https://image.com';
+  const description = 'Kampanya açıklaması';
+  const platform = 'insta-post';
+  const currency = 'TRY';
+
+  try {
+    const response = await fetch(`${apiClient.baseURL}/campaign/create-new`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ country, currency, name, cover_photo, description, platform }),
+    });
+    const data = await response.json();
+
     if (response.status === 200) {
       return data;
     } else {

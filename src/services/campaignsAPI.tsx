@@ -117,7 +117,7 @@ export const TAfindApprovalCampaign = async (token: string) => {
   }
 };
 
-export const TAdoApprovalCampaign = async (status: string, rejected_reason: string, id: string, token: string) => {
+export const TAdoApprovalCampaign = async (status: string, rejected_reason: any, id: string, token: string) => {
   const query = new URLSearchParams({
     id,
     status,
