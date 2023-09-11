@@ -304,6 +304,20 @@ const GetAllUsers = () => {
     return <div>{brandId}</div>;
   };
 
+  const phoneNumberFix = (phone: string) => {
+    if (phone.length >= 7) {
+      const hiddenPart = '*'.repeat(7);
+      const visiblePart = phone.slice(0, 6);
+      return visiblePart + hiddenPart;
+    } else {
+      return phone;
+    }
+  };
+
+  const renderPhone = (record: any) => {
+    return <div>{phoneNumberFix(record.phone)}</div>;
+  };
+
   return (
     <div className="panel">
       <div className="flex md:items-center md:flex-row flex-col">
@@ -534,7 +548,7 @@ const GetAllUsers = () => {
                 sortable: true,
                 render: ({ name }) => <div>{name}</div>,
               },
-              { accessor: 'phone', title: 'Phone', sortable: true },
+              { accessor: 'phone', title: 'Phone', sortable: true, render: renderPhone },
               { accessor: 'age', title: 'Age', sortable: true },
               { accessor: 'instaUsername', title: 'Insta Username', sortable: true },
               { accessor: 'tiktokUsername', title: 'Tiktok Username', sortable: true },
