@@ -125,3 +125,25 @@ export const TAcreateCampaign = async () => {
     throw error;
   }
 };
+
+export const TAdeleteCampaign = async (campaign_id: string) => {
+  try {
+    const response = await fetch(`${apiClient.baseURL}/campaign/delete`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ campaign_id }),
+    });
+    const data = await response.json();
+
+    if (response.status === 200) {
+      return data;
+    } else {
+      throw new Error('Login failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
