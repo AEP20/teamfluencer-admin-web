@@ -1,20 +1,19 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { TAfindAllBrands, TAfindBrand } from '../services/brandAPI';
+import { TAfindAllBrands } from '../services/brandAPI';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
-import { AllBrandType, BrandType, MoneyExchanges } from '../types/brandData';
+import { AllBrandType, BrandType } from '../types/brandData';
 import { selectToken } from '../redux/store/userSlice';
-import BrandProfile from '../components/BrandProfile';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollarSign, faEye } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 
-const fetchData = async (page: number, perPage: number, token: string) => {
+const fetchData = async (page: number, perPage: number, brand: string, token: string) => {
   try {
-    const response = await TAfindAllBrands(page, perPage, token);
+    const response = await TAfindAllBrands(page, perPage, brand, token);
     if (response && Array.isArray(response.brands)) {
       const totalLength = response.brands.length;
       const totalPages = response.totalPages;
@@ -47,16 +46,14 @@ const AllBrands = () => {
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [error, setError] = useState<string | null>(null);
   const [brandname, setBrandname] = useState('');
-  const [searchMatches, setSearchMatches] = useState<AllBrandType[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [brandData, setbrandData] = useState<BrandType | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     const loadBrands = async () => {
       try {
-        const response = await fetchData(page, pageSize, token);
+        const response = await fetchData(page, pageSize, brandname, token);
         if (response !== undefined) {
           setInitialRecords(response.data);
           setTotalPages(response.totalPages);
@@ -69,109 +66,21 @@ const AllBrands = () => {
       }
     };
     loadBrands();
-  }, [page, pageSize, token]);
-
-  const handleForm = async (e: any) => {
-    e.preventDefault();
-    let data;
-    data = { brandname };
-    if (brandname === '') {
-      setError('Please provide brand name!');
-      return;
-    }
-    try {
-      const res = await TAfindBrand(data, token);
-      const response = Array.isArray(res) ? res[0] : res;
-
-      const object: BrandType = {
-        balance: response.balance,
-        email: response.email,
-        brand_name: response.brand_name,
-        country: response.country,
-        first_name: response.first_name,
-        last_name: response.last_name,
-        phone: response.phone,
-        currency: response.currency,
-        language: response.language,
-        brand_logo: response.brand_logo,
-        job_title: response.job_title,
-        billing_address: {
-          type: response.billing_address?.type ?? '',
-          firm_name: response.billing_address?.firm_name ?? '',
-          contactName: response.billing_address?.contactName ?? '',
-          id: response.billing_address?.id ?? '',
-          city: response.billing_address?.city ?? '',
-          country: response.billing_address?.country ?? '',
-          address: response.billing_address?.address ?? '',
-          zipCode: response.billing_address?.zipCode ?? '',
-        },
-
-        money_exchanges: Array.isArray(response.money_exchanges)
-          ? response.money_exchanges.map((exchange: MoneyExchanges) => ({
-              operation: exchange?.operation ?? '',
-              amount: exchange?.amount ?? 0,
-              application_id: exchange?.application_id ?? '',
-              action_time: exchange?.action_time ?? '',
-            }))
-          : [],
-        notes: response.notes ? response.notes : '',
-        _id: response._id,
-      };
-      setbrandData(object);
-    } catch (error: any) {
-      setError(error.message);
-    }
-  };
-
-  const searchBrands = (text: string) => {
-    let matches = userData.filter((brand: AllBrandType) => {
-      const regex = new RegExp(`^${text}`, 'gi');
-      setBrandname(text);
-
-      return brand.brand_name.match(regex);
-    });
-    if (matches.length === 0 || text.length === 0) {
-      setIsDropdownOpen(false);
-    } else {
-      setIsDropdownOpen(true);
-    }
-    setSearchMatches(matches);
-  };
+  }, [page, pageSize, brandname, token]);
 
   useEffect(() => {
     setPage(1);
   }, [pageSize]);
 
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const data = await fetchData(page, pageSize, token);
-        if (data !== undefined) {
-          setInitialRecords(data.data);
-          setUserData(data.data);
-        } else {
-          setError('No data found');
-        }
-      } catch (error) {
-        setError('No data found');
-      }
-    };
-    getUserData();
-  }, [page, pageSize, token]);
-
-  const handleBrandNameSelect = (selectedBrand: any) => {
-    setBrandname(selectedBrand.brand_name);
-  };
-
-  useEffect(() => {
-    const handleClick = () => {
-      setIsDropdownOpen(false);
-    };
-    document.addEventListener('click', handleClick);
-    return () => {
-      document.removeEventListener('click', handleClick);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const handleClick = () => {
+  //     setIsDropdownOpen(false);
+  //   };
+  //   document.addEventListener('click', handleClick);
+  //   return () => {
+  //     document.removeEventListener('click', handleClick);
+  //   };
+  // }, []);
 
   const renderBrandId = (record: any, index: number) => {
     const itemsPerPage = page * pageSize;
@@ -184,19 +93,18 @@ const AllBrands = () => {
     <div className="panel">
       <div className="mb-4.5 flex md:items-center md:flex-row flex-col gap-5">
         {error && <div className="bg-red-200 text-red-800 border border-red-600 p-2 rounded">{error}</div>}
-        <div className="w-full ">{brandData && <BrandProfile {...brandData} />}</div>
         <div className="ltr:ml-auto rtl:mr-auto flex">
           <input
             type="text"
-            className="form-input w-auto"
+            className="form-input w-auto mr-4"
             placeholder="Search Brand Name"
             value={brandname}
             onChange={(e) => {
               const text = e.target.value;
-              searchBrands(text);
+              setBrandname(text);
             }}
           />
-          {isDropdownOpen && searchMatches.length > 0 && (
+          {/* {isDropdownOpen && searchMatches.length > 0 && (
             <div className="absolute bg-white border border-gray-300 rounded mt-10 z-10">
               {searchMatches.slice(0, 4).map((match: AllBrandType) => (
                 <div
@@ -208,12 +116,7 @@ const AllBrands = () => {
                 </div>
               ))}
             </div>
-          )}
-          <div className="flex justify-center">
-            <button type="button" onClick={handleForm} className="btn btn-primary ml-3">
-              Submit
-            </button>
-          </div>
+          )} */}
         </div>
       </div>
       <div className="datatables">
@@ -245,7 +148,6 @@ const AllBrands = () => {
                 title: 'Name',
                 render: ({ first_name, last_name }) => <div>{`${first_name} ${last_name}`}</div>,
               },
-              //create a money accessor to show the balance in the table, if balance is more than 0 then show a money icon
               {
                 accessor: 'balance',
                 title: 'Balance',
