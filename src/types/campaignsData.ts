@@ -119,6 +119,7 @@ type CampaignFilters = {
   created_at: 'last_week' | 'last_month' | 'last_three_months' | '';
   active_campaigns: boolean | '';
   platform: 'insta-post' | 'insta-story' | 'insta-reels' | 'tiktok' | '';
+  application_counts: ApplicationCounts;
 };
 
 export type {
