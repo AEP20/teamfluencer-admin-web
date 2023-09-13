@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { selectToken } from '../redux/store/userSlice';
-import { TAdoVisibleCampaign, TAfindAllCampaigns, TAsetVisibility } from '../services/campaignsAPI';
+import { TAdoVisibleCampaign, TAfindAllCampaigns } from '../services/campaignsAPI';
 import {
   CampaignType,
   Campaign,

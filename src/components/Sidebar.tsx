@@ -9,6 +9,7 @@ import {
   TAbrandEmailPassword,
   TAbrandLogin,
   TAcreateCampaign,
+  TAdeleteCampaign,
   TAuserAuth,
   TAuserEngagementRate,
 } from '../services/testAPI';
@@ -61,6 +62,7 @@ const Sidebar = () => {
     // const createCampaign = await TAcreateCampaign(); // auth hatası alıyor düzeltilecek (middleware'i kapatınca normal çalışıyor)
     const visible = await TAdoVisibleCampaign('5f5b1f3a8d1d5c1860945370', 'true', token);
     const doApproval = await TAdoApprovalCampaign('verified', undefined, '5f5b1f3a8d1d5c1860945370', token);
+    // const campaignDelete = await TAdeleteCampaign('5f84513d7848830da12984d2'); // auth hatası alıyor düzeltilecek (middleware'i kapatınca normal çalışıyor)
 
     if (
       brandLogin.status === 200 &&
@@ -70,6 +72,7 @@ const Sidebar = () => {
       // createCampaign &&
       doApproval &&
       visible
+      // &&campaignDelete
     ) {
       setPending(false);
       setDone(true);
