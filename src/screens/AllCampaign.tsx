@@ -51,12 +51,105 @@ function AllCampaign() {
   const [initialRecords, setInitialRecords] = useState(sortBy(campaignData, 'id'));
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'desc' });
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-
   const [isLoading, setIsLoading] = React.useState(false);
+
+  const handleSortChange = (newSortStatus: any) => {
+    setSortStatus(newSortStatus);
+
+    const sortedRecords = [...initialRecords];
+
+    if (newSortStatus.columnAccessor === 'application_counts.application_done') {
+      sortedRecords.sort((a, b) => {
+        const valueA = a?.application_counts?.application_done ?? 0;
+        const valueB = b?.application_counts?.application_done ?? 0;
+
+        if (newSortStatus.direction === 'asc') {
+          return valueA - valueB;
+        } else {
+          return valueB - valueA;
+        }
+      });
+    }
+
+    if (newSortStatus.columnAccessor === 'application_counts.content_approved') {
+      sortedRecords.sort((a, b) => {
+        const valueA = a?.application_counts?.content_approved ?? 0;
+        const valueB = b?.application_counts?.content_approved ?? 0;
+
+        if (newSortStatus.direction === 'asc') {
+          return valueA - valueB;
+        } else {
+          return valueB - valueA;
+        }
+      });
+    }
+    if (newSortStatus.columnAccessor === 'application_counts.content_offered') {
+      sortedRecords.sort((a, b) => {
+        const valueA = a?.application_counts?.content_offered ?? 0;
+        const valueB = b?.application_counts?.content_offered ?? 0;
+
+        if (newSortStatus.direction === 'asc') {
+          return valueA - valueB;
+        } else {
+          return valueB - valueA;
+        }
+      });
+    }
+    if (newSortStatus.columnAccessor === 'application_counts.content_shared') {
+      sortedRecords.sort((a, b) => {
+        const valueA = a?.application_counts?.content_shared ?? 0;
+        const valueB = b?.application_counts?.content_shared ?? 0;
+
+        if (newSortStatus.direction === 'asc') {
+          return valueA - valueB;
+        } else {
+          return valueB - valueA;
+        }
+      });
+    }
+    if (newSortStatus.columnAccessor === 'application_counts.content_to_share') {
+      sortedRecords.sort((a, b) => {
+        const valueA = a?.application_counts?.content_to_share ?? 0;
+        const valueB = b?.application_counts?.content_to_share ?? 0;
+
+        if (newSortStatus.direction === 'asc') {
+          return valueA - valueB;
+        } else {
+          return valueB - valueA;
+        }
+      });
+    }
+    if (newSortStatus.columnAccessor === 'application_counts.first_application') {
+      sortedRecords.sort((a, b) => {
+        const valueA = a?.application_counts?.first_application ?? 0;
+        const valueB = b?.application_counts?.first_application ?? 0;
+
+        if (newSortStatus.direction === 'asc') {
+          return valueA - valueB;
+        } else {
+          return valueB - valueA;
+        }
+      });
+    }
+    if (newSortStatus.columnAccessor === 'application_counts.waiting_content') {
+      sortedRecords.sort((a, b) => {
+        const valueA = a?.application_counts?.waiting_content ?? 0;
+        const valueB = b?.application_counts?.waiting_content ?? 0;
+
+        if (newSortStatus.direction === 'asc') {
+          return valueA - valueB;
+        } else {
+          return valueB - valueA;
+        }
+      });
+    }
+
+    setInitialRecords(sortedRecords);
+  };
 
   const handleToggleVisibility = async (_id: string, value: string, token: string) => {
     setIsLoading(true);
@@ -109,6 +202,7 @@ function AllCampaign() {
     created_at: '',
     active_campaigns: '',
     platform: '',
+    application_counts: {},
   };
 
   const [filters, setFilters] = useState<CampaignFilters>(defaultState);
@@ -133,10 +227,14 @@ function AllCampaign() {
       setFilters((prev) => ({ ...prev, [key]: value as boolean | '' }));
     } else if (key === 'platform') {
       setFilters((prev) => ({ ...prev, [key]: value as 'insta-post' | 'insta-story' | 'insta-reels' | 'tiktok' | '' }));
-    } else if (type) {
-      setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
+    } else if (key === 'max_cost') {
+      setFilters((prev) => ({
+        ...prev,
+        [key]: { ...prev[key], [type]: value as string },
+      }));
     }
   };
+
   useEffect(() => {
     setPage(1);
   }, [pageSize, filters]);
@@ -247,9 +345,11 @@ function AllCampaign() {
       throw error;
     }
   }
+
   const handleCampaignSelect = (selectedCampaign: any) => {
     setSearch(selectedCampaign.name);
   };
+
   useEffect(() => {
     const handleClick = () => {
       setIsDropdownOpen(false);
@@ -583,6 +683,41 @@ function AllCampaign() {
                   </div>
                 ),
               },
+              {
+                accessor: 'application_counts.application_done',
+                title: 'Application Done',
+                sortable: true,
+              },
+              {
+                accessor: 'application_counts.content_approved',
+                title: 'Content Approved',
+                sortable: true,
+              },
+              {
+                accessor: 'application_counts.content_offered',
+                title: 'Content Offered',
+                sortable: true,
+              },
+              {
+                accessor: 'application_counts.content_shared',
+                title: 'Content Shared',
+                sortable: true,
+              },
+              {
+                accessor: 'application_counts.content_to_share',
+                title: 'Content To Share',
+                sortable: true,
+              },
+              {
+                accessor: 'application_counts.first_application',
+                title: 'First Application',
+                sortable: true,
+              },
+              {
+                accessor: 'application_counts.waiting_content',
+                title: 'Waiting Content',
+                sortable: true,
+              },
             ]}
             totalRecords={initialRecords.length}
             recordsPerPage={pageSize}
@@ -591,7 +726,7 @@ function AllCampaign() {
             recordsPerPageOptions={PAGE_SIZES}
             onRecordsPerPageChange={setPageSize}
             sortStatus={sortStatus}
-            onSortStatusChange={setSortStatus}
+            onSortStatusChange={handleSortChange}
             minHeight={200}
             paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
           />
