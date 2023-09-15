@@ -2,15 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { selectToken } from '../redux/store/userSlice';
-import { TAdoVisibleCampaign, TAfindAllCampaigns } from '../services/campaignsAPI';
-import {
-  CampaignType,
-  Campaign,
-  CampaignFilters,
-  FilterValue,
-  FilterType,
-  CountryFilterValue,
-} from '../types/campaignsData';
+import { TAfindAllCampaigns } from '../services/campaignsAPI';
+import { CampaignType } from '../types/campaignsData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,18 +11,80 @@ import { faCheck, faEye, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faHeartPulse } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 
-const fetchData = async (token: string) => {
+const fetchData = async (
+  created_at: string,
+  country: string,
+  platform: string,
+  is_verified: string,
+  visibility: string,
+  max_cost: string,
+  gender: string,
+  min_follower: string,
+  max_follower: string,
+  min_age: string,
+  max_age: string,
+  sortBy: string,
+  page: number,
+  perPage: number,
+  campaign: string,
+  token: string,
+) => {
   try {
-    const response = await TAfindAllCampaigns(token);
-    if (response && Array.isArray(response)) {
-      const data = response.map((item: any, index: any) => {
+    const response = await TAfindAllCampaigns(
+      created_at,
+      country,
+      platform,
+      is_verified,
+      visibility,
+      max_cost,
+      gender,
+      min_follower,
+      max_follower,
+      min_age,
+      max_age,
+      sortBy,
+      page,
+      perPage,
+      campaign,
+      token,
+    );
+    if (response && Array.isArray(response.campaigns)) {
+      const totalPages = response.totalPages;
+      const totalLength = response.campaigns.length;
+      const data = response.campaigns.map((item: any, index: any) => {
         return {
-          id: index + 1,
+          id: totalLength - index,
           _id: item.details._id,
           ...item,
         };
       });
-      return data;
+      console.log(
+        'created_at',
+        created_at,
+        'country',
+        country,
+        'platform',
+        platform,
+        'is_verified',
+        is_verified,
+        'visibility',
+        visibility,
+        'max_cost',
+        max_cost,
+        'gender',
+        gender,
+        'min_follower',
+        min_follower,
+        'max_follower',
+        max_follower,
+        'min_age',
+        min_age,
+        'max_age',
+        max_age,
+        'sortBy',
+        sortBy,
+      );
+      return { data, totalPages };
     }
   } catch (error: any) {
     throw new Error(error);
@@ -43,128 +98,58 @@ function AllCampaign() {
     dispatch(setPageTitle('All Campaigns'));
   }, [dispatch]);
 
-  const [userData, setUserData] = useState([] as Campaign[]);
   const [campaignData, setCampaignData] = useState([] as CampaignType[]);
   const [page, setPage] = useState(1);
   const PAGE_SIZES = [10, 20, 30, 50, 100];
   const [pageSize, setPageSize] = useState(PAGE_SIZES[2]);
+  const [totalPages, setTotalPages] = useState(0);
   const [initialRecords, setInitialRecords] = useState(sortBy(campaignData, 'id'));
   const [error, setError] = useState<string | null>(null);
-  const [search, setSearch] = useState('');
+  const [campaignName, setCampaignName] = useState('');
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'desc' });
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
-
-  const handleSortChange = (newSortStatus: any) => {
-    setSortStatus(newSortStatus);
-
-    const sortedRecords = [...initialRecords];
-
-    if (newSortStatus.columnAccessor === 'application_counts.application_done') {
-      sortedRecords.sort((a, b) => {
-        const valueA = a?.application_counts?.application_done ?? 0;
-        const valueB = b?.application_counts?.application_done ?? 0;
-
-        if (newSortStatus.direction === 'asc') {
-          return valueA - valueB;
-        } else {
-          return valueB - valueA;
-        }
-      });
-    }
-
-    if (newSortStatus.columnAccessor === 'application_counts.content_approved') {
-      sortedRecords.sort((a, b) => {
-        const valueA = a?.application_counts?.content_approved ?? 0;
-        const valueB = b?.application_counts?.content_approved ?? 0;
-
-        if (newSortStatus.direction === 'asc') {
-          return valueA - valueB;
-        } else {
-          return valueB - valueA;
-        }
-      });
-    }
-    if (newSortStatus.columnAccessor === 'application_counts.content_offered') {
-      sortedRecords.sort((a, b) => {
-        const valueA = a?.application_counts?.content_offered ?? 0;
-        const valueB = b?.application_counts?.content_offered ?? 0;
-
-        if (newSortStatus.direction === 'asc') {
-          return valueA - valueB;
-        } else {
-          return valueB - valueA;
-        }
-      });
-    }
-    if (newSortStatus.columnAccessor === 'application_counts.content_shared') {
-      sortedRecords.sort((a, b) => {
-        const valueA = a?.application_counts?.content_shared ?? 0;
-        const valueB = b?.application_counts?.content_shared ?? 0;
-
-        if (newSortStatus.direction === 'asc') {
-          return valueA - valueB;
-        } else {
-          return valueB - valueA;
-        }
-      });
-    }
-    if (newSortStatus.columnAccessor === 'application_counts.content_to_share') {
-      sortedRecords.sort((a, b) => {
-        const valueA = a?.application_counts?.content_to_share ?? 0;
-        const valueB = b?.application_counts?.content_to_share ?? 0;
-
-        if (newSortStatus.direction === 'asc') {
-          return valueA - valueB;
-        } else {
-          return valueB - valueA;
-        }
-      });
-    }
-    if (newSortStatus.columnAccessor === 'application_counts.first_application') {
-      sortedRecords.sort((a, b) => {
-        const valueA = a?.application_counts?.first_application ?? 0;
-        const valueB = b?.application_counts?.first_application ?? 0;
-
-        if (newSortStatus.direction === 'asc') {
-          return valueA - valueB;
-        } else {
-          return valueB - valueA;
-        }
-      });
-    }
-    if (newSortStatus.columnAccessor === 'application_counts.waiting_content') {
-      sortedRecords.sort((a, b) => {
-        const valueA = a?.application_counts?.waiting_content ?? 0;
-        const valueB = b?.application_counts?.waiting_content ?? 0;
-
-        if (newSortStatus.direction === 'asc') {
-          return valueA - valueB;
-        } else {
-          return valueB - valueA;
-        }
-      });
-    }
-
-    setInitialRecords(sortedRecords);
-  };
-
-  const handleToggleVisibility = async (_id: string, value: string, token: string) => {
-    setIsLoading(true);
-    await toggleVisibility(_id, value, token);
-    setIsLoading(false);
-  };
+  const [created_at, setCreated_at] = useState('');
+  const [country, setCountry] = useState('');
+  const [platform, setPlatform] = useState('');
+  const [is_verified, setIs_verified] = useState('');
+  const [visibility, setVisibility] = useState('');
+  const [max_cost, setMax_cost] = useState('');
+  const [gender, setGender] = useState('');
+  const [min_follower, setMin_follower] = useState('');
+  const [max_follower, setMax_follower] = useState('');
+  const [min_age, setMin_age] = useState('');
+  const [max_age, setMax_age] = useState('');
+  const [SortBy, setSortBy] = useState('');
 
   useEffect(() => {
     setLoading(true);
+    setPage(1);
     const loadCampaigns = async () => {
       try {
-        const response = await fetchData(token);
+        const response = await fetchData(
+          created_at,
+          country,
+          platform,
+          is_verified,
+          visibility,
+          max_cost,
+          gender,
+          min_follower,
+          max_follower,
+          min_age,
+          max_age,
+          SortBy,
+          page,
+          pageSize,
+          campaignName,
+          token,
+        );
         if (response !== undefined) {
-          setCampaignData(response);
-          setInitialRecords(response);
+          setTotalPages(response.totalPages);
+          setCampaignData(response.data);
+          setInitialRecords(response.data);
           setError(null);
         }
       } catch (error) {
@@ -175,159 +160,28 @@ function AllCampaign() {
     };
 
     loadCampaigns();
-  }, [token, isLoading]);
-
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const data = await fetchData(token);
-        if (data !== undefined) {
-          setInitialRecords(data);
-          setUserData(data);
-        } else {
-          setError('No data found');
-        }
-      } catch (error) {
-        setError('No data found');
-      }
-    };
-    getUserData();
-  }, [token]);
-
-  const defaultState: CampaignFilters = {
-    is_verified: '',
-    visibility: '',
-    max_cost: { min: '', max: '' },
-    country: { value: '' },
-    created_at: '',
-    active_campaigns: '',
-    platform: '',
-    application_counts: {},
-  };
-
-  const [filters, setFilters] = useState<CampaignFilters>(defaultState);
-
-  const setFilter = (
-    key: keyof CampaignFilters,
-    type: FilterType,
-    value:
-      | string
-      | boolean
-      | ('TR' | 'Other' | '')
-      | ('last_week' | 'last_month' | 'last_three_months' | '')
-      | ('insta-post' | 'insta-story' | 'insta-reels' | 'tiktok' | ''),
-  ) => {
-    if (key === 'is_verified' || key === 'visibility') {
-      setFilters((prev) => ({ ...prev, [key]: value as 'true' | 'false' | '' }));
-    } else if (key === 'country') {
-      setFilters((prev) => ({ ...prev, [key]: { value: value as 'TR' | 'Other' | '' } }));
-    } else if (key === 'created_at') {
-      setFilters((prev) => ({ ...prev, [key]: value as 'last_week' | 'last_month' | 'last_three_months' | '' }));
-    } else if (key === 'active_campaigns') {
-      setFilters((prev) => ({ ...prev, [key]: value as boolean | '' }));
-    } else if (key === 'platform') {
-      setFilters((prev) => ({ ...prev, [key]: value as 'insta-post' | 'insta-story' | 'insta-reels' | 'tiktok' | '' }));
-    } else if (key === 'max_cost') {
-      setFilters((prev) => ({
-        ...prev,
-        [key]: { ...prev[key], [type]: value as string },
-      }));
-    }
-  };
-
-  useEffect(() => {
-    setPage(1);
-  }, [pageSize, filters]);
-
-  const filterKeys: (keyof CampaignFilters)[] = [
-    'is_verified',
-    'visibility',
-    'country',
-    'created_at',
-    // 'active_campaigns',
-    'platform',
-    'max_cost',
-  ];
+  }, [
+    created_at,
+    country,
+    platform,
+    is_verified,
+    visibility,
+    max_cost,
+    gender,
+    min_follower,
+    max_follower,
+    min_age,
+    max_age,
+    SortBy,
+    page,
+    pageSize,
+    campaignName,
+    token,
+  ]);
 
   useEffect(() => {
     setPage(1);
   }, [pageSize]);
-
-  useEffect(() => {
-    let dt = userData;
-
-    Object.entries(filters).forEach(([key, value]) => {
-      if (key === 'country') {
-        const countryValue = value as CountryFilterValue;
-        if (countryValue.value) {
-          const normalizedCountryValue = countryValue.value.toLowerCase();
-
-          if (normalizedCountryValue === 'tr' || normalizedCountryValue === 'turkey') {
-            dt = dt.filter((d) => d[key as keyof typeof d] === 'TR' || d[key as keyof typeof d] === 'turkey');
-          } else if (normalizedCountryValue === 'other') {
-            dt = dt.filter((d) => d[key as keyof typeof d] !== 'TR' && d[key as keyof typeof d] !== 'turkey');
-          } else {
-            dt = dt.filter((d) => d[key as keyof typeof d] === normalizedCountryValue);
-          }
-        }
-      } else if (key === 'is_verified' || key === 'visibility' || key === 'active_campaigns') {
-        const filterValue = value as boolean | '';
-        if (filterValue !== '') {
-          dt = dt.filter((d) => d[key as keyof typeof d] === filterValue);
-        }
-      } else if (key === 'created_at') {
-        const filterValue = value as 'last_week' | 'last_month' | 'last_three_months' | '';
-        if (filterValue !== '') {
-          const currentDate = new Date();
-          let filteredDate: Date;
-          if (filterValue === 'last_week') filteredDate = new Date(currentDate.setDate(currentDate.getDate() - 7));
-          else if (filterValue === 'last_month')
-            filteredDate = new Date(currentDate.setMonth(currentDate.getMonth() - 1));
-          else if (filterValue === 'last_three_months')
-            filteredDate = new Date(currentDate.setMonth(currentDate.getMonth() - 3));
-
-          dt = dt.filter((d) => {
-            const dateValue = d[key as keyof typeof d];
-            if (typeof dateValue === 'string' || dateValue instanceof Date) {
-              return new Date(dateValue) >= filteredDate;
-            }
-            return true;
-          });
-        }
-      } else if (key === 'platform') {
-        const filterValue = value as 'insta-post' | 'insta-story' | 'insta-reels' | 'tiktok' | '';
-        if (filterValue !== '') {
-          dt = dt.filter((d) => d[key as keyof typeof d] === filterValue);
-        }
-      } else {
-        const { min, max } = value as FilterValue;
-
-        if (min !== '' && min !== null) {
-          dt = dt.filter((d) => Number(d[key as keyof typeof d]) >= Number(min));
-        }
-
-        if (max !== '' && max !== null) {
-          dt = dt.filter((d) => Number(d[key as keyof typeof d]) <= Number(max));
-        }
-      }
-    });
-
-    setInitialRecords(dt);
-  }, [filters]);
-
-  const searchCampaign = (text: string) => {
-    let matches = userData.filter((campaign: Campaign) => {
-      const regex = new RegExp(text, 'gi');
-      setSearch(text);
-      return campaign.name.match(regex);
-    });
-    if (matches.length === 0 || text.length === 0) {
-      setIsDropdownOpen(false);
-    } else {
-      setIsDropdownOpen(true);
-    }
-    setInitialRecords(matches);
-  };
 
   const verifiedIcon = (visibility: boolean) => {
     if (visibility) {
@@ -337,17 +191,8 @@ function AllCampaign() {
     }
   };
 
-  async function toggleVisibility(_id: string, visibility: string, token: string) {
-    try {
-      const response = await TAdoVisibleCampaign(_id, visibility, token);
-      if (!response) return console.log('response yok');
-    } catch (error) {
-      throw error;
-    }
-  }
-
   const handleCampaignSelect = (selectedCampaign: any) => {
-    setSearch(selectedCampaign.name);
+    setCampaignName(selectedCampaign.name);
   };
 
   useEffect(() => {
@@ -359,19 +204,6 @@ function AllCampaign() {
       document.removeEventListener('click', handleClick);
     };
   }, []);
-
-  const formatKey = (key: string) => {
-    switch (key) {
-      case 'is_verified':
-        return 'Is Verified';
-      case 'visibility':
-        return 'Visibility';
-      case 'active_campaigns':
-        return 'Active Campaigns';
-      default:
-        return key;
-    }
-  };
 
   const renderDescriptionCell = ({ description }: CampaignType) => {
     const toggleExpandedRow = () => {
@@ -412,154 +244,189 @@ function AllCampaign() {
     <div className="panel">
       {error && <div className="alert alert-danger">{error}</div>}
       <div className="flex md:items-center md:flex-row flex-col">
-        <div className="flex flex-col justify-center text-center"></div>
-        <div className="flex flex-col md:flex-row">
-          {filterKeys.map((key) => {
-            if (key === 'is_verified' || key === 'visibility' || key === 'active_campaigns') {
-              return (
-                <div key={key} className="flex flex-col mr-4 ml-2">
-                  <h2 className="text-sm font-bold mb-2">{formatKey(key)}</h2>
-                  <label className="inline-flex items-center mb-2">
-                    <input
-                      type="radio"
-                      value="true"
-                      checked={filters[key] === true}
-                      onChange={(e) => {
-                        setFilter(key, 'value', e.target.value === 'true');
-                      }}
-                      className="form-radio text-pink-600 mr-2"
-                    />
-                    <span className="text-gray-700">True</span>
-                  </label>
-                  <label className="inline-flex items-center mb-2">
-                    <input
-                      type="radio"
-                      value="false"
-                      checked={filters[key] === false}
-                      onChange={(e) => {
-                        setFilter(key, 'value', e.target.value === 'true');
-                      }}
-                      className="form-radio text-pink-600 mr-2"
-                    />
-                    <span className="text-gray-700">False</span>
-                  </label>
-                  <label className="inline-flex items-center">
-                    <input
-                      type="radio"
-                      value=""
-                      checked={filters[key] === ''}
-                      onChange={(e) => {
-                        setFilter(key, 'value', e.target.value);
-                      }}
-                      className="form-radio text-pink-600 mr-2"
-                    />
-                    <span className="text-gray-700">Any</span>
-                  </label>
-                </div>
-              );
-            } else if (key === 'country') {
-              const countries = ['TR', 'Other', ''];
-              return (
-                <div key={key} className="flex flex-col mr-4 ml-2">
-                  <h2 className="text-sm font-bold mb-2">{key.charAt(0).toUpperCase() + key.slice(1)}</h2>
-                  {countries.map((country) => (
-                    <label key={country} className="inline-flex items-center mb-2">
-                      <input
-                        type="radio"
-                        value={country}
-                        checked={filters[key].value === country}
-                        onChange={(e) => {
-                          setFilter(key, 'value', e.target.value);
-                        }}
-                        className="form-radio text-pink-600 mr-2"
-                      />
-                      <span className="text-gray-700">{country || 'Any'}</span>
-                    </label>
-                  ))}
-                </div>
-              );
-            } else if (key === 'platform') {
-              const platforms = ['insta-post', 'insta-story', 'insta-reels', 'tiktok', ''];
-              return (
-                <div key={key} className="flex flex-col mr-8 ml-2">
-                  <h2 className="text-sm font-bold mb-2">{key.charAt(0).toUpperCase() + key.slice(1)}</h2>
-                  {platforms.map((platform) => (
-                    <label key={platform} className="inline-flex items-center mb-2">
-                      <input
-                        type="radio"
-                        value={platform}
-                        checked={filters[key] === platform}
-                        onChange={(e) => {
-                          setFilter(key, 'value', e.target.value);
-                        }}
-                        className="form-radio text-pink-600 mr-2"
-                      />
-                      <span className="text-gray-700">{platform || 'Any'}</span>
-                    </label>
-                  ))}
-                </div>
-              );
-            } else if (key === 'created_at') {
-              const creationDates = ['Last week', 'Last month', 'Last three months', ''];
-              return (
-                <div key={key} className="flex flex-col mr-4 ml-2">
-                  <h2 className="text-sm font-bold mb-2">Created at</h2>
-                  {creationDates.map((date) => (
-                    <label key={date} className="inline-flex items-center mb-2">
-                      <input
-                        type="radio"
-                        value={date}
-                        checked={filters[key] === date}
-                        onChange={(e) => {
-                          setFilter(key, 'value', e.target.value);
-                        }}
-                        className="form-radio text-pink-600 mr-2"
-                      />
-                      <span className="text-gray-700">{date || 'Any'}</span>
-                    </label>
-                  ))}
-                </div>
-              );
-            } else if (key === 'max_cost') {
-              return (
-                <div key={key} className="flex flex-col flex-1/2 mr-4">
-                  <h2 className="text-sm font-bold mb-2 ml-1">Max Cost</h2>
-                  <input
-                    type="text"
-                    value={filters[key].min}
-                    onChange={(e) => {
-                      setFilter(key, 'min', e.target.value);
-                    }}
-                    className="form-input w-full mb-2"
-                    placeholder={`min. max cost`}
-                  />
-
-                  <input
-                    type="text"
-                    value={filters[key].max}
-                    onChange={(e) => {
-                      setFilter(key, 'max', e.target.value);
-                    }}
-                    className="form-input w-full"
-                    placeholder={`max. max cost`}
-                  />
-                </div>
-              );
-            }
-          })}
+        <div className="flex flex-col md:flex-row gap-5">
+          <div className="ml-4 py-2">
+            <h3 className="font-bold">Platform</h3>
+            {['', 'insta-post', 'insta-reels', 'insta-story', 'tiktok'].map((value) => (
+              <div key={value} className="form-check flex flex-row">
+                <input
+                  type="radio"
+                  id={value}
+                  name="platform"
+                  value={value}
+                  checked={platform === value}
+                  onChange={(e) => setPlatform(e.target.value)}
+                />
+                <label className="form-check-label ml-2 mt-2" htmlFor={value}>
+                  {value === '' ? 'any' : value}
+                </label>
+              </div>
+            ))}
+          </div>
+          <div className="py-2">
+            <h3 className="ml-2 font-bold">Created At</h3>
+            {['', 'last_3_months', 'last_month', 'last_week'].map((value) => (
+              <div key={value} className="form-check flex flex-row">
+                <input
+                  type="radio"
+                  id={value}
+                  name="created_at"
+                  value={value}
+                  checked={created_at === value}
+                  onChange={(e) => setCreated_at(e.target.value)}
+                />
+                <label className="form-check-label ml-2 mt-2" htmlFor={value}>
+                  {value === '' ? 'any' : value}
+                </label>
+              </div>
+            ))}
+          </div>
+          <div className="py-2">
+            <h3 className="ml-2 font-bold">Is Verified</h3>
+            {['', 'false', 'true'].map((value) => (
+              <div key={value} className="form-check flex flex-row">
+                <input
+                  type="radio"
+                  id={value}
+                  name="is_verified"
+                  value={value}
+                  checked={is_verified === value}
+                  onChange={(e) => setIs_verified(e.target.value)}
+                />
+                <label className="form-check-label ml-2 mt-2" htmlFor={value}>
+                  {value === '' ? 'any' : value}
+                </label>
+              </div>
+            ))}
+          </div>
+          <div className="py-2">
+            <h3 className="ml-2 font-bold">Visibility</h3>
+            {['', 'false', 'true'].map((value) => (
+              <div key={value} className="form-check flex flex-row">
+                <input
+                  type="radio"
+                  id={value}
+                  name="visibility"
+                  value={value}
+                  checked={visibility === value}
+                  onChange={(e) => setVisibility(e.target.value)}
+                />
+                <label className="form-check-label ml-2 mt-2" htmlFor={value}>
+                  {value === '' ? 'any' : value}
+                </label>
+              </div>
+            ))}
+          </div>
+          <div className="py-2">
+            <h3 className="ml-2 font-bold">Gender</h3>
+            {['', 'female', 'male'].map((value) => (
+              <div key={value} className="form-check flex flex-row">
+                <input
+                  type="radio"
+                  id={value}
+                  name="gender"
+                  value={value}
+                  checked={gender === value}
+                  onChange={(e) => setGender(e.target.value)}
+                />
+                <label className="form-check-label ml-2 mt-2" htmlFor={value}>
+                  {value === '' ? 'any' : value}
+                </label>
+              </div>
+            ))}
+          </div>
+          <div className="py-2">
+            <h3 className="ml-2 font-bold">Country</h3>
+            {['', 'others', 'TR'].map((value) => (
+              <div key={value} className="form-check flex flex-row">
+                <input
+                  type="radio"
+                  id={value}
+                  name="country"
+                  value={value}
+                  checked={country === value}
+                  onChange={(e) => setCountry(e.target.value)}
+                />
+                <label className="form-check-label ml-2 mt-2" htmlFor={value}>
+                  {value === '' ? 'any' : value}
+                </label>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-col">
+            <div className="ml-4 py-2">
+              <h3 className="font-bold">Max Followers</h3>
+              <div className="flex flex-row items-center mt-2">
+                <input
+                  type="number"
+                  className="bg-gray-100 rounded-md px-3 py-2 w-20 focus:outline-none focus:ring focus:border-blue-300"
+                  value={max_follower}
+                  onChange={(e) => setMax_follower(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="ml-4 py-2">
+              <h3 className="font-bold">Min Followers</h3>
+              <div className="flex flex-row items-center mt-2">
+                <input
+                  type="number"
+                  className="bg-gray-100 rounded-md px-3 py-2 w-20 focus:outline-none focus:ring focus:border-blue-300"
+                  value={min_follower}
+                  onChange={(e) => setMin_follower(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <div className="ml-4 py-2">
+              <h3 className="font-bold">Max Age</h3>
+              <div className="flex flex-row items-center mt-2">
+                <input
+                  type="number"
+                  className="bg-gray-100 rounded-md px-3 py-2 w-20 focus:outline-none focus:ring focus:border-blue-300"
+                  value={max_age}
+                  onChange={(e) => setMax_age(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="ml-4 py-2">
+              <h3 className="font-bold">Min Age</h3>
+              <div className="flex flex-row items-center mt-2">
+                <input
+                  type="number"
+                  className="bg-gray-100 rounded-md px-3 py-2 w-20 focus:outline-none focus:ring focus:border-blue-300"
+                  value={min_age}
+                  onChange={(e) => setMin_age(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="ml-4 py-2">
+            <h3 className="font-bold">Max Cost</h3>
+            <div className="flex flex-row items-center mt-2">
+              <input
+                type="number"
+                className="bg-gray-100 rounded-md px-3 py-2 w-20 focus:outline-none focus:ring focus:border-blue-300"
+                value={max_cost}
+                onChange={(e) => setMax_cost(e.target.value)}
+              />
+            </div>
+          </div>
         </div>
-        <div className="ml-auto mb-32 mr-16">
-          <input
-            type="text"
-            className="form-input w-auto"
-            placeholder="Search Campaign Name"
-            value={search}
-            onChange={(e) => {
-              const text = e.target.value;
-              setSearch(text);
-              searchCampaign(text);
-            }}
-          />
+        <div className="ml-auto mb-16 mr-16">
+          <div className="pt-8">
+            <div className="form-check flex flex-row">
+              <input
+                type="text"
+                className="form-input w-auto"
+                name="campaignName"
+                placeholder="Search Campaign Name"
+                value={campaignName}
+                onChange={(e) => setCampaignName(e.target.value)}
+              />
+              <label className="form-check-label ml-2 mt-2"></label>
+            </div>
+          </div>
           {isDropdownOpen && initialRecords.length > 0 && (
             <div className="w-auto absolute bg-white border border-gray-300 rounded z-10">
               {initialRecords.slice(0, 4).map((match: CampaignType) => (
@@ -585,7 +452,7 @@ function AllCampaign() {
           <DataTable
             highlightOnHover
             className="whitespace-nowrap table-hover"
-            records={initialRecords.slice((page - 1) * pageSize, page * pageSize)}
+            records={initialRecords}
             columns={[
               {
                 accessor: 'brand',
@@ -647,10 +514,10 @@ function AllCampaign() {
                     <div className="flex">
                       <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         <button
-                          onClick={() => handleToggleVisibility(_id, visibility ? 'false' : 'true', token)}
+                          // onClick={() => handleToggleVisibility(_id, visibility ? 'false' : 'true', token)}
                           className="bg-blue-500 text-white rounded-md px-3 py-2 w-full hover:bg-blue-600"
                         >
-                          {isLoading ? (
+                          {loading ? (
                             <span className="spinner"></span> // 4. Replace the button text with spinner if loading
                           ) : visibility ? (
                             'Yayından Kaldır'
@@ -665,7 +532,7 @@ function AllCampaign() {
               },
               {
                 accessor: 'created_at',
-                title: 'Created At',
+                title: <div onClick={() => setSortBy('created_at')}>Created At</div>,
                 sortable: true,
                 render: ({ created_at }: any) => (
                   <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -675,7 +542,7 @@ function AllCampaign() {
               },
               {
                 accessor: 'max_cost',
-                title: 'Max Cost',
+                title: <div onClick={() => setSortBy('max_cost')}>Max Cost</div>,
                 sortable: true,
                 render: ({ max_cost }: any) => (
                   <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -685,48 +552,43 @@ function AllCampaign() {
               },
               {
                 accessor: 'application_counts.application_done',
-                title: 'Application Done',
+                title: <div onClick={() => setSortBy('application_counts.application_done')}>Application Done</div>,
                 sortable: true,
               },
               {
                 accessor: 'application_counts.content_approved',
-                title: 'Content Approved',
-                sortable: true,
-              },
-              {
-                accessor: 'application_counts.content_offered',
-                title: 'Content Offered',
+                title: <div onClick={() => setSortBy('application_counts.content_approved')}> Content Approved</div>,
                 sortable: true,
               },
               {
                 accessor: 'application_counts.content_shared',
-                title: 'Content Shared',
+                title: <div onClick={() => setSortBy('application_counts.content_shared')}>Content Shared</div>,
                 sortable: true,
               },
               {
                 accessor: 'application_counts.content_to_share',
-                title: 'Content To Share',
+                title: <div onClick={() => setSortBy('application_counts.content_to_share')}>Content to Share</div>,
                 sortable: true,
               },
               {
                 accessor: 'application_counts.first_application',
-                title: 'First Application',
+                title: <div onClick={() => setSortBy('application_counts.first_application')}>First Application</div>,
                 sortable: true,
               },
               {
                 accessor: 'application_counts.waiting_content',
-                title: 'Waiting Content',
+                title: <div onClick={() => setSortBy('application_counts.waiting_content')}>Waiting Content</div>,
                 sortable: true,
               },
             ]}
-            totalRecords={initialRecords.length}
+            totalRecords={totalPages * pageSize}
             recordsPerPage={pageSize}
             page={page}
             onPageChange={(p) => setPage(p)}
             recordsPerPageOptions={PAGE_SIZES}
             onRecordsPerPageChange={setPageSize}
             sortStatus={sortStatus}
-            onSortStatusChange={handleSortChange}
+            onSortStatusChange={setSortStatus}
             minHeight={200}
             paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
           />

@@ -81,14 +81,33 @@ export const TAsetVisibility = async (_id: string, status: boolean = true, token
   }
 };
 
-export const TAfindAllCampaigns = async (token: string) => {
+export const TAfindAllCampaigns = async (
+  created_at: string,
+  country: string,
+  platform: string,
+  is_verified: string,
+  visibility: string,
+  max_cost: string,
+  gender: string,
+  min_follower: string,
+  max_follower: string,
+  min_age: string,
+  max_age: string,
+  sortBy: string,
+  page: number,
+  perPage: number,
+  campaign: string,
+  token: string,
+) => {
   try {
-    const response = await apiClient.get(`/admin/campaign/getall`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await apiClient.get(
+      `/admin/campaign/getall?created_at=${created_at}&country=${country}&platform=${platform}&is_verified=${is_verified}&visibility=${visibility}&max_cost=${max_cost}&gender=${gender}&min_follower=${min_follower}&max_follower=${max_follower}&min_age=${min_age}&max_age=${max_age}&sortBy=${sortBy}&page=${page}&perPage=${perPage}&campaign=${campaign}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
-
+    );
     if (response.status === 200) {
       return response.data;
     } else {

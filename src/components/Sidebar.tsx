@@ -17,9 +17,6 @@ import { TAdoApprovalCampaign, TAdoVisibleCampaign } from '../services/campaigns
 import { selectToken } from '../redux/store/userSlice';
 
 const Sidebar = () => {
-  const [pending, setPending] = useState(false);
-  const [done, setDone] = useState(false);
-  const [failed, setFailed] = useState(false);
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);
   const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
   const location = useLocation();
@@ -49,38 +46,6 @@ const Sidebar = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
-
-  const sendRequest = async () => {
-    setPending(true);
-    setDone(false);
-    setFailed(false);
-
-    const brandLogin = await TAbrandLogin();
-    const brandEmailPassword = await TAbrandEmailPassword();
-    const data = await TAuserAuth();
-    // const response4 = await TAuserEngagementRate(data.token); // auth hatası alıyor düzeltilecek (middleware'i kapatınca normal çalışıyor)
-    // const createCampaign = await TAcreateCampaign(); // auth hatası alıyor düzeltilecek (middleware'i kapatınca normal çalışıyor)
-    const visible = await TAdoVisibleCampaign('5f5b1f3a8d1d5c1860945370', 'true', token);
-    const doApproval = await TAdoApprovalCampaign('verified', undefined, '5f5b1f3a8d1d5c1860945370', token);
-    // const campaignDelete = await TAdeleteCampaign('5f84513d7848830da12984d2'); // auth hatası alıyor düzeltilecek (middleware'i kapatınca normal çalışıyor)
-
-    if (
-      brandLogin.status === 200 &&
-      brandEmailPassword.status === 200 &&
-      data &&
-      // response4 &&
-      // createCampaign &&
-      doApproval &&
-      visible
-      // &&campaignDelete
-    ) {
-      setPending(false);
-      setDone(true);
-    } else {
-      setPending(false);
-      setFailed(true);
-    }
-  };
 
   return (
     <div className={semidark ? 'dark' : ''}>
@@ -559,28 +524,6 @@ const Sidebar = () => {
                         </span>
                       </div>
                     </NavLink>
-                  </li>
-
-                  <div className="border-t border-gray-300"></div>
-
-                  <h2 className="flex justify-center font-extrabold mt-3 mb-2 font-xl">Tests</h2>
-                  <li className="menu nav-item">
-                    <div className="flex items-center">
-                      <button
-                        onClick={sendRequest}
-                        className="flex ltr:pl-12 rtl:pr-6 pr-12 py-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark"
-                        style={{
-                          borderRadius: 10,
-                          backgroundColor: pending ? 'yellow' : done ? 'green' : failed ? 'red' : 'grey',
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          width: '100%',
-                        }}
-                      >
-                        {pending ? 'Pending' : done ? 'Done' : failed ? 'Failed' : 'Send Request'}
-                      </button>
-                    </div>
                   </li>
                 </ul>
               </li>

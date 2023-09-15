@@ -5,6 +5,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectToken } from '../redux/store/userSlice';
 import { useEffect, useState } from 'react';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
+import { TAdoVisibleCampaign, TAdoApprovalCampaign } from '../services/campaignsAPI';
+import {
+  TAbrandLogin,
+  TAbrandEmailPassword,
+  TAuserAuth,
+  TAcreateCampaign,
+  TAdeleteCampaign,
+  TAuserEngagementRate,
+} from '../services/testAPI';
 
 const fetchData = async (token: string) => {
   try {
@@ -44,6 +53,17 @@ const Dashboard = () => {
   const [buttonClicked, setButtonClicked] = useState<boolean>(false);
   const [buttonClicked2, setButtonClicked2] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
+  const [done, setDone] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [brandLogin, setBrandLogin] = useState<string>('');
+  const [brandEmailPassword, setBrandEmailPassword] = useState<string>('');
+  const [userLogin, setUserLogin] = useState<string>('');
+  const [engagementRate, setEngagementRate] = useState<string>('');
+  const [createCampaign, setCreateCampaign] = useState<string>('');
+  const [doVisibleCampaign, setDoVisibleCampaign] = useState<string>('');
+  const [doApprovalCampaign, setDoApprovalCampaign] = useState<string>('');
+  const [deleteCampaign, setDeleteCampaign] = useState<string>('');
 
   useEffect(() => {
     const loadStatistics = async () => {
@@ -74,6 +94,59 @@ const Dashboard = () => {
     };
     loadStatistics();
   }, [token]);
+
+  const sendRequest = async () => {
+    setPending(true);
+    setDone(false);
+    setFailed(false);
+    setBrandLogin('pending');
+    setBrandEmailPassword('pending');
+    setUserLogin('pending');
+    setEngagementRate('pending');
+    setCreateCampaign('pending');
+    setDoVisibleCampaign('pending');
+    setDoApprovalCampaign('pending');
+    setDeleteCampaign('pending');
+
+    try {
+      const response1 = await TAbrandLogin();
+      const response2 = await TAbrandEmailPassword();
+      const response3 = await TAuserAuth();
+      // const response4 = await TAuserEngagementRate(response3.token); // auth hatası alıyor düzeltilecek (middleware'i kapatınca normal çalışıyor)
+      // const response5 = await TAcreateCampaign(); // auth hatası alıyor düzeltilecek (middleware'i kapatınca normal çalışıyor)
+      // const response6 = await TAdoVisibleCampaign('5f5b1f3a8d1d5c1860945370', 'true', token);
+      // const response7 = await TAdoApprovalCampaign('verified', undefined, '5f5b1f3a8d1d5c1860945370', token);
+      // const response8 = await TAdeleteCampaign('5f84513d7848830da12984d2'); // auth hatası alıyor düzeltilecek (middleware'i kapatınca normal çalışıyor)
+
+      if (response1.status === 200) {
+        setBrandLogin('done');
+      } else {
+        setBrandLogin('failed');
+      }
+      if (response2.status === 200) {
+        setBrandEmailPassword('done');
+      } else {
+        setBrandEmailPassword('failed');
+      }
+      if (response3) {
+        setUserLogin('done');
+      } else {
+        setUserLogin('failed');
+      }
+      // setEngagementRate('done');
+      // setCreateCampaign('done');
+      // setDoVisibleCampaign('done');
+      // setDoApprovalCampaign('done');
+      // setDeleteCampaign('done');
+      if (response1.status === 200 && response2.status === 200 && response3) {
+        setDone(true);
+        setPending(false);
+      }
+    } catch (error) {
+      setFailed(true);
+      setPending(false);
+    }
+  };
 
   return (
     <div>
@@ -303,89 +376,132 @@ const Dashboard = () => {
         <div className="pt-5">
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
             <div className="panel h-full sm:col-span-2 xl:col-span-1 pb-0">
-              <h5 className="font-semibold text-lg dark:text-white-light mb-5">Recent Activities</h5>
+              <h5 className="font-semibold text-lg dark:text-white-light mb-5">Test Activities</h5>
               <div className="text-sm cursor-pointer">
                 <div className="flex items-center py-1.5 relative group">
-                  <div className="bg-primary w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
-                  <div className="flex-1">Updated Server Logs</div>
-                  <div className="ltr:ml-auto rtl:mr-auto text-xs text-white-dark dark:text-gray-500">Just Now</div>
-
-                  <span className="badge badge-outline-primary absolute ltr:right-0 rtl:left-0 text-xs bg-primary-light dark:bg-black opacity-0 group-hover:opacity-100">
-                    Pending
-                  </span>
-                </div>
-                <div className="flex items-center py-1.5 relative group">
-                  <div className="bg-success w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
-                  <div className="flex-1">Send Mail to HR and Admin</div>
-                  <div className="ltr:ml-auto rtl:mr-auto text-xs text-white-dark dark:text-gray-500">2 min ago</div>
-
-                  <span className="badge badge-outline-success absolute ltr:right-0 rtl:left-0 text-xs bg-success-light dark:bg-black opacity-0 group-hover:opacity-100">
-                    Completed
-                  </span>
-                </div>
-                <div className="flex items-center py-1.5 relative group">
-                  <div className="bg-danger w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
-                  <div className="flex-1">Backup Files EOD</div>
-                  <div className="ltr:ml-auto rtl:mr-auto text-xs text-white-dark dark:text-gray-500">14:00</div>
-
-                  <span className="badge badge-outline-danger absolute ltr:right-0 rtl:left-0 text-xs bg-danger-light dark:bg-black opacity-0 group-hover:opacity-100">
-                    Pending
-                  </span>
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Brand Login</div>
+                  {brandLogin === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : brandLogin === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    brandLogin === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
                 </div>
                 <div className="flex items-center py-1.5 relative group">
                   <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
-                  <div className="flex-1">Collect documents from Sara</div>
-                  <div className="ltr:ml-auto rtl:mr-auto text-xs text-white-dark dark:text-gray-500">16:00</div>
-
-                  <span className="badge badge-outline-dark absolute ltr:right-0 rtl:left-0 text-xs bg-dark-light dark:bg-black opacity-0 group-hover:opacity-100">
-                    Completed
-                  </span>
+                  <div className="flex-1">Brand Email Password</div>
+                  {brandEmailPassword === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : brandEmailPassword === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    brandEmailPassword === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
                 </div>
                 <div className="flex items-center py-1.5 relative group">
-                  <div className="bg-warning w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
-                  <div className="flex-1">Conference call with Marketing Manager.</div>
-                  <div className="ltr:ml-auto rtl:mr-auto text-xs text-white-dark dark:text-gray-500">17:00</div>
-
-                  <span className="badge badge-outline-warning absolute ltr:right-0 rtl:left-0 text-xs bg-warning-light dark:bg-black opacity-0 group-hover:opacity-100">
-                    In progress
-                  </span>
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">User Login</div>
+                  {userLogin === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : userLogin === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    userLogin === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
                 </div>
                 <div className="flex items-center py-1.5 relative group">
-                  <div className="bg-info w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
-                  <div className="flex-1">Rebooted Server</div>
-                  <div className="ltr:ml-auto rtl:mr-auto text-xs text-white-dark dark:text-gray-500">17:00</div>
-
-                  <span className="badge badge-outline-info absolute ltr:right-0 rtl:left-0 text-xs bg-info-light dark:bg-black opacity-0 group-hover:opacity-100">
-                    Completed
-                  </span>
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Engagement Rate</div>
+                  {engagementRate === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : engagementRate === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    engagementRate === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
                 </div>
                 <div className="flex items-center py-1.5 relative group">
-                  <div className="bg-secondary w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
-                  <div className="flex-1">Send contract details to Freelancer</div>
-                  <div className="ltr:ml-auto rtl:mr-auto text-xs text-white-dark dark:text-gray-500">18:00</div>
-
-                  <span className="badge badge-outline-secondary absolute ltr:right-0 rtl:left-0 text-xs bg-secondary-light dark:bg-black opacity-0 group-hover:opacity-100">
-                    Pending
-                  </span>
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Create Campaign</div>
+                  {createCampaign === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : createCampaign === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    createCampaign === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
                 </div>
                 <div className="flex items-center py-1.5 relative group">
-                  <div className="bg-primary w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
-                  <div className="flex-1">Updated Server Logs</div>
-                  <div className="ltr:ml-auto rtl:mr-auto text-xs text-white-dark dark:text-gray-500">Just Now</div>
-
-                  <span className="badge badge-outline-primary absolute ltr:right-0 rtl:left-0 text-xs bg-primary-light dark:bg-black opacity-0 group-hover:opacity-100">
-                    Pending
-                  </span>
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Do Visible Campaign</div>
+                  {doVisibleCampaign === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : doVisibleCampaign === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    doVisibleCampaign === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
                 </div>
                 <div className="flex items-center py-1.5 relative group">
-                  <div className="bg-success w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
-                  <div className="flex-1">Send Mail to HR and Admin</div>
-                  <div className="ltr:ml-auto rtl:mr-auto text-xs text-white-dark dark:text-gray-500">2 min ago</div>
-
-                  <span className="badge badge-outline-success absolute ltr:right-0 rtl:left-0 text-xs bg-success-light dark:bg-black opacity-0 group-hover:opacity-100">
-                    Completed
-                  </span>
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Approve Campaign</div>
+                  {doApprovalCampaign === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : doApprovalCampaign === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    doApprovalCampaign === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
                 </div>
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Delete Campaign</div>
+                  {deleteCampaign === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : deleteCampaign === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    deleteCampaign === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                <ul>
+                  <li className="menu nav-item">
+                    <div className="flex items-center mt-4">
+                      <button
+                        onClick={sendRequest}
+                        className="flex ltr:pl-12 rtl:pr-6 pr-12 py-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark"
+                        style={{
+                          borderRadius: 10,
+                          backgroundColor: pending ? 'yellow' : done ? 'green' : failed ? 'red' : 'grey',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          width: '100%',
+                        }}
+                      >
+                        {pending ? 'Pending' : done ? 'Done' : failed ? 'Failed' : 'Send Request'}
+                      </button>
+                    </div>
+                  </li>
+                </ul>
               </div>
             </div>
 
