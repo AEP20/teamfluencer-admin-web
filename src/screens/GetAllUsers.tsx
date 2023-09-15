@@ -478,7 +478,27 @@ const GetAllUsers = () => {
                       <div className="dropdown pt-20 pl-2" style={{ position: 'fixed', zIndex: 999 }}>
                         <ul>
                           {autoCompleteKeyword.map((keyword, index) => (
-                            <li key={index}>{keyword}</li>
+                            <li
+                              key={index}
+                              onClick={() => {
+                                const currentInput = filters[key].join(', ');
+
+                                if (currentInput.includes(',')) {
+                                  const parts = currentInput.split(',');
+                                  parts[parts.length - 1] = keyword;
+                                  setFilter(
+                                    key,
+                                    'value',
+                                    parts.map((part) => part.trim()),
+                                  );
+                                } else {
+                                  setFilter(key, 'value', [keyword]);
+                                }
+                                setIsDropdownOpen(false);
+                              }}
+                            >
+                              {keyword}
+                            </li>
                           ))}
                         </ul>
                       </div>
@@ -535,11 +555,11 @@ const GetAllUsers = () => {
                 title: 'Details',
                 sortable: false,
                 render: ({ _id }: any) => (
-                  <Link to={`/user/find/${_id}`}>
+                  <a href={`/user/find/${_id}`} target="_blank" rel="noopener noreferrer">
                     <div className="text-center items-center">
                       <FontAwesomeIcon icon={faEye} style={{ color: '#005eff' }} />
                     </div>
-                  </Link>
+                  </a>
                 ),
               },
               {
