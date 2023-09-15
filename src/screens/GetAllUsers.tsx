@@ -7,7 +7,7 @@ import { WaitingApprovalUserData } from '../types/waitingApprovalUserData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
-import { Filters, FilterValue, FilterType, CountryFilterValue } from '../types/getAllUsersData';
+import { Filters, FilterValue, FilterType, CountryFilterValue, CityFilterValue } from '../types/getAllUsersData';
 import { selectToken } from '../redux/store/userSlice';
 import DownloadPdfButton from '../components/DownloadPdfButton';
 import DownloadCSVButton from '../components/DownloadCSVButton';
@@ -56,6 +56,7 @@ const fetchData = async (page: number, query: any, token: string) => {
           age: item.age,
           city: item.city,
           country: item.country,
+          hobbies: item.hobbies,
           phone: phoneNumberFixer(item.phone),
           gender: item.gender,
           profile_complete: item.profile_complete,
@@ -99,15 +100,6 @@ const GetAllUsers = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   setPage(1);
-  // }, [pageSize]);
-
-  // useEffect(() => {
-  //   const data = sortBy(initialRecords, sortStatus.columnAccessor);
-  //   setInitialRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
-  // }, [sortStatus, initialRecords]);
-
   const defaultState: Filters = {
     age: { min: '', max: '' },
     followers: { min: '', max: '' },
@@ -116,6 +108,8 @@ const GetAllUsers = () => {
     tiktok_average_like: { min: '', max: '' },
     tiktok_engagement_rate: { min: '', max: '' },
     country: { value: '' },
+    city: { value: '' },
+    hobbies: [],
     keywords: [],
     gender: '',
     verification: '',
@@ -127,74 +121,34 @@ const GetAllUsers = () => {
     type: FilterType,
     value: string | string[] | ('male' | 'female' | '' | 'true' | 'false'),
   ) => {
-    if (key === 'keywords') {
+    if (key === 'keywords' || key === 'hobbies') {
       setFilterss((prev) => ({ ...prev, [key]: value as string[] }));
     } else if (key === 'verification') {
       setFilterss((prev) => ({ ...prev, [key]: value as 'true' | 'false' | '' }));
     } else if (key === 'gender') {
       setFilterss((prev) => ({ ...prev, [key]: value as 'male' | 'female' | '' }));
+    } else if (key === 'city') {
+      setFilterss((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
+    } else if (key === 'country') {
+      setFilterss((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
     } else {
       setFilterss((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
     }
   };
 
-  // useEffect(() => {
-  //   const getUserData = async () => {
-  //     const flattenFilters = Object.entries(filters).reduce((acc, [key, filter]) => {
-  //       if (key === 'keywords') {
-  //       } else if (key === 'gender' && typeof filter === 'string') {
-  //         acc[key] = filter;
-  //       } else if (key === 'verification' && typeof filter === 'string') {
-  //         acc[key] = filter;
-  //       } else if (key === 'country') {
-  //         acc[key] = (filter as CountryFilterValue).value;
-  //       } else {
-  //         const { min, max } = filter as FilterValue;
-  //         if (min) acc[`min_${key}`] = min;
-  //         if (max) acc[`max_${key}`] = max;
-  //       }
-
-  //       return acc;
-  //     }, {} as { [key: string]: string });
-
-  //     const params = new URLSearchParams(flattenFilters);
-
-  //     const keywords = (filters.keywords as string[]).map(
-  //       (keyword) => keyword.charAt(0).toUpperCase() + keyword.slice(1),
-  //     );
-  //     keywords.forEach((keywords) => {
-  //       params.append('keywords', keywords);
-  //     });
-  //     try {
-  //       const data = await fetchData(page, params, token);
-  //       if (data !== undefined) {
-  //         setInitialRecords(data.data);
-  //         setUserData(data.data);
-  //         setTotalPages(data.totalPages);
-  //       } else {
-  //         setError('No data found');
-  //       }
-  //     } catch (error) {
-  //       setError('No data found');
-  //     }
-  //   };
-  //   // getUserData();
-  // }, [
-  //   // page, pageSize,
-  //   token,
-  // ]);
-
   const handleFetchData = async () => {
     setLoading(true);
 
     const flattenFilters = Object.entries(filters).reduce((acc, [key, filter]) => {
-      if (key === 'keywords') {
+      if (key === 'keywords' || key === 'hobbies') {
       } else if (key === 'gender' && typeof filter === 'string') {
         acc[key] = filter;
       } else if (key === 'verification' && typeof filter === 'string') {
         acc[key] = filter;
       } else if (key === 'country') {
         acc[key] = (filter as CountryFilterValue).value;
+      } else if (key === 'city') {
+        acc[key] = (filter as CityFilterValue).value;
       } else {
         const { min, max } = filter as FilterValue;
         if (min) acc[`min_${key}`] = min;
@@ -213,6 +167,10 @@ const GetAllUsers = () => {
       params.append('keywords', keywords);
     });
 
+    const hobbies = (filters.hobbies as string[]).map((hobby) => hobby.charAt(0) + hobby.slice(1));
+    hobbies.forEach((hobbies) => {
+      params.append('hobbies', hobbies);
+    });
     try {
       const data: any = await fetchData(page, params, token);
       if (data !== undefined) {
@@ -236,6 +194,8 @@ const GetAllUsers = () => {
     'tiktok_average_like',
     'tiktok_engagement_rate',
     'country',
+    'city',
+    'hobbies',
     'keywords',
     'gender',
     'verification',
@@ -290,8 +250,6 @@ const GetAllUsers = () => {
         return 'TikTok Average Like';
       case 'tiktok_engagement_rate':
         return 'TikTok Engagement Rate';
-      case 'country':
-        return 'Country';
       default:
         return key;
     }
@@ -408,7 +366,7 @@ const GetAllUsers = () => {
                   </label>
                 </div>
               );
-            } else if (key !== 'country' && key !== 'keywords') {
+            } else if (key !== 'country' && key !== 'keywords' && key !== 'city' && key !== 'hobbies') {
               return (
                 <div key={key} className="md:flex md:flex-col flex-1 mr-2">
                   <h2 className="text-sm font-bold mb-2 ml-2">{formatKey(key)}</h2>
@@ -456,6 +414,40 @@ const GetAllUsers = () => {
                     />
                   </div>
                 );
+              } else if (key === 'city') {
+                return (
+                  <div key={key} className="md:flex md:flex-col flex-1 mb-4 ml-5">
+                    <h2 className="text-sm font-bold mb-1 mt-3 ml-2">City Name</h2>
+                    <input
+                      type="text"
+                      value={filters[key].value}
+                      onChange={(e) => {
+                        setFilter(key, 'value', e.target.value);
+                      }}
+                      className="form-input"
+                      placeholder={`${key.charAt(0).toUpperCase() + key.slice(1)} name`}
+                    />
+                  </div>
+                );
+              } else if (key === 'hobbies') {
+                return (
+                  <div key={key} className="md:flex md:flex-col flex-1 mb-4 mr-2 ml-5">
+                    <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Hobbies</h2>
+                    <input
+                      type="text"
+                      value={filters[key].join(',')}
+                      onChange={(e) => {
+                        const hobbies = e.target.value.split(',').map((word) => {
+                          const trimmedWord = word.trim();
+                          return trimmedWord.charAt(0) + trimmedWord.slice(1).toLowerCase();
+                        });
+                        setFilter(key, 'value', hobbies);
+                      }}
+                      className="form-input"
+                      placeholder={`hobby1, hobby2, ...`}
+                    />
+                  </div>
+                );
               } else if (key === 'keywords') {
                 return (
                   <div key={key} className="md:flex md:flex-col flex-1 mb-4 mr-2 ml-5">
@@ -472,7 +464,7 @@ const GetAllUsers = () => {
                         handleInputChange(e);
                       }}
                       className="form-input"
-                      placeholder={`Keywords`}
+                      placeholder={`Keyword1, Keyword2, ...`}
                     />
                     {isDropdownOpen && keywords.length > 0 && (
                       <div className="dropdown pt-20 pl-2" style={{ position: 'fixed', zIndex: 999 }}>
@@ -593,7 +585,7 @@ const GetAllUsers = () => {
               { accessor: 'tiktok_average_like', title: 'Tiktok Average Like', sortable: true },
               { accessor: 'tiktok_engagement_rate', title: 'Tiktok Engagement Rate', sortable: true },
             ]}
-            totalRecords={initialRecords.length}
+            totalRecords={totalPages * pageSize}
             recordsPerPage={pageSize}
             page={page}
             onPageChange={(p) => setPage(p)}
