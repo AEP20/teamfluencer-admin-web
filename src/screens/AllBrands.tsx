@@ -5,7 +5,7 @@ import { TAfindAllBrands } from '../services/brandAPI';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
-import { AllBrandType, BrandType } from '../types/brandData';
+import { AllBrandType } from '../types/brandData';
 import { selectToken } from '../redux/store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollarSign, faEye } from '@fortawesome/free-solid-svg-icons';
@@ -46,7 +46,7 @@ const AllBrands = () => {
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [error, setError] = useState<string | null>(null);
   const [brandname, setBrandname] = useState('');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {

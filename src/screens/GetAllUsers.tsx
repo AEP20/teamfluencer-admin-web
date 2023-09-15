@@ -120,7 +120,7 @@ const GetAllUsers = () => {
     gender: '',
     verification: '',
   };
-  const [filters, setFilters] = useState<Filters>(defaultState);
+  const [filters, setFilterss] = useState<Filters>(defaultState);
 
   const setFilter = (
     key: keyof Filters,
@@ -128,61 +128,61 @@ const GetAllUsers = () => {
     value: string | string[] | ('male' | 'female' | '' | 'true' | 'false'),
   ) => {
     if (key === 'keywords') {
-      setFilters((prev) => ({ ...prev, [key]: value as string[] }));
+      setFilterss((prev) => ({ ...prev, [key]: value as string[] }));
     } else if (key === 'verification') {
-      setFilters((prev) => ({ ...prev, [key]: value as 'true' | 'false' | '' }));
+      setFilterss((prev) => ({ ...prev, [key]: value as 'true' | 'false' | '' }));
     } else if (key === 'gender') {
-      setFilters((prev) => ({ ...prev, [key]: value as 'male' | 'female' | '' }));
+      setFilterss((prev) => ({ ...prev, [key]: value as 'male' | 'female' | '' }));
     } else {
-      setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
+      setFilterss((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
     }
   };
 
-  useEffect(() => {
-    const getUserData = async () => {
-      const flattenFilters = Object.entries(filters).reduce((acc, [key, filter]) => {
-        if (key === 'keywords') {
-        } else if (key === 'gender' && typeof filter === 'string') {
-          acc[key] = filter;
-        } else if (key === 'verification' && typeof filter === 'string') {
-          acc[key] = filter;
-        } else if (key === 'country') {
-          acc[key] = (filter as CountryFilterValue).value;
-        } else {
-          const { min, max } = filter as FilterValue;
-          if (min) acc[`min_${key}`] = min;
-          if (max) acc[`max_${key}`] = max;
-        }
+  // useEffect(() => {
+  //   const getUserData = async () => {
+  //     const flattenFilters = Object.entries(filters).reduce((acc, [key, filter]) => {
+  //       if (key === 'keywords') {
+  //       } else if (key === 'gender' && typeof filter === 'string') {
+  //         acc[key] = filter;
+  //       } else if (key === 'verification' && typeof filter === 'string') {
+  //         acc[key] = filter;
+  //       } else if (key === 'country') {
+  //         acc[key] = (filter as CountryFilterValue).value;
+  //       } else {
+  //         const { min, max } = filter as FilterValue;
+  //         if (min) acc[`min_${key}`] = min;
+  //         if (max) acc[`max_${key}`] = max;
+  //       }
 
-        return acc;
-      }, {} as { [key: string]: string });
+  //       return acc;
+  //     }, {} as { [key: string]: string });
 
-      const params = new URLSearchParams(flattenFilters);
+  //     const params = new URLSearchParams(flattenFilters);
 
-      const keywords = (filters.keywords as string[]).map(
-        (keyword) => keyword.charAt(0).toUpperCase() + keyword.slice(1),
-      );
-      keywords.forEach((keywords) => {
-        params.append('keywords', keywords);
-      });
-      try {
-        const data = await fetchData(page, params, token);
-        if (data !== undefined) {
-          setInitialRecords(data.data);
-          setUserData(data.data);
-          setTotalPages(data.totalPages);
-        } else {
-          setError('No data found');
-        }
-      } catch (error) {
-        setError('No data found');
-      }
-    };
-    // getUserData();
-  }, [
-    // page, pageSize,
-    token,
-  ]);
+  //     const keywords = (filters.keywords as string[]).map(
+  //       (keyword) => keyword.charAt(0).toUpperCase() + keyword.slice(1),
+  //     );
+  //     keywords.forEach((keywords) => {
+  //       params.append('keywords', keywords);
+  //     });
+  //     try {
+  //       const data = await fetchData(page, params, token);
+  //       if (data !== undefined) {
+  //         setInitialRecords(data.data);
+  //         setUserData(data.data);
+  //         setTotalPages(data.totalPages);
+  //       } else {
+  //         setError('No data found');
+  //       }
+  //     } catch (error) {
+  //       setError('No data found');
+  //     }
+  //   };
+  //   // getUserData();
+  // }, [
+  //   // page, pageSize,
+  //   token,
+  // ]);
 
   const handleFetchData = async () => {
     setLoading(true);
