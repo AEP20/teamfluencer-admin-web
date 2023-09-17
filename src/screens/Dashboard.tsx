@@ -13,6 +13,11 @@ import {
   TAcreateCampaign,
   TAdeleteCampaign,
   TAuserEngagementRate,
+  TAalterState,
+  TAnotificate,
+  TAforBrand,
+  TAapplicationKeywords,
+  TAaddApplicationAddress,
 } from '../services/testAPI';
 
 const fetchData = async (token: string) => {
@@ -61,6 +66,11 @@ const Dashboard = () => {
   const [doVisibleCampaign, setDoVisibleCampaign] = useState<string>('');
   const [doApprovalCampaign, setDoApprovalCampaign] = useState<string>('');
   const [deleteCampaign, setDeleteCampaign] = useState<string>('');
+  const [alterState, setAlterState] = useState<string>('');
+  const [notificate, setNotificate] = useState<string>('');
+  const [forBrand3, setForBrand3] = useState<string>('');
+  const [applicationKeywords, setApplicationKeywords] = useState<string>('');
+  const [addApplicationAddress, setAddApplicationAddress] = useState<string>('');
 
   useEffect(() => {
     const loadStatistics = async () => {
@@ -101,6 +111,11 @@ const Dashboard = () => {
     setDoVisibleCampaign('pending');
     setDoApprovalCampaign('pending');
     setDeleteCampaign('pending');
+    setAlterState('pending');
+    setNotificate('pending');
+    setForBrand3('pending');
+    setApplicationKeywords('pending');
+    setAddApplicationAddress('pending');
 
     try {
       const response1 = await TAbrandLogin();
@@ -110,14 +125,40 @@ const Dashboard = () => {
       // const response5 = await TAcreateCampaign(); // auth hatası alıyor düzeltilecek (middleware'i kapatınca normal çalışıyor)
       // const response6 = await TAdoVisibleCampaign('5f5b1f3a8d1d5c1860945370', 'true', token);
       // const response7 = await TAdoApprovalCampaign('verified', undefined, '5f5b1f3a8d1d5c1860945370', token);
-      // const response8 = await TAdeleteCampaign('5f84513d7848830da12984d2'); // auth hatası alıyor düzeltilecek (middleware'i kapatınca normal çalışıyor)
+      const response8 = await TAdeleteCampaign('5f8451dc7848830da12984d6'); // auth hatası alıyor düzeltilecek (middleware'i kapatınca normal çalışıyor)
+      // const response9 = await TAalterState('5f60785e7791232717414ab3', 'waiting_content', '');
+      const response10 = await TAnotificate('5f60785e7791232717414ab3');
+      const response11 = await TAforBrand(
+        'first_application',
+        '5f940af6ef292463c341dd1b',
+        'male',
+        'highschool',
+        'swim',
+        'Clothing',
+      );
+      const response12 = await TAapplicationKeywords('people', '5fa5395050ffdc662efb0ace');
+      const data = {
+        address: {
+          contactName: 'test',
+          contactPhone: '+905516321224',
+          city: 'Istnabul',
+          country: 'Turkey',
+          address: 'test',
+          details: 'test',
+          zipCode: 'test',
+          id: 'test',
+          extra_information: 'test',
+        },
+        application_id: '5f60785e7791232717414ab3',
+      };
+      // const response13 = await TAaddApplicationAddress(data); // AUTH HATASI ALIYOR
 
-      if (response1.status === 200) {
+      if (response1) {
         setBrandLogin('done');
       } else {
         setBrandLogin('failed');
       }
-      if (response2.status === 200) {
+      if (response2) {
         setBrandEmailPassword('done');
       } else {
         setBrandEmailPassword('failed');
@@ -127,11 +168,56 @@ const Dashboard = () => {
       } else {
         setUserLogin('failed');
       }
-      // setEngagementRate('done');
-      // setCreateCampaign('done');
-      // setDoVisibleCampaign('done');
-      // setDoApprovalCampaign('done');
-      // setDeleteCampaign('done');
+      // if (response4) {
+      //   setEngagementRate('done');
+      // } else {
+      //   setEngagementRate('failed');
+      // }
+      // if (response5) {
+      //   setCreateCampaign('done');
+      // } else {
+      //   setCreateCampaign('failed');
+      // }
+      // if (response6) {
+      //   setDoVisibleCampaign('done');
+      // } else {
+      //   setDoVisibleCampaign('failed');
+      // }
+      // if (response7) {
+      //   setDoApprovalCampaign('done');
+      // } else {
+      //   setDoApprovalCampaign('failed');
+      // }
+      if (response8) {
+        setDeleteCampaign('done');
+      } else {
+        setDeleteCampaign('failed');
+      }
+      // if (response9) {
+      //   setAlterState('done');
+      // } else {
+      //   setAlterState('failed');
+      // }
+      if (response10) {
+        setNotificate('done');
+      } else {
+        setNotificate('failed');
+      }
+      if (response11) {
+        setForBrand3('done');
+      } else {
+        setForBrand3('failed');
+      }
+      if (response12) {
+        setApplicationKeywords('done');
+      } else {
+        setApplicationKeywords('failed');
+      }
+      // if (response13) {
+      //   setAddApplicationAddress('done');
+      // } else {
+      //   setAddApplicationAddress('failed');
+      // }
     } catch (error: any) {
       throw new Error(error);
     }
@@ -369,7 +455,7 @@ const Dashboard = () => {
         {/*  Recent Activities  */}
         <div className="pt-5">
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
-            <div className="panel h-full sm:col-span-2 xl:col-span-1 pb-0">
+            <div className="panel h-full sm:col-span-2 xl:col-span-1 mb-2">
               <h5 className="font-semibold text-lg dark:text-white-light mb-5">Test Activities</h5>
               <div className="text-sm cursor-pointer">
                 <div className="flex items-center py-1.5 relative group">
@@ -472,6 +558,71 @@ const Dashboard = () => {
                     <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
                   ) : (
                     deleteCampaign === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Alter State</div>
+                  {alterState === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : alterState === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    alterState === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Notificate</div>
+                  {notificate === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : notificate === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    notificate === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">For Brand</div>
+                  {forBrand3 === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : forBrand3 === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    forBrand3 === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Application Keywords</div>
+                  {applicationKeywords === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : applicationKeywords === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    applicationKeywords === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Add Application Address</div>
+                  {addApplicationAddress === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : addApplicationAddress === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    addApplicationAddress === 'failed' && (
                       <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
                     )
                   )}

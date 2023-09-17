@@ -20,8 +20,6 @@ export const TAbrandLogin = async () => {
 
     if (response.status === 200) {
       return response;
-    } else {
-      throw new Error('Login failed');
     }
   } catch (error) {
     throw error;
@@ -38,8 +36,6 @@ export const TAbrandEmailPassword = async () => {
     });
     if (response.status === 200) {
       return response;
-    } else {
-      throw new Error('Login failed');
     }
   } catch (error) {
     throw error;
@@ -66,8 +62,6 @@ export const TAuserAuth = async () => {
 
     if (response.status === 200) {
       return data;
-    } else {
-      throw new Error('Login failed');
     }
   } catch (error) {
     throw error;
@@ -89,8 +83,6 @@ export const TAuserEngagementRate = async (token: string) => {
     const data = await response.json();
     if (response.status === 200) {
       return data;
-    } else {
-      throw new Error('Login failed');
     }
   } catch (error) {
     throw error;
@@ -118,8 +110,6 @@ export const TAcreateCampaign = async () => {
 
     if (response.status === 200) {
       return data;
-    } else {
-      throw new Error('Login failed');
     }
   } catch (error) {
     throw error;
@@ -140,9 +130,111 @@ export const TAdeleteCampaign = async (campaign_id: string) => {
 
     if (response.status === 200) {
       return data;
-    } else {
-      throw new Error('Login failed');
     }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAalterState = async (applicationData: string, new_state: string, new_state_payload: string) => {
+  try {
+    const response = await fetch(`${apiClient.baseURL}/application/alterState`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        // Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify({ applicationData, new_state, new_state_payload }),
+    });
+    const data = await response.json();
+
+    if (response.status === 200) return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAnotificate = async (applications: string) => {
+  try {
+    const response = await fetch(`${apiClient.baseURL}/application/notificate`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        // Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify({ applications }),
+    });
+    const data = await response;
+
+    if (response.status === 200) return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAforBrand = async (
+  state: string,
+  campaign_id: string,
+  gender: string,
+  schooltype: string,
+  hobbies: string,
+  keywords: string,
+) => {
+  try {
+    const response = await fetch(
+      `${apiClient.baseURL}/application/forBrand3/?state=${state}&campaign_id=${campaign_id}&gender=${gender}&schooltype=${schooltype}&hobbies=${hobbies}&keywords=${keywords}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    const data = await response.json();
+
+    if (response.status === 200) return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAapplicationKeywords = async (q: string, campaign_id: string) => {
+  try {
+    const response = await fetch(
+      `${apiClient.baseURL}/application/applicationkeywords/?q=${q}&campaign_id=${campaign_id}`,
+      {
+        method: 'get',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    const data = await response.json();
+
+    if (response.status === 200) return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAaddApplicationAddress = async (address: object) => {
+  try {
+    const response = await fetch(`${apiClient.baseURL}/application/addApplicationAddress`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        // Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify({ address }),
+    });
+    const data = await response.json();
+
+    if (response.status === 200) return data;
   } catch (error) {
     throw error;
   }
