@@ -58,32 +58,6 @@ const fetchData = async (
           ...item,
         };
       });
-      console.log(
-        'created_at',
-        created_at,
-        'country',
-        country,
-        'platform',
-        platform,
-        'is_verified',
-        is_verified,
-        'visibility',
-        visibility,
-        'max_cost',
-        max_cost,
-        'gender',
-        gender,
-        'min_follower',
-        min_follower,
-        'max_follower',
-        max_follower,
-        'min_age',
-        min_age,
-        'max_age',
-        max_age,
-        'sortBy',
-        sortBy,
-      );
       return { data, totalPages };
     }
   } catch (error: any) {
