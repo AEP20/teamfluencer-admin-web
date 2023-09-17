@@ -53,9 +53,6 @@ const Dashboard = () => {
   const [buttonClicked, setButtonClicked] = useState<boolean>(false);
   const [buttonClicked2, setButtonClicked2] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
-  const [pending, setPending] = useState(false);
-  const [done, setDone] = useState(false);
-  const [failed, setFailed] = useState(false);
   const [brandLogin, setBrandLogin] = useState<string>('');
   const [brandEmailPassword, setBrandEmailPassword] = useState<string>('');
   const [userLogin, setUserLogin] = useState<string>('');
@@ -96,9 +93,6 @@ const Dashboard = () => {
   }, [token]);
 
   const sendRequest = async () => {
-    setPending(true);
-    setDone(false);
-    setFailed(false);
     setBrandLogin('pending');
     setBrandEmailPassword('pending');
     setUserLogin('pending');
@@ -138,15 +132,14 @@ const Dashboard = () => {
       // setDoVisibleCampaign('done');
       // setDoApprovalCampaign('done');
       // setDeleteCampaign('done');
-      if (response1.status === 200 && response2.status === 200 && response3) {
-        setDone(true);
-        setPending(false);
-      }
-    } catch (error) {
-      setFailed(true);
-      setPending(false);
+    } catch (error: any) {
+      throw new Error(error);
     }
   };
+
+  useEffect(() => {
+    sendRequest();
+  }, []);
 
   return (
     <div>
@@ -157,6 +150,7 @@ const Dashboard = () => {
         </li>
       </ul>
       <div className="pt-5">
+        {error && <div className="text-red-500">{error}</div>}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-6 text-white">
           {/* Total Brands */}
           <div className="flex flex-col panel bg-gray-500">
@@ -482,26 +476,6 @@ const Dashboard = () => {
                     )
                   )}
                 </div>
-                <ul>
-                  <li className="menu nav-item">
-                    <div className="flex items-center mt-4">
-                      <button
-                        onClick={sendRequest}
-                        className="flex ltr:pl-12 rtl:pr-6 pr-12 py-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark"
-                        style={{
-                          borderRadius: 10,
-                          backgroundColor: pending ? 'yellow' : done ? 'green' : failed ? 'red' : 'grey',
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          width: '100%',
-                        }}
-                      >
-                        {pending ? 'Pending' : done ? 'Done' : failed ? 'Failed' : 'Send Request'}
-                      </button>
-                    </div>
-                  </li>
-                </ul>
               </div>
             </div>
 
