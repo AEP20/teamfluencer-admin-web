@@ -68,7 +68,7 @@ const DoApprovalScreen: React.FC = () => {
         setError('Response is null');
         return;
       }
-      setRefreshData((prev) => !prev);
+      // setRefreshData((prev) => !prev);
       setIsLoading(false);
       handleNext();
     } catch (error: any) {
