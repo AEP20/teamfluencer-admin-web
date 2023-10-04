@@ -37,7 +37,7 @@ function APIdocsScreen() {
       summary: 'Get all profiles awaiting approval',
     },
     {
-      path: '/user/verificateuser/:id/:status',
+      path: '/user/verificateuser?id=<id>&status=<status>',
       get: false,
       post: false,
       delete: false,
