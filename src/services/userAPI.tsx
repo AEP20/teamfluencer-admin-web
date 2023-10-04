@@ -79,7 +79,7 @@ export const TAfindAllApprovalUser = async (page: number, perPage: number, token
 export const TAverifyUser = async (id: string, status: string, token: string) => {
   try {
     const response = await apiClient.post(
-      `/admin/user/verificateuser?id=${id}&status=${status}`,
+      `/admin/user/verificateuser/${id}/${status}`,
       {},
       {
         headers: {
