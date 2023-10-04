@@ -52,6 +52,14 @@ const DoApprovalScreen: React.FC = () => {
     fetchData();
   }, [refreshData]);
 
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) => (prevIndex < data.length ? prevIndex + 1 : prevIndex));
+  };
+
+  const handlePrevious = () => {
+    setCurrentIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : prevIndex));
+  };
+
   const handleApprove = async (id: string, status: string) => {
     setIsLoading(true);
     try {
@@ -62,18 +70,11 @@ const DoApprovalScreen: React.FC = () => {
       }
       setRefreshData((prev) => !prev);
       setIsLoading(false);
+      handleNext();
     } catch (error: any) {
       setError(error.message);
       setIsLoading(false);
     }
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex < data.length - 1 ? prevIndex + 1 : prevIndex));
-  };
-
-  const handlePrevious = () => {
-    setCurrentIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : prevIndex));
   };
 
   const genderIcon = (gender: string) => {
