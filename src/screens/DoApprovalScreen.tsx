@@ -88,7 +88,12 @@ const DoApprovalScreen: React.FC = () => {
     }
   };
 
-  if (isLoading) return <p>Yükleniyor...</p>;
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center h-40">
+        <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-pink-600"></div>
+      </div>
+    );
   if (error) return <p>Hata: {error}</p>;
 
   return (
