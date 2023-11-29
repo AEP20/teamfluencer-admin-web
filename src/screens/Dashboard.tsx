@@ -8,7 +8,6 @@ import {
   TAbrandLogin,
   TAbrandEmailPassword,
   TAuserAuth,
-  TAdeleteCampaign,
   TAnotificate,
   TAforBrand,
   TAapplicationKeywords,
@@ -103,7 +102,6 @@ const Dashboard = () => {
       const response1 = await TAbrandLogin();
       const response2 = await TAbrandEmailPassword();
       const response3 = await TAuserAuth();
-      const response8 = await TAdeleteCampaign('5f8451dc7848830da12984d6'); // auth hatası alıyor düzeltilecek (middleware'i kapatınca normal çalışıyor)
       const response10 = await TAnotificate('5f60785e7791232717414ab3');
       const response11 = await TAforBrand(
         'first_application',
@@ -114,20 +112,6 @@ const Dashboard = () => {
         'Clothing',
       );
       const response12 = await TAapplicationKeywords('people', '5fa5395050ffdc662efb0ace');
-      const data = {
-        address: {
-          contactName: 'test',
-          contactPhone: '+905516321224',
-          city: 'Istnabul',
-          country: 'Turkey',
-          address: 'test',
-          details: 'test',
-          zipCode: 'test',
-          id: 'test',
-          extra_information: 'test',
-        },
-        application_id: '5f60785e7791232717414ab3',
-      };
 
       if (response1) {
         setBrandLogin('done');
@@ -143,11 +127,6 @@ const Dashboard = () => {
         setUserLogin('done');
       } else {
         setUserLogin('failed');
-      }
-      if (response8) {
-        setDeleteCampaign('done');
-      } else {
-        setDeleteCampaign('failed');
       }
       if (response10) {
         setNotificate('done');
@@ -439,19 +418,6 @@ const Dashboard = () => {
                     <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
                   ) : (
                     userLogin === 'failed' && (
-                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
-                    )
-                  )}
-                </div>
-                <div className="flex items-center py-1.5 relative group">
-                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
-                  <div className="flex-1">Delete Campaign</div>
-                  {deleteCampaign === 'pending' ? (
-                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
-                  ) : deleteCampaign === 'done' ? (
-                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
-                  ) : (
-                    deleteCampaign === 'failed' && (
                       <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
                     )
                   )}

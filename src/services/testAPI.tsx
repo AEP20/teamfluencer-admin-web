@@ -166,9 +166,8 @@ export const TAnotificate = async (applications: string) => {
       },
       body: JSON.stringify({ applications }),
     });
-    const data = await response;
 
-    if (response.status === 200) return data;
+    if (response.status === 200) return response;
   } catch (error) {
     throw error;
   }
