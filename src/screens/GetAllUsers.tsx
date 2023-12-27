@@ -7,7 +7,14 @@ import { WaitingApprovalUserData } from '../types/waitingApprovalUserData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
-import { Filters, FilterValue, FilterType, CountryFilterValue, CityFilterValue } from '../types/getAllUsersData';
+import {
+  Filters,
+  FilterValue,
+  FilterType,
+  CountryFilterValue,
+  CityFilterValue,
+  JobFilterValue,
+} from '../types/getAllUsersData';
 import { selectToken } from '../redux/store/userSlice';
 import DownloadPdfButton from '../components/DownloadPdfButton';
 import DownloadCSVButton from '../components/DownloadCSVButton';
@@ -54,6 +61,7 @@ const fetchData = async (page: number, query: any, token: string) => {
           name: item.name,
           email: item.email,
           age: item.age,
+          job: item.job,
           city: item.city,
           country: item.country,
           hobbies: item.hobbies,
@@ -109,6 +117,7 @@ const GetAllUsers = () => {
     tiktok_engagement_rate: { min: '', max: '' },
     country: { value: '' },
     city: { value: '' },
+    job: { value: '' },
     hobbies: [],
     keywords: [],
     gender: '',
@@ -131,6 +140,8 @@ const GetAllUsers = () => {
       setFilterss((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
     } else if (key === 'country') {
       setFilterss((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
+    } else if (key === 'job') {
+      setFilterss((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
     } else {
       setFilterss((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
     }
@@ -149,6 +160,8 @@ const GetAllUsers = () => {
         acc[key] = (filter as CountryFilterValue).value;
       } else if (key === 'city') {
         acc[key] = (filter as CityFilterValue).value;
+      } else if (key === 'job') {
+        acc[key] = (filter as JobFilterValue).value;
       } else {
         const { min, max } = filter as FilterValue;
         if (min) acc[`min_${key}`] = min;
@@ -195,6 +208,7 @@ const GetAllUsers = () => {
     'tiktok_engagement_rate',
     'country',
     'city',
+    'job',
     'hobbies',
     'keywords',
     'gender',
@@ -366,7 +380,7 @@ const GetAllUsers = () => {
                   </label>
                 </div>
               );
-            } else if (key !== 'country' && key !== 'keywords' && key !== 'city' && key !== 'hobbies') {
+            } else if (key !== 'country' && key !== 'keywords' && key !== 'city' && key !== 'hobbies' && key !== 'job') {
               return (
                 <div key={key} className="md:flex md:flex-col flex-1 mr-2">
                   <h2 className="text-sm font-bold mb-2 ml-2">{formatKey(key)}</h2>
@@ -497,6 +511,21 @@ const GetAllUsers = () => {
                     )}
                   </div>
                 );
+              } else if (key === 'job') {
+                return (
+                  <div key={key} className="md:flex md:flex-col flex-1 mb-4 ml-5">
+                    <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Job Name</h2>
+                    <input
+                      type="text"
+                      value={filters[key].value}
+                      onChange={(e) => {
+                        setFilter(key, 'value', e.target.value);
+                      }}
+                      className="form-input"
+                      placeholder={`Job name`}
+                    />
+                  </div>
+                );
               }
             })}
           </div>
@@ -562,6 +591,7 @@ const GetAllUsers = () => {
               },
               { accessor: 'phone', title: 'Phone', sortable: true, render: renderPhone },
               { accessor: 'age', title: 'Age', sortable: true },
+              { accessor: 'job', title: 'Job', sortable: true },
               { accessor: 'instaUsername', title: 'Insta Username', sortable: true },
               { accessor: 'tiktokUsername', title: 'Tiktok Username', sortable: true },
               {
