@@ -12,19 +12,10 @@ import {
   TAforBrand,
   TAapplicationKeywords,
 } from '../services/testAPI';
-
-const fetchData = async (token: string) => {
-  try {
-    const response = await TAstatistics(token);
-    if (response) {
-      return response;
-    } else {
-      throw new Error('Statistics not found');
-    }
-  } catch (error: any) {
-    throw new Error(error);
-  }
-};
+import { TAgetPopularHashtagSearchPost } from '../services/hashtagSearchAPI';
+import HashtagSearchPostProfile from '../components/HashtagSearchPostProfile';
+import { PostData } from '../types/hashtagSearchPostData';
+import PostPicture from '../components/HashtagSearchPostPicture';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -32,6 +23,21 @@ const Dashboard = () => {
   useEffect(() => {
     dispatch(setPageTitle('Dashboard'));
   });
+
+  const fetchData = async (token: string) => {
+    try {
+      const statistics_response = await TAstatistics(token);
+      const hashtag_search_response = await TAgetPopularHashtagSearchPost(token);
+      if (statistics_response && hashtag_search_response) {
+        setPostData(hashtag_search_response[0]);
+        return { statistics_response, hashtag_search_response };
+      } else {
+        throw new Error('Statistics not found');
+      }
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  };
 
   const [totalBrands, setTotalBrands] = useState<number>(0);
   const [activeBrands30, setActiveBrands30] = useState<number>(0);
@@ -54,31 +60,31 @@ const Dashboard = () => {
   const [brandLogin, setBrandLogin] = useState<string>('');
   const [brandEmailPassword, setBrandEmailPassword] = useState<string>('');
   const [userLogin, setUserLogin] = useState<string>('');
-  const [deleteCampaign, setDeleteCampaign] = useState<string>('');
   const [notificate, setNotificate] = useState<string>('');
   const [forBrand3, setForBrand3] = useState<string>('');
   const [applicationKeywords, setApplicationKeywords] = useState<string>('');
+  const [postData, setPostData] = useState<PostData | null>(null);
 
   useEffect(() => {
     const loadStatistics = async () => {
       try {
         const response = await fetchData(token);
         if (response !== undefined) {
-          setTotalBrands(response.totalBrands);
-          setActiveBrands30(response.activeBrands30);
-          setActiveBrands15(response.activeBrands15);
-          setActiveBrands7(response.activeBrands7);
-          setPaidBrands(response.paidBrands);
-          setInTurkeys(response.inTurkey);
-          setOutOfTurkeys(response.outOfTurkey);
-          setTotalCampaigns(response.totalCampaigns);
-          setActiveCampaigns(response.activeCampaigns);
-          setWaitingApprovalCampaigns(response.waitingApprovalCampaigns);
-          setTotalUsers(response.totalUsers);
-          setWaitingApprovalUsers(response.waitingApprovalUsers);
-          setApprovedUsers(response.approvedUsers);
-          setDeletedUsers(response.deletedUsers);
-          setTotalCooperations(response.totalCooperations);
+          setTotalBrands(response.statistics_response.totalBrands);
+          setActiveBrands30(response.statistics_response.activeBrands30);
+          setActiveBrands15(response.statistics_response.activeBrands15);
+          setActiveBrands7(response.statistics_response.activeBrands7);
+          setPaidBrands(response.statistics_response.paidBrands);
+          setInTurkeys(response.statistics_response.inTurkey);
+          setOutOfTurkeys(response.statistics_response.outOfTurkey);
+          setTotalCampaigns(response.statistics_response.totalCampaigns);
+          setActiveCampaigns(response.statistics_response.activeCampaigns);
+          setWaitingApprovalCampaigns(response.statistics_response.waitingApprovalCampaigns);
+          setTotalUsers(response.statistics_response.totalUsers);
+          setWaitingApprovalUsers(response.statistics_response.waitingApprovalUsers);
+          setApprovedUsers(response.statistics_response.approvedUsers);
+          setDeletedUsers(response.statistics_response.deletedUsers);
+          setTotalCooperations(response.statistics_response.totalCooperations);
         } else {
           setError('No Data Found');
         }
@@ -93,7 +99,6 @@ const Dashboard = () => {
     setBrandLogin('pending');
     setBrandEmailPassword('pending');
     setUserLogin('pending');
-    setDeleteCampaign('pending');
     setNotificate('pending');
     setForBrand3('pending');
     setApplicationKeywords('pending');
@@ -102,8 +107,8 @@ const Dashboard = () => {
       const response1 = await TAbrandLogin();
       const response2 = await TAbrandEmailPassword();
       const response3 = await TAuserAuth();
-      const response10 = await TAnotificate('5f60785e7791232717414ab3');
-      const response11 = await TAforBrand(
+      const response4 = await TAnotificate('5f60785e7791232717414ab3');
+      const response5 = await TAforBrand(
         'first_application',
         '5f940af6ef292463c341dd1b',
         'male',
@@ -111,7 +116,7 @@ const Dashboard = () => {
         'swim',
         'Clothing',
       );
-      const response12 = await TAapplicationKeywords('people', '5fa5395050ffdc662efb0ace');
+      const response6 = await TAapplicationKeywords('people', '5fa5395050ffdc662efb0ace');
 
       if (response1) {
         setBrandLogin('done');
@@ -128,17 +133,17 @@ const Dashboard = () => {
       } else {
         setUserLogin('failed');
       }
-      if (response10) {
+      if (response4) {
         setNotificate('done');
       } else {
         setNotificate('failed');
       }
-      if (response11) {
+      if (response5) {
         setForBrand3('done');
       } else {
         setForBrand3('failed');
       }
-      if (response12) {
+      if (response6) {
         setApplicationKeywords('done');
       } else {
         setApplicationKeywords('failed');
@@ -377,10 +382,10 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/*  Recent Activities  */}
         <div className="pt-5">
+          {/*  Test Activities  */}
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
-            <div className="panel h-full sm:col-span-2 xl:col-span-1 mb-2">
+            <div className="panel sm:col-span-2 xl:col-span-1 mb-2">
               <h5 className="font-semibold text-lg dark:text-white-light mb-5">Test Activities</h5>
               <div className="text-sm cursor-pointer">
                 <div className="flex items-center py-1.5 relative group">
@@ -462,6 +467,15 @@ const Dashboard = () => {
                   )}
                 </div>
               </div>
+            </div>
+          </div>
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
+            <div className="panel h-full sm:col-span-2 xl:col-span-1 mb-2">
+              <h5 className="font-semibold text-lg dark:text-white-light mb-5">Popular Post</h5>
+              <div className="flex flex-row items-center mr-16">
+                <PostPicture postData={postData} />
+              </div>
+              <div className="w-full">{postData && <HashtagSearchPostProfile {...postData} />}</div>
             </div>
           </div>
         </div>
