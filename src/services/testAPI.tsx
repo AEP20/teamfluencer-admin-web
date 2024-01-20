@@ -6,6 +6,14 @@ const apiClient = {
   },
 };
 
+const rapidOptions = {
+  baseURL: `${process.env.SCRAPE_SERVER_URL}`,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+};
+
 const email = 'ogokcekoca1@gmail.com';
 const password = '123456789';
 
@@ -68,92 +76,71 @@ export const TAuserAuth = async () => {
   }
 };
 
-export const TAuserEngagementRate = async (token: string) => {
-  const user_id = '5f92c6dbdff25a7f3dccd175';
-  try {
-    const response = await fetch(`${apiClient.baseURL}/user/engagement`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ user_id }),
-    });
-    const data = await response.json();
-    if (response.status === 200) {
-      return data;
-    }
-  } catch (error) {
-    throw error;
-  }
-};
+// export const TAcreateCampaign = async () => {
+//   const country = 'turkey';
+//   const name = 'Kampanya adı';
+//   const cover_photo = 'https://image.com';
+//   const description = 'Kampanya açıklaması';
+//   const platform = 'insta-post';
+//   const currency = 'TRY';
 
-export const TAcreateCampaign = async () => {
-  const country = 'turkey';
-  const name = 'Kampanya adı';
-  const cover_photo = 'https://image.com';
-  const description = 'Kampanya açıklaması';
-  const platform = 'insta-post';
-  const currency = 'TRY';
+//   try {
+//     const response = await fetch(`${apiClient.baseURL}/campaign/create-new`, {
+//       method: 'POST',
+//       credentials: 'include',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ country, currency, name, cover_photo, description, platform }),
+//     });
+//     const data = await response.json();
 
-  try {
-    const response = await fetch(`${apiClient.baseURL}/campaign/create-new`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ country, currency, name, cover_photo, description, platform }),
-    });
-    const data = await response.json();
+//     if (response.status === 200) {
+//       return data;
+//     }
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
-    if (response.status === 200) {
-      return data;
-    }
-  } catch (error) {
-    throw error;
-  }
-};
+// export const TAdeleteCampaign = async (campaign_id: string) => {
+//   try {
+//     const response = await fetch(`${apiClient.baseURL}/campaign/delete`, {
+//       method: 'POST',
+//       credentials: 'include',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ campaign_id }),
+//     });
+//     const data = await response.json();
 
-export const TAdeleteCampaign = async (campaign_id: string) => {
-  try {
-    const response = await fetch(`${apiClient.baseURL}/campaign/delete`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ campaign_id }),
-    });
-    const data = await response.json();
+//     if (response.status === 200) {
+//       return data;
+//     }
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
-    if (response.status === 200) {
-      return data;
-    }
-  } catch (error) {
-    throw error;
-  }
-};
+// export const TAalterState = async (applicationData: string, new_state: string, new_state_payload: string) => {
+//   try {
+//     const response = await fetch(`${apiClient.baseURL}/application/alterState`, {
+//       method: 'POST',
+//       credentials: 'include',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         // Authorization: `Bearer ${localStorage.getItem('token')}`,
+//       },
+//       body: JSON.stringify({ applicationData, new_state, new_state_payload }),
+//     });
+//     const data = await response.json();
 
-export const TAalterState = async (applicationData: string, new_state: string, new_state_payload: string) => {
-  try {
-    const response = await fetch(`${apiClient.baseURL}/application/alterState`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        // Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-      body: JSON.stringify({ applicationData, new_state, new_state_payload }),
-    });
-    const data = await response.json();
-
-    if (response.status === 200) return data;
-  } catch (error) {
-    throw error;
-  }
-};
+//     if (response.status === 200) return data;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
 export const TAnotificate = async (applications: string) => {
   try {
@@ -212,29 +199,76 @@ export const TAapplicationKeywords = async (q: string, campaign_id: string) => {
         },
       },
     );
-    const data = await response.json();
 
-    if (response.status === 200) return data;
+    if (response.status === 200) return response.json();
   } catch (error) {
     throw error;
   }
 };
 
-export const TAaddApplicationAddress = async (address: object) => {
+// export const TAaddApplicationAddress = async (address: object) => {
+//   try {
+//     const response = await fetch(`${apiClient.baseURL}/application/addApplicationAddress`, {
+//       method: 'POST',
+//       credentials: 'include',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         // Authorization: `Bearer ${localStorage.getItem('token')}`,
+//       },
+//       body: JSON.stringify({ address }),
+//     });
+//     const data = await response.json();
+
+//     if (response.status === 200) return data;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
+export const TAinstaGraph = async () => {
   try {
-    const response = await fetch(`${apiClient.baseURL}/application/addApplicationAddress`, {
-      method: 'POST',
+    const response = await fetch(`${apiClient.baseURL}/insta/insta-graph?username=danlabilic`, {
+      method: 'GET',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        // Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
-      body: JSON.stringify({ address }),
     });
-    const data = await response.json();
 
-    if (response.status === 200) return data;
+    if (response.status === 200) return response.json();
   } catch (error) {
     throw error;
   }
 };
+
+export const TAinstaHashtagSearch = async () => {
+  try {
+    const response = await fetch(`${apiClient.baseURL}/insta/insta-hashtag-search?search_hashtag=işbirliği`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.status === 200) return response.json();
+  } catch (error) {
+    throw error;
+  }
+};
+
+// export const TAinstaUserAnalysis = async () => {
+//   try {
+//     const response = await fetch(`${rapidOptions.baseURL}/user-analysis?username=danlabilic`, {
+//       method: 'GET',
+//       credentials: 'include',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//     });
+
+//     if (response.status === 200) return response.json();
+//   } catch (error) {
+//     throw error;
+//   }
+// };

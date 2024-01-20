@@ -32,6 +32,10 @@ type CityFilterValue = {
   value: 'İstanbul' | 'Other' | '' | 'All';
 };
 
+type JobFilterValue = {
+  value: string;
+};
+
 type Filters = {
   age: FilterValue;
   followers: FilterValue;
@@ -41,10 +45,19 @@ type Filters = {
   tiktok_engagement_rate: FilterValue;
   country: CountryFilterValue;
   city: CityFilterValue;
+  job: JobFilterValue;
   hobbies: string[];
   keywords: string[];
   gender: 'male' | 'female' | '';
   verification: 'true' | 'false' | '';
 };
 
-export type { WaitingApprovalUserData, FilterValue, Filters, FilterType, CountryFilterValue, CityFilterValue };
+export type {
+  WaitingApprovalUserData,
+  FilterValue,
+  Filters,
+  FilterType,
+  CountryFilterValue,
+  CityFilterValue,
+  JobFilterValue,
+};

@@ -11,6 +11,9 @@ import {
   TAnotificate,
   TAforBrand,
   TAapplicationKeywords,
+  TAinstaGraph,
+  TAinstaHashtagSearch,
+  // TAinstaUserAnalysis,
 } from '../services/testAPI';
 import { TAgetPopularHashtagSearchPost } from '../services/hashtagSearchAPI';
 import HashtagSearchPostProfile from '../components/HashtagSearchPostProfile';
@@ -64,6 +67,9 @@ const Dashboard = () => {
   const [forBrand3, setForBrand3] = useState<string>('');
   const [applicationKeywords, setApplicationKeywords] = useState<string>('');
   const [postData, setPostData] = useState<PostData | null>(null);
+  const [instaGraph, setInstaGraph] = useState<string>('');
+  const [hashtahSearch, setHashtahSearch] = useState<string>('');
+  // const [instaUserAnalysis, setInstaUserAnalysis] = useState<string>('');
 
   useEffect(() => {
     const loadStatistics = async () => {
@@ -102,7 +108,9 @@ const Dashboard = () => {
     setNotificate('pending');
     setForBrand3('pending');
     setApplicationKeywords('pending');
-
+    setInstaGraph('pending');
+    setHashtahSearch('pending');
+    // setInstaUserAnalysis('pending');
     try {
       const response1 = await TAbrandLogin();
       const response2 = await TAbrandEmailPassword();
@@ -117,6 +125,9 @@ const Dashboard = () => {
         'Clothing',
       );
       const response6 = await TAapplicationKeywords('people', '5fa5395050ffdc662efb0ace');
+      const response7 = await TAinstaGraph();
+      const response8 = await TAinstaHashtagSearch();
+      // const response9 = await TAinstaUserAnalysis();
 
       if (response1) {
         setBrandLogin('done');
@@ -148,6 +159,21 @@ const Dashboard = () => {
       } else {
         setApplicationKeywords('failed');
       }
+      if (response7) {
+        setInstaGraph('done');
+      } else {
+        setInstaGraph('failed');
+      }
+      if (response8) {
+        setHashtahSearch('done');
+      } else {
+        setHashtahSearch('failed');
+      }
+      // if (response9) {
+      //   setInstaUserAnalysis('done');
+      // } else {
+      //   setInstaUserAnalysis('failed');
+      // }
     } catch (error: any) {
       throw new Error(error);
     }
@@ -466,6 +492,45 @@ const Dashboard = () => {
                     )
                   )}
                 </div>
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Instagram Graph Api</div>
+                  {instaGraph === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : instaGraph === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    instaGraph === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Instagram Hashtag Search</div>
+                  {hashtahSearch === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : hashtahSearch === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    hashtahSearch === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                {/* <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Instagram User Analysis</div>
+                  {instaUserAnalysis === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : instaUserAnalysis === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    instaUserAnalysis === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div> */}
               </div>
             </div>
           </div>
