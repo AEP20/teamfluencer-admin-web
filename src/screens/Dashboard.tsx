@@ -11,6 +11,9 @@ import {
   TAnotificate,
   TAforBrand,
   TAapplicationKeywords,
+  TAinstaGraph,
+  TAinstaHashtagSearch,
+  // TAinstaUserAnalysis,
 } from '../services/testAPI';
 
 const fetchData = async (token: string) => {
@@ -54,11 +57,12 @@ const Dashboard = () => {
   const [brandLogin, setBrandLogin] = useState<string>('');
   const [brandEmailPassword, setBrandEmailPassword] = useState<string>('');
   const [userLogin, setUserLogin] = useState<string>('');
-  const [deleteCampaign, setDeleteCampaign] = useState<string>('');
   const [notificate, setNotificate] = useState<string>('');
   const [forBrand3, setForBrand3] = useState<string>('');
   const [applicationKeywords, setApplicationKeywords] = useState<string>('');
-
+  const [instaGraph, setInstaGraph] = useState<string>('');
+  const [hashtahSearch, setHashtahSearch] = useState<string>('');
+  // const [instaUserAnalysis, setInstaUserAnalysis] = useState<string>('');
   useEffect(() => {
     const loadStatistics = async () => {
       try {
@@ -93,17 +97,18 @@ const Dashboard = () => {
     setBrandLogin('pending');
     setBrandEmailPassword('pending');
     setUserLogin('pending');
-    setDeleteCampaign('pending');
     setNotificate('pending');
     setForBrand3('pending');
     setApplicationKeywords('pending');
-
+    setInstaGraph('pending');
+    setHashtahSearch('pending');
+    // setInstaUserAnalysis('pending');
     try {
       const response1 = await TAbrandLogin();
       const response2 = await TAbrandEmailPassword();
       const response3 = await TAuserAuth();
-      const response10 = await TAnotificate('5f60785e7791232717414ab3');
-      const response11 = await TAforBrand(
+      const response4 = await TAnotificate('5f60785e7791232717414ab3');
+      const response5 = await TAforBrand(
         'first_application',
         '5f940af6ef292463c341dd1b',
         'male',
@@ -111,7 +116,10 @@ const Dashboard = () => {
         'swim',
         'Clothing',
       );
-      const response12 = await TAapplicationKeywords('people', '5fa5395050ffdc662efb0ace');
+      const response6 = await TAapplicationKeywords('people', '5fa5395050ffdc662efb0ace');
+      const response7 = await TAinstaGraph();
+      const response8 = await TAinstaHashtagSearch();
+      // const response9 = await TAinstaUserAnalysis();
 
       if (response1) {
         setBrandLogin('done');
@@ -128,21 +136,36 @@ const Dashboard = () => {
       } else {
         setUserLogin('failed');
       }
-      if (response10) {
+      if (response4) {
         setNotificate('done');
       } else {
         setNotificate('failed');
       }
-      if (response11) {
+      if (response5) {
         setForBrand3('done');
       } else {
         setForBrand3('failed');
       }
-      if (response12) {
+      if (response6) {
         setApplicationKeywords('done');
       } else {
         setApplicationKeywords('failed');
       }
+      if (response7) {
+        setInstaGraph('done');
+      } else {
+        setInstaGraph('failed');
+      }
+      if (response8) {
+        setHashtahSearch('done');
+      } else {
+        setHashtahSearch('failed');
+      }
+      // if (response9) {
+      //   setInstaUserAnalysis('done');
+      // } else {
+      //   setInstaUserAnalysis('failed');
+      // }
     } catch (error: any) {
       throw new Error(error);
     }
@@ -461,6 +484,45 @@ const Dashboard = () => {
                     )
                   )}
                 </div>
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Instagram Graph Api</div>
+                  {instaGraph === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : instaGraph === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    instaGraph === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Instagram Hashtag Search</div>
+                  {hashtahSearch === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : hashtahSearch === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    hashtahSearch === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                {/* <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Instagram User Analysis</div>
+                  {instaUserAnalysis === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : instaUserAnalysis === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    instaUserAnalysis === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div> */}
               </div>
             </div>
           </div>
