@@ -24,6 +24,96 @@ export const TAfindUser = async (data: any, token: string) => {
   }
 };
 
+export const TAfindUsername = async (data: any, token: string) => {
+  try {
+    const response = await apiClient.get(`/admin/user/getusername?username=${data}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Find User failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAfindCountry = async (data: any, token: string) => {
+  try {
+    const response = await apiClient.get(`/admin/user/getcountry?country=${data}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Find User failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAfindCity = async (data: any, token: string) => {
+  try {
+    const response = await apiClient.get(`/admin/user/getcity?city=${data}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Find User failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAfindJob = async (data: any, token: string) => {
+  try {
+    const response = await apiClient.get(`/admin/user/getjob?job=${data}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Find User failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAfindHobbies = async (data: any, token: string) => {
+  try {
+    const response = await apiClient.get(`/admin/user/gethobbies?hobbies=${data}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Find User failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const TAfindAllUser = async (page: number, params: any, token: string) => {
   try {
     const response = await apiClient.get(`/admin/user/getall?${params}&page=${page}`, {
@@ -135,7 +225,9 @@ export const TAfindUserById = async (id: any, token: string) => {
 
 export const TArecoverAccount = async (id: string, status: string, token: string) => {
   try {
-    const response = await apiClient.post(`/admin/user/recoveraccount/${id}/${status}`,{},
+    const response = await apiClient.post(
+      `/admin/user/recoveraccount/${id}/${status}`,
+      {},
       {
         headers: {
           'Content-Type': 'application/json',
@@ -154,7 +246,9 @@ export const TArecoverAccount = async (id: string, status: string, token: string
 
 export const TAchangePhone = async (id: string, phone: string, token: string) => {
   try {
-    const response = await apiClient.post(`/admin/user/changephone/${id}/${phone}`,{},
+    const response = await apiClient.post(
+      `/admin/user/changephone/${id}/${phone}`,
+      {},
       {
         headers: {
           'Content-Type': 'application/json',

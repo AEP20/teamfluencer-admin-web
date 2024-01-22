@@ -27,6 +27,22 @@ export const TAfindBrand = async (data: any, token: string) => {
   }
 };
 
+export const TAfindBrandName = async (data: any, token: string) => {
+  try {
+    const response = await apiClient.get(`/admin/brand/brandname?brand_name=${data}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const TAfindAllBrands = async (page: number, perPage: number, brand: string, token: string) => {
   try {
     const response = await apiClient.get(`/admin/brand/getall?page=${page}&perPage=${perPage}&brand=${brand}`, {
