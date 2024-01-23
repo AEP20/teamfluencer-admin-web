@@ -102,86 +102,33 @@ const Dashboard = () => {
   }, [token]);
 
   const sendRequest = async () => {
-    setBrandLogin('pending');
-    setBrandEmailPassword('pending');
-    setUserLogin('pending');
-    setNotificate('pending');
-    setForBrand3('pending');
-    setApplicationKeywords('pending');
-    setInstaGraph('pending');
-    setHashtahSearch('pending');
-    // setInstaUserAnalysis('pending');
-    try {
-      const response1 = await TAbrandLogin();
-      const response2 = await TAbrandEmailPassword();
-      const response3 = await TAuserAuth();
-      const response4 = await TAnotificate('5f60785e7791232717414ab3');
-      const response5 = await TAforBrand(
-        'first_application',
-        '5f940af6ef292463c341dd1b',
-        'male',
-        'highschool',
-        'swim',
-        'Clothing',
-      );
-      const response6 = await TAapplicationKeywords('people', '5fa5395050ffdc662efb0ace');
-      const response7 = await TAinstaGraph();
-      const response8 = await TAinstaHashtagSearch();
-      // const response9 = await TAinstaUserAnalysis();
+    const apiCalls = [
+      { func: TAbrandLogin, state: setBrandLogin },
+      { func: TAbrandEmailPassword, state: setBrandEmailPassword },
+      { func: TAuserAuth, state: setUserLogin },
+      { func: () => TAnotificate('5f60785e7791232717414ab3'), state: setNotificate },
+      {
+        func: () =>
+          TAforBrand('first_application', '5f940af6ef292463c341dd1b', 'male', 'highschool', 'swim', 'Clothing'),
+        state: setForBrand3,
+      },
+      { func: () => TAapplicationKeywords('people', '5fa5395050ffdc662efb0ace'), state: setApplicationKeywords },
+      { func: TAinstaGraph, state: setInstaGraph },
+      { func: TAinstaHashtagSearch, state: setHashtahSearch },
+      // { func: TAinstaUserAnalysis, state: setInstaUserAnalysis },
+    ];
 
-      if (response1) {
-        setBrandLogin('done');
-      } else {
-        setBrandLogin('failed');
+    for (const { func, state } of apiCalls) {
+      state('pending');
+      try {
+        const response = await func();
+        state(response ? 'done' : 'failed');
+      } catch (error: any) {
+        state('failed');
+        throw new Error(error);
       }
-      if (response2) {
-        setBrandEmailPassword('done');
-      } else {
-        setBrandEmailPassword('failed');
-      }
-      if (response3) {
-        setUserLogin('done');
-      } else {
-        setUserLogin('failed');
-      }
-      if (response4) {
-        setNotificate('done');
-      } else {
-        setNotificate('failed');
-      }
-      if (response5) {
-        setForBrand3('done');
-      } else {
-        setForBrand3('failed');
-      }
-      if (response6) {
-        setApplicationKeywords('done');
-      } else {
-        setApplicationKeywords('failed');
-      }
-      if (response7) {
-        setInstaGraph('done');
-      } else {
-        setInstaGraph('failed');
-      }
-      if (response8) {
-        setHashtahSearch('done');
-      } else {
-        setHashtahSearch('failed');
-      }
-      // if (response9) {
-      //   setInstaUserAnalysis('done');
-      // } else {
-      //   setInstaUserAnalysis('failed');
-      // }
-    } catch (error: any) {
-      throw new Error(error);
     }
   };
-
-  useEffect(() => {
-    sendRequest();
-  }, []);
 
   return (
     <div>
@@ -412,7 +359,12 @@ const Dashboard = () => {
           {/*  Test Activities  */}
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
             <div className="panel sm:col-span-2 xl:col-span-1 mb-2">
-              <h5 className="font-semibold text-lg dark:text-white-light mb-5">Test Activities</h5>
+              <div className="flex justify-between mb-3">
+                <h5 className="font-semibold text-lg dark:text-white-light mb-5">Test Activities</h5>
+                <button className="btn" onClick={sendRequest}>
+                  Send Request
+                </button>
+              </div>
               <div className="text-sm cursor-pointer">
                 <div className="flex items-center py-1.5 relative group">
                   <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
