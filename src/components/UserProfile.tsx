@@ -122,6 +122,7 @@ const UserProfile = (data: ProfileData) => {
   }, [data]);
 
   const personalInfo: InfoType[] = [
+    { key: '_ID:', value: _id },
     { key: 'Name:', value: name },
     { key: 'Birthday:', value: birthday },
     { key: 'Email:', value: email },
