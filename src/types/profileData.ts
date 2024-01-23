@@ -13,6 +13,7 @@ type ProfileData = {
   gender: string;
   isWaitingVerification: boolean;
   deleted: string;
+  hobbies: string[];
 };
 
 type InstagramData = {

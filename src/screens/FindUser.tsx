@@ -74,6 +74,7 @@ const FindUser = () => {
         gender: response.gender,
         isWaitingVerification: response.isWaitingVerification,
         deleted: response.deleted,
+        hobbies: response.hobbies,
       };
       setProfileData(object);
     } catch (error: any) {

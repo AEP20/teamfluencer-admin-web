@@ -114,7 +114,7 @@ const GetAllUsers = () => {
   const [autofillJobs, setAutofillJobs] = useState<string[]>([]);
   const [job, setJob] = useState('');
   const [autofillHobbies, setAutofillHobbies] = useState<string[]>([]);
-  const [hobby, setHobby] = useState('');
+  const [hobby, setHobby] = useState<string[]>([]);
 
   const defaultState: Filters = {
     age: { min: '', max: '' },
@@ -330,23 +330,27 @@ const GetAllUsers = () => {
       throw error;
     }
   };
+
   useEffect(() => {
-    if (country.length > 1) {
+    if (country.length > 0) {
       autofillCountry();
     }
   }, [country]);
+
   useEffect(() => {
-    if (city.length > 1) {
+    if (city.length > 0) {
       autofillCity();
     }
   }, [city]);
+
   useEffect(() => {
-    if (job.length > 1) {
+    if (job.length > 0) {
       autofillJob();
     }
   }, [job]);
+
   useEffect(() => {
-    if (hobby.length > 1) {
+    if (hobby) {
       autofillHobby();
     }
   }, [hobby]);
@@ -363,9 +367,13 @@ const GetAllUsers = () => {
     setFilter(key, 'value', selectedJob);
     setAutofillJobs([]);
   };
-  const handleHobbySuggestionClick = (key: any, selectedHobby: any) => {
-    setFilter(key, 'value', selectedHobby);
-    setAutofillHobbies([]);
+  const handleHobbySuggestionClick = (key: any, selectedHobby: string[]) => {
+    if (hobby.length > 1) {
+      setHobby([...hobby.slice(0, -1), selectedHobby[0]]);
+    } else {
+      setHobby([selectedHobby[0]]);
+    }
+    setFilter('hobbies', 'value', hobby);
   };
 
   return (
@@ -603,22 +611,22 @@ const GetAllUsers = () => {
                             const trimmedWord = word.trim();
                             return trimmedWord.charAt(0) + trimmedWord.slice(1).toLowerCase();
                           });
-                          setFilter(key, 'value', hobbies);
-                          setHobby(e.target.value);
+                          setFilter('hobbies', 'value', hobbies);
+                          setHobby(hobbies);
                         }}
                         className="form-input"
                         placeholder={`hobby1, hobby2, ...`}
                       />
                     </div>
-                    {autofillHobbies.length > 0 && hobby.length > 0 && (
+                    {autofillHobbies.length > 0 && hobby[0] && (
                       <ul className="suggestion-list" style={{ position: 'absolute', zIndex: 9999 }}>
                         {[...new Set(autofillHobbies)].slice(0, 5).map((autofillHobby, index) => (
                           <li
                             key={index}
                             className="bg-white p-2 ml-6 text-black cursor-pointer hover:bg-gray-200"
-                            onClick={() => handleHobbySuggestionClick('hobbies', autofillHobby)}
+                            onClick={() => handleHobbySuggestionClick('hobbies', [autofillHobby])}
                           >
-                            {autofillHobby}
+                            {[autofillHobby]}
                           </li>
                         ))}
                       </ul>
