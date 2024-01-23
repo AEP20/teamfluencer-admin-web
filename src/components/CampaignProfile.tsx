@@ -3,6 +3,7 @@ import { CampaignType, InfoType, Limitations, ApplicationCounts } from '../types
 import './styles/styles.css';
 
 const CampaignProfile = (data: CampaignType) => {
+  const [_id, set_Id] = useState('');
   const [name, setName] = useState('');
   const [country, setCountry] = useState('');
   const [description, setDescription] = useState('');
@@ -34,6 +35,7 @@ const CampaignProfile = (data: CampaignType) => {
   });
 
   useEffect(() => {
+    set_Id(data?._id ?? '');
     setName(data?.name ?? '');
     setCountry(data?.country ?? '');
     setDescription(data?.description ?? '');
@@ -70,6 +72,7 @@ const CampaignProfile = (data: CampaignType) => {
   }, [data]);
 
   const campaignInfo: InfoType[] = [
+    { key: 'Campaign Id:', value: _id },
     { key: 'Campaign Name:', value: name },
     { key: 'Country:', value: country },
     { key: 'Description:', value: description },
