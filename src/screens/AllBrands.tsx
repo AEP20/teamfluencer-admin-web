@@ -135,11 +135,11 @@ const AllBrands = () => {
                 title: 'Details',
                 sortable: false,
                 render: ({ _id }: any) => (
-                  <Link to={`/brands/find/${_id}`}>
+                  <a href={`/brands/find/${_id}`} target="_blank" rel="noopener noreferrer">
                     <div className="text-center items-center mr-4">
                       <FontAwesomeIcon icon={faEye} style={{ color: '#005eff' }} />
                     </div>
-                  </Link>
+                  </a>
                 ),
               },
               { accessor: 'id', title: 'Id', sortable: true, render: renderBrandId },
