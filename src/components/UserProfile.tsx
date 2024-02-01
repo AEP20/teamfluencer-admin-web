@@ -59,6 +59,7 @@ const UserProfile = (data: ProfileData) => {
   const [deleted, setDeleted] = useState('');
   const [notification, setNotification] = useState('');
   const [editor, setEditor] = useState(false);
+  const [hobbies, setHobbies] = useState(['']);
 
   useEffect(() => {
     setId(data?._id ?? '');
@@ -67,6 +68,7 @@ const UserProfile = (data: ProfileData) => {
     setEmail(data?.email ?? '');
     setPhone(data?.phone ?? '');
     setDeleted(data?.deleted ?? '');
+    setHobbies(data?.hobbies ?? ['']);
     setIsWaitingVerification(data?.isWaitingVerification ?? false);
     setInstagramData(
       data?.instagram ?? {
@@ -132,6 +134,7 @@ const UserProfile = (data: ProfileData) => {
     { key: 'Papara Account No:', value: moneyData.paparaAccountNo },
     { key: 'Money:', value: moneyData.current },
     { key: 'Waiting Verification:', value: isWaitingVerification },
+    { key: 'Hobbies:', value: hobbies.join(', ') },
   ];
 
   const instagramInfo: InfoType[] = [
@@ -142,7 +145,7 @@ const UserProfile = (data: ProfileData) => {
     { key: 'Following:', value: instagramData.following },
     { key: 'Post Number:', value: instagramData.post_number },
     { key: 'Average Like:', value: instagramData.average_like },
-    { key: 'Keywords:', value: instagramData.keywords.join(' ') },
+    { key: 'Keywords:', value: instagramData.keywords.join(', ') },
   ];
 
   const tiktokInfo: InfoType[] = [

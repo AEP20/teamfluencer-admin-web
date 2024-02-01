@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { TAfindBrand, TAfindBrandById } from '../services/brandAPI';
+import { TAfindBrand, TAfindBrandById, TAfindBrandName } from '../services/brandAPI';
 import { BrandType, MoneyExchanges } from '../types/brandData';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import BrandProfile from '../components/BrandProfile';
@@ -36,6 +36,7 @@ const FindBrand = () => {
   const [brandname, setBrandname] = useState('');
   const [brandData, setbrandData] = useState<BrandType | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [autofillNames, setAutofillNames] = useState<string[]>([]);
 
   const handleForm = async (e: any) => {
     e.preventDefault();
@@ -100,6 +101,25 @@ const FindBrand = () => {
     }
   };
 
+  useEffect(() => {
+    const autofillBrand = async () => {
+      try {
+        const response = await TAfindBrandName(brandname, token);
+        setAutofillNames(response);
+      } catch (error) {
+        throw error;
+      }
+    };
+    if (brandname.length > 1) {
+      autofillBrand();
+    }
+  }, [brandname]);
+
+  const handleSuggestionClick = (selectedBrandname: any) => {
+    setBrandname(selectedBrandname);
+    setAutofillNames([]);
+  };
+
   return (
     <div className="flex flex-col lg:flex-row justify-between items-start min-h-screen bg-cover bg-center relative">
       <div className="w-full ">{brandData && <BrandProfile {...brandData} />}</div>
@@ -125,6 +145,20 @@ const FindBrand = () => {
             setBrandname(e.target.value);
           }}
         />
+
+        {autofillNames.length > 0 && (
+          <ul className="suggestion-list" style={{ position: 'absolute', zIndex: 9999 }}>
+            {[...new Set(autofillNames)].slice(0, 5).map((autofillName, index) => (
+              <li
+                key={index}
+                className="bg-white p-2 m-2 text-black cursor-pointer hover:bg-gray-200"
+                onClick={() => handleSuggestionClick(autofillName)}
+              >
+                {autofillName}
+              </li>
+            ))}
+          </ul>
+        )}
 
         <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Brand No</h2>
         <input

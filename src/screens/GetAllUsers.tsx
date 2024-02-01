@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, Link, redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { TAfindAllUser } from '../services/userAPI';
+import { TAfindAllUser, TAfindCity, TAfindCountry, TAfindHobbies, TAfindJob } from '../services/userAPI';
 import { WaitingApprovalUserData } from '../types/waitingApprovalUserData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
@@ -107,6 +107,14 @@ const GetAllUsers = () => {
   const [keywords, setKeywords] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [autofillCountries, setAutofillCountries] = useState<string[]>([]);
+  const [country, setCountry] = useState('');
+  const [autofillCities, setAutofillCities] = useState<string[]>([]);
+  const [city, setCity] = useState('');
+  const [autofillJobs, setAutofillJobs] = useState<string[]>([]);
+  const [job, setJob] = useState('');
+  const [autofillHobbies, setAutofillHobbies] = useState<string[]>([]);
+  const [hobby, setHobby] = useState<string[]>([]);
 
   const defaultState: Filters = {
     age: { min: '', max: '' },
@@ -290,6 +298,84 @@ const GetAllUsers = () => {
     return <div>{phoneNumberFix(record.phone)}</div>;
   };
 
+  const autofillCountry = async () => {
+    try {
+      const response = await TAfindCountry(country, token);
+      setAutofillCountries(response);
+    } catch (error) {
+      throw error;
+    }
+  };
+  const autofillCity = async () => {
+    try {
+      const response = await TAfindCity(city, token);
+      setAutofillCities(response);
+    } catch (error) {
+      throw error;
+    }
+  };
+  const autofillJob = async () => {
+    try {
+      const response = await TAfindJob(job, token);
+      setAutofillJobs(response);
+    } catch (error) {
+      throw error;
+    }
+  };
+  const autofillHobby = async () => {
+    try {
+      const response = await TAfindHobbies(hobby, token);
+      setAutofillHobbies(response);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    if (country.length > 0) {
+      autofillCountry();
+    }
+  }, [country]);
+
+  useEffect(() => {
+    if (city.length > 0) {
+      autofillCity();
+    }
+  }, [city]);
+
+  useEffect(() => {
+    if (job.length > 0) {
+      autofillJob();
+    }
+  }, [job]);
+
+  useEffect(() => {
+    if (hobby) {
+      autofillHobby();
+    }
+  }, [hobby]);
+
+  const handleCountrySuggestionClick = (key: any, selectedCountry: any) => {
+    setFilter(key, 'value', selectedCountry);
+    setAutofillCountries([]);
+  };
+  const handleCitySuggestionClick = (key: any, selectedCity: any) => {
+    setFilter(key, 'value', selectedCity);
+    setAutofillCities([]);
+  };
+  const handleJobSuggestionClick = (key: any, selectedJob: any) => {
+    setFilter(key, 'value', selectedJob);
+    setAutofillJobs([]);
+  };
+  const handleHobbySuggestionClick = (key: any, selectedHobby: string[]) => {
+    if (hobby.length > 1) {
+      setHobby([...hobby.slice(0, -1), selectedHobby[0]]);
+    } else {
+      setHobby([selectedHobby[0]]);
+    }
+    setFilter('hobbies', 'value', hobby);
+  };
+
   return (
     <div className="panel">
       <div className="flex md:items-center md:flex-row flex-col">
@@ -380,7 +466,13 @@ const GetAllUsers = () => {
                   </label>
                 </div>
               );
-            } else if (key !== 'country' && key !== 'keywords' && key !== 'city' && key !== 'hobbies' && key !== 'job') {
+            } else if (
+              key !== 'country' &&
+              key !== 'keywords' &&
+              key !== 'city' &&
+              key !== 'hobbies' &&
+              key !== 'job'
+            ) {
               return (
                 <div key={key} className="md:flex md:flex-col flex-1 mr-2">
                   <h2 className="text-sm font-bold mb-2 ml-2">{formatKey(key)}</h2>
@@ -415,56 +507,135 @@ const GetAllUsers = () => {
             {filterKeys.map((key) => {
               if (key === 'country') {
                 return (
-                  <div key={key} className="md:flex md:flex-col flex-1 mb-4">
-                    <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Country Name</h2>
-                    <input
-                      type="text"
-                      value={filters[key].value}
-                      onChange={(e) => {
-                        setFilter(key, 'value', e.target.value);
-                      }}
-                      className="form-input"
-                      placeholder={`${key.charAt(0).toUpperCase() + key.slice(1)} name`}
-                    />
+                  <div key={key}>
+                    <div className="md:flex md:flex-col flex-1 mb-4">
+                      <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Country Name</h2>
+                      <input
+                        type="text"
+                        value={filters[key].value}
+                        onChange={(e) => {
+                          setFilter(key, 'value', e.target.value);
+                          setCountry(e.target.value);
+                        }}
+                        className="form-input"
+                        placeholder={`${key.charAt(0).toUpperCase() + key.slice(1)} name`}
+                      />
+                    </div>
+                    {autofillCountries.length > 0 && country.length > 0 && (
+                      <ul className="suggestion-list" style={{ position: 'absolute', zIndex: 9999 }}>
+                        {[...new Set(autofillCountries)].slice(0, 5).map((autofillCountry, index) => (
+                          <li
+                            key={index}
+                            className="bg-white p-2 text-black cursor-pointer hover:bg-gray-200"
+                            onClick={() => handleCountrySuggestionClick('country', autofillCountry)}
+                          >
+                            {autofillCountry}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 );
               } else if (key === 'city') {
                 return (
-                  <div key={key} className="md:flex md:flex-col flex-1 mb-4 ml-5">
-                    <h2 className="text-sm font-bold mb-1 mt-3 ml-2">City Name</h2>
-                    <input
-                      type="text"
-                      value={filters[key].value}
-                      onChange={(e) => {
-                        setFilter(key, 'value', e.target.value);
-                      }}
-                      className="form-input"
-                      placeholder={`${key.charAt(0).toUpperCase() + key.slice(1)} name`}
-                    />
+                  <div key={key}>
+                    <div className="md:flex md:flex-col flex-1 mb-4 ml-5">
+                      <h2 className="text-sm font-bold mb-1 mt-3 ml-2">City Name</h2>
+                      <input
+                        type="text"
+                        value={filters[key].value}
+                        onChange={(e) => {
+                          setFilter(key, 'value', e.target.value);
+                          setCity(e.target.value);
+                        }}
+                        className="form-input"
+                        placeholder={`${key.charAt(0).toUpperCase() + key.slice(1)} name`}
+                      />
+                    </div>
+                    {autofillCities.length > 0 && city.length > 0 && (
+                      <ul className="suggestion-list" style={{ position: 'absolute', zIndex: 9999 }}>
+                        {[...new Set(autofillCities)].slice(0, 5).map((autofillCity, index) => (
+                          <li
+                            key={index}
+                            className="bg-white ml-4 p-2 text-black cursor-pointer hover:bg-gray-200"
+                            onClick={() => handleCitySuggestionClick('city', autofillCity)}
+                          >
+                            {autofillCity}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                );
+              } else if (key === 'job') {
+                return (
+                  <div key={key}>
+                    <div className="md:flex md:flex-col flex-1 mb-4 ml-5">
+                      <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Job Name</h2>
+                      <input
+                        type="text"
+                        value={filters[key].value}
+                        onChange={(e) => {
+                          setFilter(key, 'value', e.target.value);
+                          setJob(e.target.value);
+                        }}
+                        className="form-input"
+                        placeholder={`Job name`}
+                      />
+                    </div>
+                    {autofillJobs.length > 0 && job.length > 0 && (
+                      <ul className="suggestion-list" style={{ position: 'absolute', zIndex: 9999 }}>
+                        {[...new Set(autofillJobs)].slice(0, 5).map((autofillJob, index) => (
+                          <li
+                            key={index}
+                            className="bg-white p-2 ml-6 text-black cursor-pointer hover:bg-gray-200"
+                            onClick={() => handleJobSuggestionClick('job', autofillJob)}
+                          >
+                            {autofillJob}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 );
               } else if (key === 'hobbies') {
                 return (
-                  <div key={key} className="md:flex md:flex-col flex-1 mb-4 mr-2 ml-5">
-                    <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Hobbies</h2>
-                    <input
-                      type="text"
-                      value={filters[key].join(',')}
-                      onChange={(e) => {
-                        const hobbies = e.target.value.split(',').map((word) => {
-                          const trimmedWord = word.trim();
-                          return trimmedWord.charAt(0) + trimmedWord.slice(1).toLowerCase();
-                        });
-                        setFilter(key, 'value', hobbies);
-                      }}
-                      className="form-input"
-                      placeholder={`hobby1, hobby2, ...`}
-                    />
+                  <div key={key}>
+                    <div className="md:flex md:flex-col flex-1 mb-4 mr-2 ml-5">
+                      <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Hobbies</h2>
+                      <input
+                        type="text"
+                        value={hobby}
+                        onChange={(e) => {
+                          const hobbies = e.target.value.split(',').map((word) => {
+                            const trimmedWord = word.trim();
+                            return trimmedWord.charAt(0) + trimmedWord.slice(1).toLowerCase();
+                          });
+                          setFilter('hobbies', 'value', hobbies);
+                          setHobby(hobbies);
+                        }}
+                        className="form-input"
+                        placeholder={`hobby1, hobby2, ...`}
+                      />
+                    </div>
+                    {autofillHobbies.length > 0 && hobby[0] && (
+                      <ul className="suggestion-list" style={{ position: 'absolute', zIndex: 9999 }}>
+                        {[...new Set(autofillHobbies)].slice(0, 5).map((autofillHobby, index) => (
+                          <li
+                            key={index}
+                            className="bg-white p-2 ml-6 text-black cursor-pointer hover:bg-gray-200"
+                            onClick={() => handleHobbySuggestionClick('hobbies', [autofillHobby])}
+                          >
+                            {[autofillHobby]}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 );
               } else if (key === 'keywords') {
                 return (
-                  <div key={key} className="md:flex md:flex-col flex-1 mb-4 mr-2 ml-5">
+                  <div key={key}>
                     <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Keywords</h2>
                     <input
                       type="text"
@@ -481,11 +652,12 @@ const GetAllUsers = () => {
                       placeholder={`Keyword1, Keyword2, ...`}
                     />
                     {isDropdownOpen && keywords.length > 0 && (
-                      <div className="dropdown pt-20 pl-2" style={{ position: 'fixed', zIndex: 999 }}>
-                        <ul>
+                      <div>
+                        <ul className="suggestion-list" style={{ position: 'absolute', zIndex: 9999 }}>
                           {autoCompleteKeyword.map((keyword, index) => (
                             <li
                               key={index}
+                              className="bg-white p-2 mt-4 text-black cursor-pointer hover:bg-gray-200"
                               onClick={() => {
                                 const currentInput = filters[key].join(', ');
 
@@ -509,21 +681,6 @@ const GetAllUsers = () => {
                         </ul>
                       </div>
                     )}
-                  </div>
-                );
-              } else if (key === 'job') {
-                return (
-                  <div key={key} className="md:flex md:flex-col flex-1 mb-4 ml-5">
-                    <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Job Name</h2>
-                    <input
-                      type="text"
-                      value={filters[key].value}
-                      onChange={(e) => {
-                        setFilter(key, 'value', e.target.value);
-                      }}
-                      className="form-input"
-                      placeholder={`Job name`}
-                    />
                   </div>
                 );
               }
@@ -615,7 +772,7 @@ const GetAllUsers = () => {
               { accessor: 'tiktok_average_like', title: 'Tiktok Average Like', sortable: true },
               { accessor: 'tiktok_engagement_rate', title: 'Tiktok Engagement Rate', sortable: true },
             ]}
-            totalRecords={totalPages * pageSize}
+            totalRecords={initialRecords.length}
             recordsPerPage={pageSize}
             page={page}
             onPageChange={(p) => setPage(p)}

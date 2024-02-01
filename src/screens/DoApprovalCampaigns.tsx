@@ -169,6 +169,10 @@ const DoApprovalCampaigns: React.FC = () => {
 
           <tbody>
             <tr>
+              <td className="font-semibold text-md mb-2">Brand ID:</td>
+              <td>{data[currentIndex]._id || 'None'}</td>
+            </tr>
+            <tr>
               <td className="font-semibold text-md mb-2">Brand Description:</td>
               <td>{data[currentIndex].brand_description || 'None'}</td>
             </tr>
