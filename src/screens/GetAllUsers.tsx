@@ -16,7 +16,7 @@ import {
   JobFilterValue,
 } from '../types/getAllUsersData';
 import { selectToken } from '../redux/store/userSlice';
-import DownloadPdfButton from '../components/DownloadPdfButton';
+// import DownloadPdfButton from '../components/DownloadPdfButton';
 import DownloadCSVButton from '../components/DownloadCSVButton';
 import KeywordData from '../JSON/KEYWORDS.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -695,10 +695,10 @@ const GetAllUsers = () => {
           >
             Fetch Data
           </button>
-          <DownloadPdfButton
+          {/* <DownloadPdfButton
             className=" inline-flex items-center justify-center px-2 py-2 mt-6 mb-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 "
             userData={initialRecords}
-          />
+          /> */}
           <DownloadCSVButton
             className=" inline-flex items-center justify-center ml-2 px-2 py-2 mt-6 mb-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 "
             userData={initialRecords}

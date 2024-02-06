@@ -8,7 +8,7 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { Filters, FilterValue, FilterType, CountryFilterValue } from '../types/waitingApprovalUserData';
-import DownloadPdfButton from '../components/DownloadPdfButton';
+// import DownloadPdfButton from '../components/DownloadPdfButton';
 import DownloadCSVButton from '../components/DownloadCSVButton';
 import { selectToken } from '../redux/store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -367,10 +367,10 @@ const ApprovedUsers = () => {
         </div>
 
         <div className="flex flex-row justify-end text-center w-1/3 mb-6 mt-2 mr-2">
-          <DownloadPdfButton
+          {/* <DownloadPdfButton
             className=" inline-flex items-center justify-center px-2 py-2 mt-3 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 "
             userData={initialRecords}
-          />
+          /> */}
           <DownloadCSVButton
             className=" inline-flex items-center justify-center ml-2 px-2 py-2 mt-3 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 "
             userData={initialRecords}
