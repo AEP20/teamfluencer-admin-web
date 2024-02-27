@@ -19,6 +19,7 @@ import { selectToken } from './redux/store/userSlice';
 import ApprovedUsers from './screens/ApprovedUsers';
 import ApprovedCampaigns from './screens/ApprovedCampaigns';
 import Dashboard from './screens/Dashboard';
+import HashtagSearch from './screens/HashtagSearch';
 
 function App() {
   const token = useSelector(selectToken);
@@ -131,6 +132,7 @@ function StatisticsLayout() {
         <CommonLayout>
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/hashtag-search" element={<HashtagSearch />} />
           </Routes>
         </CommonLayout>
       </Suspense>

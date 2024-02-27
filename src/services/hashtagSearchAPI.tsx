@@ -16,3 +16,20 @@ export const TAgetPopularHashtagSearchPost = async (token: string) => {
     throw error;
   }
 };
+
+export const TAgetHashtagPostsLastThreeMonths = async (page: number, perPage: number, token: string) => {
+  try {
+    const response = await apiClient.get(`/insta/insta-hashtag-posts-three-months?page=${page}&perPage=${perPage}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Find post failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
