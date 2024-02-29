@@ -11,9 +11,7 @@ import { PostData } from '../types/hashtagSearchPostData';
 const fetchData = async (page: number, perPage: number, token: string) => {
   try {
     const response = await TAgetHashtagPostsLastThreeMonths(page, perPage, token);
-    console.log('response', response);
     if (response.posts && response.posts.length > 0) {
-      console.log('içerde');
       const totalLength = response.posts.length;
       const totalPages = response.totalPages;
       const data = response.posts.map((item: any, index: any) => {
@@ -22,7 +20,6 @@ const fetchData = async (page: number, perPage: number, token: string) => {
           ...item,
         };
       });
-      console.log('data', data, 'totalPages', totalPages);
       return { data, totalPages };
     }
   } catch (error: any) {
@@ -119,11 +116,28 @@ const HashtagSearch = () => {
               {
                 accessor: 'user.username',
                 title: 'Username',
+                render: (rowData) => {
+                  const username = rowData.user.username;
+                  return (
+                    <a href={`https://www.instagram.com/${username}`} target="_blank" rel="noopener noreferrer">
+                      {username}
+                    </a>
+                  );
+                },
               },
               {
                 accessor: 's3_url',
-                title: 'Media Url',
+                title: 'S3 URL',
+                render: (rowData) => {
+                  const s3_url: string = rowData.s3_url as string;
+                  return (
+                    <a href={s3_url} target="_blank" rel="noopener noreferrer">
+                      {s3_url}
+                    </a>
+                  );
+                },
               },
+
               {
                 accessor: 'owner.full_name',
                 title: 'Owner Full Name',
