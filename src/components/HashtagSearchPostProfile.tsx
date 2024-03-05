@@ -1,72 +1,172 @@
 import React, { useEffect, useState } from 'react';
-import { PostData, CaptionData, InfoType } from '../types/hashtagSearchPostData';
+import { PostData, InfoType } from '../types/hashtagSearchPostData';
 import './styles/styles.css';
 
 const HashtagSearchPostProfile = (data: PostData) => {
-  const [media_id, setMedia_id] = useState('');
-  const [comment_count, setComment_count] = useState(0);
-  const [like_count, setLike_count] = useState(0);
-  const [caption, setCaption] = useState<CaptionData>({
-    pk: '',
-    user_id: '',
-    type: '',
-    text: '',
-    media_id: 0,
+  const [post, setPost] = useState<PostData>({
+    media_id: '',
+    caption_is_edited: false,
+    like_and_view_counts_disabled: false,
+    has_shared_to_fb: 0,
+    is_unified_video: false,
+    commerciality_status: '',
+    is_organic_product_tagging_eligible: false,
+    like_count: 0,
+    media_type: '',
+    description: '',
+    language: '',
+    hashtag: '',
+    // tagged_profiles_description: Array,
+    tagged_profiles: [
+      {
+        pk: '',
+        pk_id: '',
+        id: '',
+        username: '',
+        full_name: '',
+        is_private: false,
+        strong_id__: '',
+        is_verified: false,
+        profile_pic_id: '',
+        profile_pic_url: '',
+        position: {
+          x: 0,
+          y: 0,
+        },
+      },
+    ],
+    caption_created_at: 0,
+    // clips_tab_pinned_user_ids: Array,
+    accessibility_caption: '',
+    is_in_profile_grid: false,
     user: {
-      fbid_v2: '',
+      last_scrape: new Date(),
+      full_name: '',
+      is_private: false,
+      username: '',
+      hd_profile_pic_url_info: {
+        url: '',
+        width: 0,
+        height: 0,
+      },
+      profile_pic_url: '',
+      biography: '', // mevcut değil
+      followers: 0, // mevcut değil
+      following: 0, // mevcut değil
+      post_number: 0, // mevcut değil
+      average_like: 0, // mevcut değil
+      engagement_rate: 0, // mevcut değil
+      user_tags: {
+        // nadir durum
+        id: '',
+        full_name: '',
+        username: '',
+        is_verified: false,
+        is_private: false,
+        profile_pic_url: '',
+        coordinates: {
+          x: 0,
+          y: 0,
+        },
+      },
+      location: {
+        name: '',
+        address: '',
+        city: '',
+        lng: 0,
+        lat: 0,
+      },
+    },
+    media_url: {
+      url: '',
+      width: 0,
+      height: 0,
+    },
+    video_url: '',
+    s3_url: '',
+    video_duration: 0,
+    has_audio: false,
+    clips_metadata: {
+      // music_info: "",
+      original_sound_info: {
+        audio_asset_id: '',
+        progressive_download_url: '',
+      },
+      audio_type: '',
+      music_canonical_id: '',
+      // featured_label: "",
+      mashup_info: {},
+      // reusable_text_info: "",
+      // reusable_text_attribute_string: "",
+      // nux_info: "",
+      // viewer_interaction_settings: "",
+      branded_content_tag_info: {},
+      // shopping_info: "",
+      additional_audio_info: {},
+      is_shared_to_fb: false,
+      // breaking_content_info: "",
+      // challenge_info: "",
+      // reels_on_the_rise_info: "",
+      // breaking_creator_info: "",
+      // asset_recommendation_info: "",
+      // contextual_highlight_info: "",
+      clips_creation_entry_point: '',
+      audio_ranking_info: {},
+      // template_info: "",
+      is_fan_club_promo_video: false,
+      disable_use_in_clips_client_cache: false,
+      // content_appreciation_info: "",
+      achievements_info: {},
+      show_achievements: false,
+      // show_tips: "",
+      // merchandising_pill_info: "",
+      is_public_chat_welcome_video: false,
+      professional_clips_upsell_type: 0,
+      // external_media_info: "",
+      cutout_sticker_info: {},
+    },
+    original_width: 0,
+    original_height: 0,
+    product_type: '',
+    is_paid_partnership: false,
+    music_metadata: {
+      music_canonical_id: '',
+      audio_type: '',
+      music_info: '',
+      original_sound_info: '',
+      pinned_media_ids: '',
+    },
+    comment_threading_enabled: false,
+    max_num_visible_preview_comments: 0,
+    has_more_comments: false,
+    // preview_comments: Array,
+    comment_count: 0,
+    comments_disabled: false, // nadir durum
+    owner: {
       full_name: '',
       id: '',
       is_private: false,
-      is_unpublished: false,
-      pk: 0,
-      pk_id: '',
-      strong_id__: '',
-      has_anonymous_profile_picture: false,
-      is_favorite: false,
-      profile_pic_id: '',
-      profile_pic_url: '',
-      transparency_product_enabled: false,
       username: '',
+      hd_profile_pic_url_info: {
+        url: '',
+        width: 0,
+        height: 0,
+      },
+      profile_pic_url: '',
     },
+    post_url: '', // postun urlsi
   });
 
   useEffect(() => {
-    setMedia_id(data?.media_id ?? 'NULL');
-    setComment_count(data?.comment_count ?? 'NULL');
-    setLike_count(data?.like_count ?? 'NULL');
-    setCaption(
-      data?.caption[0] ?? {
-        pk: '',
-        user_id: '',
-        type: '',
-        text: 'null',
-        media_id: 0,
-        user: {
-          fbid_v2: '',
-          full_name: '',
-          id: '',
-          is_private: false,
-          is_unpublished: false,
-          pk: 0,
-          pk_id: '',
-          strong_id__: '',
-          has_anonymous_profile_picture: false,
-          is_favorite: false,
-          profile_pic_id: '',
-          profile_pic_url: '',
-          transparency_product_enabled: false,
-          username: '',
-        },
-      },
-    );
+    setPost(data);
   }, [data]);
 
   const postInfo: InfoType[] = [
-    { key: 'Media ID:', value: media_id },
-    { key: 'Comment Count:', value: comment_count },
-    { key: 'Like Count:', value: like_count },
-    { key: 'Username:', value: caption.user.username },
-    { key: 'Caption:', value: caption.text },
+    { key: 'Media ID:', value: String(post.media_id) },
+    { key: 'Comment Count:', value: Number(post.comment_count) },
+    { key: 'Like Count:', value: Number(post.like_count) },
+    { key: 'Username:', value: String(post.user.username) },
+    { key: 'description:', value: String(post.description) },
   ];
 
   return (
