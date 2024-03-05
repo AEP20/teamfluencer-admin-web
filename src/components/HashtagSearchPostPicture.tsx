@@ -11,7 +11,7 @@ const PostPicture = ({ postData }: { postData: PostData | null }) => {
         <a href={`${postData.media_url}`} target="_blank" rel="noopener noreferrer">
           <div className="flex items-center ml-3">
             {postData.media_url ? (
-              <img src={postData.media_url} alt="instagram_profile" className="rounded-md mr-3" />
+              <img src={String(postData.s3_url)} alt="instagram_profile" className="rounded-md mr-3" />
             ) : (
               <img
                 src="https://cdn3.iconfinder.com/data/icons/avatars-round-flat/33/avat-01-512.png"
