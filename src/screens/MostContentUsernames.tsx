@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { TAgetPopularBrands } from '../services/statisticsAPI';
+import { TAgetMostContentUsernames } from '../services/statisticsAPI';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
@@ -12,8 +12,7 @@ import { faEye } from '@fortawesome/free-solid-svg-icons';
 
 const fetchData = async (page: number, perPage: number, token: string) => {
   try {
-    const response = await TAgetPopularBrands(perPage, page, token);
-    console.log('response', response);
+    const response = await TAgetMostContentUsernames(perPage, page, token);
     return response;
   } catch (error: any) {
     throw new Error(error);
@@ -43,7 +42,8 @@ const PopularBrands = () => {
       try {
         const response = await fetchData(page, pageSize, token);
         if (response !== undefined) {
-          setInitialRecords(response.brands);
+          console.log('response', response);
+          setInitialRecords(response.response);
           setTotalPages(response.totalPages);
           setLoading(false);
         } else {
@@ -94,11 +94,11 @@ const PopularBrands = () => {
             records={initialRecords}
             columns={[
               {
-                accessor: 'brand',
+                accessor: 'user',
                 title: 'Details',
                 sortable: false,
-                render: ({ _id }: any) => (
-                  <a href={`/brands/find/${_id}`} target="_blank" rel="noopener noreferrer">
+                render: ({ username }: any) => (
+                  <a href={`https://www.instagram.com/${username}/`} target="_blank" rel="noopener noreferrer">
                     <div className="text-center items-center mr-4">
                       <FontAwesomeIcon icon={faEye} style={{ color: '#005eff' }} />
                     </div>
@@ -106,12 +106,16 @@ const PopularBrands = () => {
                 ),
               },
               { accessor: 'id', title: 'Id', sortable: true, render: renderBrandId },
-              { accessor: 'username', title: 'Brand Name' },
-              { accessor: 'from_hashtag_search', title: 'From Hashtag Search' },
-              { accessor: 'brand_hashtag_counter', title: 'Brand Hashtag Counter' },
-              { accessor: 'followers', title: 'Follower' },
-              { accessor: 'following', title: 'Following' },
-              { accessor: 'post_number', title: 'Post Number' },
+              { accessor: 'user.username', title: 'Username' },
+              { accessor: 'count', title: 'Content Count' },
+              { accessor: 'user.full_name', title: 'Full Name' },
+              {
+                accessor: 'user.is_private',
+                title: 'Is Private',
+                sortable: true,
+                render: (record: any, index: number) => (record.user.is_private ? 'Yes' : 'No'),
+              },
+              
             ]}
             totalRecords={totalPages * pageSize}
             recordsPerPage={pageSize}
