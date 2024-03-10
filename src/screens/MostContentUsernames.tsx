@@ -19,7 +19,7 @@ const fetchData = async (page: number, perPage: number, token: string) => {
   }
 };
 
-const PopularBrands = () => {
+const MostContentUsernames = () => {
   const dispatch = useDispatch();
   const token = useSelector(selectToken);
   useEffect(() => {
@@ -134,4 +134,4 @@ const PopularBrands = () => {
   );
 };
 
-export default PopularBrands;
+export default MostContentUsernames;
