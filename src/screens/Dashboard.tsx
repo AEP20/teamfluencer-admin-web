@@ -1,5 +1,5 @@
 import Dropdown from '../components/Dropdown';
-import { TAstatistics } from '../services/statisticsAPI';
+import { TAstatistics, TAtcNoControl } from '../services/statisticsAPI';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectToken } from '../redux/store/userSlice';
 import { useEffect, useState } from 'react';
@@ -69,6 +69,11 @@ const Dashboard = () => {
   const [postData, setPostData] = useState<PostData | null>(null);
   const [instaGraph, setInstaGraph] = useState<string>('');
   const [hashtahSearch, setHashtahSearch] = useState<string>('');
+  const [tcNo, setTcNo] = useState<string>('');
+  const [firstName, setFirstName] = useState<string>('');
+  const [lastName, setLastName] = useState<string>('');
+  const [birthYear, setBirthYear] = useState<string>('');
+  const [tcControl, setTcControl] = useState<string>('');
   // const [instaUserAnalysis, setInstaUserAnalysis] = useState<string>('');
 
   useEffect(() => {
@@ -101,7 +106,7 @@ const Dashboard = () => {
     loadStatistics();
   }, [token]);
 
-  const sendRequest = async () => {
+  const testActivities = async () => {
     const apiCalls = [
       { func: TAbrandLogin, state: setBrandLogin },
       { func: TAbrandEmailPassword, state: setBrandEmailPassword },
@@ -127,6 +132,30 @@ const Dashboard = () => {
         state('failed');
         throw new Error(error);
       }
+    }
+  };
+
+  const testIdentifierNumber = async (
+    tcNo: string,
+    firstName: string,
+    lastName: string,
+    birthYear: string,
+    token: string,
+  ) => {
+    try {
+      const response = await TAtcNoControl(tcNo, firstName, lastName, birthYear, token);
+      if (!response) {
+        throw new Error('No Data Found');
+      }
+      console.log('responseeee', response.response);
+      if (response.response === true) {
+        setTcControl('true');
+      } else if (response.response === false) {
+        setTcControl('false');
+      }
+    } catch (error: any) {
+      console.log('error', error);
+      throw new Error(error);
     }
   };
 
@@ -361,7 +390,7 @@ const Dashboard = () => {
             <div className="panel sm:col-span-2 xl:col-span-1 mb-2">
               <div className="flex justify-between mb-3">
                 <h5 className="font-semibold text-lg dark:text-white-light mb-5">Test Activities</h5>
-                <button className="btn" onClick={sendRequest}>
+                <button className="btn" onClick={testActivities}>
                   Send Request
                 </button>
               </div>
@@ -485,7 +514,83 @@ const Dashboard = () => {
                 </div> */}
               </div>
             </div>
+
+            <div className="panel sm:col-span-2 xl:col-span-1 mb-2">
+              <div className="flex justify-between mb-3">
+                <h5 className="font-semibold text-lg dark:text-white-light mb-5">Kimlik No Control</h5>
+                <button
+                  className="btn"
+                  onClick={() => testIdentifierNumber(tcNo, firstName, lastName, birthYear, token)}
+                >
+                  Send Request
+                </button>
+              </div>
+              <div className="text-sm cursor-pointer">
+                <label htmlFor="tcNo" className="block text-sm font-medium text-gray-700 dark:text-gray-400">
+                  TC No
+                </label>
+                <input
+                  type="text"
+                  id="tcNo"
+                  name="tcNo"
+                  value={tcNo}
+                  onChange={(e) => setTcNo(e.target.value)}
+                  className="mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md w-full"
+                />
+
+                <label htmlFor="firstName" className="block mt-4 text-sm font-medium text-gray-700 dark:text-gray-400">
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md w-full"
+                />
+
+                <label htmlFor="lastName" className="block mt-4 text-sm font-medium text-gray-700 dark:text-gray-400">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md w-full"
+                />
+
+                <label htmlFor="birthYear" className="block mt-4 text-sm font-medium text-gray-700 dark:text-gray-400">
+                  Birth Year
+                </label>
+                <input
+                  type="text"
+                  id="birthYear"
+                  name="birthYear"
+                  value={birthYear}
+                  onChange={(e) => setBirthYear(e.target.value)}
+                  className="mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md w-full"
+                />
+                <div className="flex items-center py-1.5 relative group mt-5">
+                  {tcControl === 'true' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500 text-center text-sm font-medium">
+                      True
+                    </span>
+                  ) : tcControl === 'false' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500 text-center text-sm font-medium">
+                      False
+                    </span>
+                  ) : (
+                    null
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
+
+          {/*  Popular Post  */}
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
             <div className="panel h-full sm:col-span-2 xl:col-span-1 mb-2">
               <h5 className="font-semibold text-lg dark:text-white-light mb-5">Popular Post</h5>

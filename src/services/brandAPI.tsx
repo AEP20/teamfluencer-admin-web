@@ -156,3 +156,22 @@ export const TAaddBalance = async (id: any, balance: number, token: string) => {
     throw error;
   }
 };
+
+export const TAgetPopularBrands = async (perPage: any, page: number, token: string) => {
+  try {
+    const response = await apiClient.get(`/admin/brand/getpopularbrands?perPage=${perPage}&page=${page}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Update failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
