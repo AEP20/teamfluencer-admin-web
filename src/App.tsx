@@ -19,6 +19,9 @@ import { selectToken } from './redux/store/userSlice';
 import ApprovedUsers from './screens/ApprovedUsers';
 import ApprovedCampaigns from './screens/ApprovedCampaigns';
 import Dashboard from './screens/Dashboard';
+import HashtagSearch from './screens/HashtagSearch';
+import PopularBrands from './screens/PopularBrands';
+import TAgetMostContentUsernames from './screens/MostContentUsernames';
 
 function App() {
   const token = useSelector(selectToken);
@@ -131,6 +134,9 @@ function StatisticsLayout() {
         <CommonLayout>
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/hashtag-search" element={<HashtagSearch />} />
+            <Route path="/popular-brands" element={<PopularBrands />} />
+            <Route path="/most-content-usernames" element={<TAgetMostContentUsernames />} />
           </Routes>
         </CommonLayout>
       </Suspense>

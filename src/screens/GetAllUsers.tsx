@@ -115,6 +115,7 @@ const GetAllUsers = () => {
   const [job, setJob] = useState('');
   const [autofillHobbies, setAutofillHobbies] = useState<string[]>([]);
   const [hobby, setHobby] = useState<string[]>([]);
+  const [isHobbyDropdownOpen, setIsHobbyDropdownOpen] = useState(false);
 
   const defaultState: Filters = {
     age: { min: '', max: '' },
@@ -258,6 +259,20 @@ const GetAllUsers = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event:any) => {
+      if (event.target.closest('.form-input') === null) {
+        setIsHobbyDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
   const formatKey = (key: string) => {
     switch (key) {
       case 'age':
@@ -271,7 +286,7 @@ const GetAllUsers = () => {
       case 'tiktok_average_like':
         return 'TikTok Average Like';
       case 'tiktok_engagement_rate':
-        return 'TikTok Engagement Rate';
+        return 'TikTok Eng. Rate';
       default:
         return key;
     }
@@ -325,6 +340,7 @@ const GetAllUsers = () => {
   const autofillHobby = async () => {
     try {
       const response = await TAfindHobbies(hobby, token);
+      console.log('response', response);
       setAutofillHobbies(response);
     } catch (error) {
       throw error;
@@ -606,6 +622,7 @@ const GetAllUsers = () => {
                       <input
                         type="text"
                         value={hobby}
+                        onClick={() => setIsHobbyDropdownOpen(true)}
                         onChange={(e) => {
                           const hobbies = e.target.value.split(',').map((word) => {
                             const trimmedWord = word.trim();
@@ -618,7 +635,7 @@ const GetAllUsers = () => {
                         placeholder={`hobby1, hobby2, ...`}
                       />
                     </div>
-                    {autofillHobbies.length > 0 && hobby[0] && (
+                    {isHobbyDropdownOpen && (
                       <ul className="suggestion-list" style={{ position: 'absolute', zIndex: 9999 }}>
                         {[...new Set(autofillHobbies)].slice(0, 5).map((autofillHobby, index) => (
                           <li
@@ -657,7 +674,7 @@ const GetAllUsers = () => {
                           {autoCompleteKeyword.map((keyword, index) => (
                             <li
                               key={index}
-                              className="bg-white p-2 mt-4 text-black cursor-pointer hover:bg-gray-200"
+                              className="bg-white p-2 text-black cursor-pointer hover:bg-gray-200"
                               onClick={() => {
                                 const currentInput = filters[key].join(', ');
 
