@@ -14,6 +14,7 @@ type ProfileData = {
   isWaitingVerification: boolean;
   deleted: string;
   hobbies: string[];
+  verification: string;
 };
 
 type InstagramData = {

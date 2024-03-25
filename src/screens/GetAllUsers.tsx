@@ -2,7 +2,14 @@ import React from 'react';
 import { useNavigate, Link, redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { TAfindAllUser, TAfindCity, TAfindCountry, TAfindHobbies, TAfindJob } from '../services/userAPI';
+import {
+  TAfindAllUser,
+  TAfindCity,
+  TAfindCountry,
+  TAfindHobbies,
+  TAfindJob,
+  TAremoveVerification,
+} from '../services/userAPI';
 import { WaitingApprovalUserData } from '../types/waitingApprovalUserData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
@@ -68,15 +75,20 @@ const fetchData = async (page: number, query: any, token: string) => {
           phone: phoneNumberFixer(item.phone),
           gender: item.gender,
           profile_complete: item.profile_complete,
-          instaUsername: item.insta?.username,
-          tiktokUsername: item.tiktok?.username,
+          insta_full_name: item.insta?.full_name,
+          insta_username: item.insta?.username,
+          post_number: item.insta?.post_number,
+          tiktok_username: item.tiktok?.username,
           followers: item.insta?.followers,
+          following: item.insta?.following,
           insta_post_number: item.post_number,
           average_like: instaAverageLikeFixer(item.insta?.average_like),
           tiktok_followers: tiktokFollowersFixer(item.tiktok?.followers),
+          tiktok_following: tiktokFollowersFixer(item.tiktok?.following),
           tiktok_videos: item.videos,
           tiktok_average_like: tiktokAverageLikeFixer(item.tiktok?.tiktok_average_like),
           tiktok_engagement_rate: engagementRateFixer(item.tiktok?.tiktok_engagement_rate),
+          tiktok_hearts: tiktokFollowersFixer(item.tiktok?.hearts),
           keywords: item.insta?.keywords,
           _id: item._id,
           verification: item.verification,
@@ -115,6 +127,7 @@ const GetAllUsers = () => {
   const [job, setJob] = useState('');
   const [autofillHobbies, setAutofillHobbies] = useState<string[]>([]);
   const [hobby, setHobby] = useState<string[]>([]);
+  const [isHobbyDropdownOpen, setIsHobbyDropdownOpen] = useState(false);
 
   const defaultState: Filters = {
     age: { min: '', max: '' },
@@ -258,6 +271,20 @@ const GetAllUsers = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (event.target.closest('.form-input') === null) {
+        setIsHobbyDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
   const formatKey = (key: string) => {
     switch (key) {
       case 'age':
@@ -271,7 +298,7 @@ const GetAllUsers = () => {
       case 'tiktok_average_like':
         return 'TikTok Average Like';
       case 'tiktok_engagement_rate':
-        return 'TikTok Engagement Rate';
+        return 'TikTok Eng. Rate';
       default:
         return key;
     }
@@ -325,6 +352,7 @@ const GetAllUsers = () => {
   const autofillHobby = async () => {
     try {
       const response = await TAfindHobbies(hobby, token);
+      console.log('response', response);
       setAutofillHobbies(response);
     } catch (error) {
       throw error;
@@ -374,6 +402,12 @@ const GetAllUsers = () => {
       setHobby([selectedHobby[0]]);
     }
     setFilter('hobbies', 'value', hobby);
+  };
+
+  const removeVerification = (id: any) => {
+    return () => {
+      TAremoveVerification(id, token);
+    };
   };
 
   return (
@@ -606,6 +640,7 @@ const GetAllUsers = () => {
                       <input
                         type="text"
                         value={hobby}
+                        onClick={() => setIsHobbyDropdownOpen(true)}
                         onChange={(e) => {
                           const hobbies = e.target.value.split(',').map((word) => {
                             const trimmedWord = word.trim();
@@ -618,7 +653,7 @@ const GetAllUsers = () => {
                         placeholder={`hobby1, hobby2, ...`}
                       />
                     </div>
-                    {autofillHobbies.length > 0 && hobby[0] && (
+                    {isHobbyDropdownOpen && (
                       <ul className="suggestion-list" style={{ position: 'absolute', zIndex: 9999 }}>
                         {[...new Set(autofillHobbies)].slice(0, 5).map((autofillHobby, index) => (
                           <li
@@ -657,7 +692,7 @@ const GetAllUsers = () => {
                           {autoCompleteKeyword.map((keyword, index) => (
                             <li
                               key={index}
-                              className="bg-white p-2 mt-4 text-black cursor-pointer hover:bg-gray-200"
+                              className="bg-white p-2 text-black cursor-pointer hover:bg-gray-200"
                               onClick={() => {
                                 const currentInput = filters[key].join(', ');
 
@@ -722,9 +757,15 @@ const GetAllUsers = () => {
                 accessor: 'verification',
                 title: 'Verified',
                 sortable: false,
-                render: ({ verification }: any) => (
+                render: ({ verification, _id }: any) => (
                   <div className="text-center items-center">
-                    {verification ? <FontAwesomeIcon icon={faStar} style={{ color: '#ffba00' }} /> : null}
+                    {verification ? (
+                      <FontAwesomeIcon
+                        icon={faStar}
+                        style={{ color: '#ffba00', cursor: 'pointer'}}
+                        onClick={() => removeVerification(_id)}
+                      />
+                    ) : null}
                   </div>
                 ),
               },
@@ -749,8 +790,9 @@ const GetAllUsers = () => {
               { accessor: 'phone', title: 'Phone', sortable: true, render: renderPhone },
               { accessor: 'age', title: 'Age', sortable: true },
               { accessor: 'job', title: 'Job', sortable: true },
-              { accessor: 'instaUsername', title: 'Insta Username', sortable: true },
-              { accessor: 'tiktokUsername', title: 'Tiktok Username', sortable: true },
+              { accessor: 'insta_full_name', title: 'FullName', sortable: true },
+              { accessor: 'insta_username', title: 'Insta Username', sortable: true },
+              { accessor: 'tiktok_username', title: 'Tiktok Username', sortable: true },
               {
                 accessor: 'gender',
                 title: 'Gender',
@@ -767,10 +809,14 @@ const GetAllUsers = () => {
               },
               { accessor: 'country', title: 'Country', sortable: true },
               { accessor: 'followers', title: 'Insta Followers', sortable: true },
+              { accessor: 'following', title: 'Insta Following', sortable: true },
               { accessor: 'average_like', title: 'Insta Average Like', sortable: true },
+              { accessor: 'post_number', title: 'Insta Post Number', sortable: true },
               { accessor: 'tiktok_followers', title: 'Tiktok Followers', sortable: true },
+              { accessor: 'tiktok_following', title: 'Tiktok Following', sortable: true },
               { accessor: 'tiktok_average_like', title: 'Tiktok Average Like', sortable: true },
               { accessor: 'tiktok_engagement_rate', title: 'Tiktok Engagement Rate', sortable: true },
+              { accessor: 'tiktok_hearts', title: 'Tiktok Hearts', sortable: true },
             ]}
             totalRecords={initialRecords.length}
             recordsPerPage={pageSize}

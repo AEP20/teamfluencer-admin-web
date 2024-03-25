@@ -4,7 +4,7 @@ import TiktokProfilePicture from './TiktokProfilePicture';
 import InstagramProfilePicture from './InstagramProfilePicture';
 import ReadMore from './ReadMore';
 import './styles/styles.css';
-import { TAchangePhone, TArecoverAccount } from '../services/userAPI';
+import { TAchangePhone, TArecoverAccount, TAremoveVerification } from '../services/userAPI';
 import { useSelector } from 'react-redux';
 import { selectToken } from '../redux/store/userSlice';
 
@@ -60,6 +60,7 @@ const UserProfile = (data: ProfileData) => {
   const [notification, setNotification] = useState('');
   const [editor, setEditor] = useState(false);
   const [hobbies, setHobbies] = useState(['']);
+  const [verification, setVerification] = useState('');
 
   useEffect(() => {
     setId(data?._id ?? '');
@@ -69,6 +70,7 @@ const UserProfile = (data: ProfileData) => {
     setPhone(data?.phone ?? '');
     setDeleted(data?.deleted ?? '');
     setHobbies(data?.hobbies ?? ['']);
+    setVerification(data?.verification ?? '');
     setIsWaitingVerification(data?.isWaitingVerification ?? false);
     setInstagramData(
       data?.instagram ?? {
@@ -171,6 +173,11 @@ const UserProfile = (data: ProfileData) => {
     setNotification('Phone Number Changed (refresh page)');
   };
 
+  const removeVerification = (id: any, token: any) => {
+    TAremoveVerification(id, token);
+    setNotification('Verification removed (refresh page)');
+  };
+
   useEffect(() => {
     if (notification) {
       const notificationTimeout = setTimeout(() => {
@@ -211,6 +218,20 @@ const UserProfile = (data: ProfileData) => {
                 <td>{info.value}</td>
               </tr>
             ))}
+          </tbody>
+          <tbody>
+            <tr>
+              <td>Verification:</td>
+              <td>{verification}</td>
+              {verification === 'true' && (
+                <button
+                  className="text-indigo-600 hover:text-indigo-900 pt-3"
+                  onClick={() => removeVerification(_id, token)}
+                >
+                  Remove Verification
+                </button>
+              )}
+            </tr>
           </tbody>
           <tbody>
             <tr>
