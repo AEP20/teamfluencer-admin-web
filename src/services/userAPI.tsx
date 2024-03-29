@@ -264,3 +264,21 @@ export const TAchangePhone = async (id: string, phone: string, token: string) =>
     throw error;
   }
 };
+
+export const TAremoveVerification = async (id: string, token: string) => {
+  try {
+    const response = await apiClient.put(`/admin/user/removeverification/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Find Approval Users failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
