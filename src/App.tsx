@@ -20,6 +20,7 @@ import ApprovedUsers from './screens/ApprovedUsers';
 import ApprovedCampaigns from './screens/ApprovedCampaigns';
 import Dashboard from './screens/Dashboard';
 import HashtagSearch from './screens/HashtagSearch';
+import PopularBrands from './screens/PopularBrands';
 
 function App() {
   const token = useSelector(selectToken);
@@ -100,6 +101,7 @@ function BrandsLayout() {
             <Route path="/find" element={<FindBrand />} />
             <Route path="/find-all" element={<AllBrands />} />
             <Route path="/find/:id" element={<FindBrand />} />
+            <Route path="/getpopular" element={<PopularBrands />} />
           </Routes>
         </CommonLayout>
       </Suspense>
