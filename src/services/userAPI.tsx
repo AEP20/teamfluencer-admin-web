@@ -1,12 +1,8 @@
 import apiClient from './axiosInstance';
 
-export const TAfindUser = async (data: any, token: string) => {
+export const TAfindUser = async (query: any, token: string) => {
   try {
-    const query = data.email
-      ? `_email=${data.email}`
-      : data.username
-      ? `_username=${data.username}`
-      : `_phone=${data.phone}`;
+
 
     const response = await apiClient.get(`/admin/user/getuser?${query}`, {
       headers: {

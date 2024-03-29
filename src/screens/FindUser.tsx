@@ -32,6 +32,7 @@ const FindUser = () => {
   });
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [_id, setId] = useState('');
   const [username, setUsername] = useState('');
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -39,23 +40,34 @@ const FindUser = () => {
 
   const handleForm = async (e: any) => {
     e.preventDefault();
+    const isNull = (array : any[]) => {
+     //controll if all elements are equal to ''
+      for (let i = 0; i < array.length; i++) {
+        if (array[i] !== '') {
+          return false;
+        }
+      }
+      return true;
+    }
+
 
     let data;
-
-    if (email !== '' && phone === '' && username === '') {
-      data = { email };
-    } else if (phone !== '' && email === '' && username === '') {
-      data = { phone };
-    } else if (phone === '' && email === '' && username !== '') {
-      data = { username };
-    } else if (phone === '' && email === '' && username === '') {
-      setError('Please provide email or phone');
+    if (_id !=='' && isNull([email, phone, username])) {
+      data = `_id=${_id}`
+    } else if (email !=='' && isNull([phone, username, _id])) {
+      data = `email=${email}`;
+    } else if (phone !=='' && isNull([email, username, _id])) {
+      data = `phone=${phone}`;
+    } else if (username !=='' && isNull([email, phone, _id])) {
+      data = `insta.username=${username}`;
+    } else if (isNull([email, phone, username])) {
+      setError('Please provide any criteria');
       return;
     } else {
       setError('Please provide only email or phone');
       return;
     }
-
+    console.log(data);
     try {
       const response = await TAfindUser(data, token);
       const object = {
@@ -90,7 +102,7 @@ const FindUser = () => {
   useEffect(() => {
     const autofillUsername = async () => {
       try {
-        const response = await TAfindUsername(username, token);
+        const response = await TAfindUsername(`username=${username}`, token);
         setAutofillUsernames(response);
       } catch (error) {
         throw error;
@@ -110,7 +122,10 @@ const FindUser = () => {
     <div className="flex flex-col lg:flex-row justify-between items-start min-h-screen bg-cover bg-center relative">
       <div className="w-full">{profileData && <UserProfile {...profileData} />}</div>
       <form className="w-1/4 absolute right-6 ">
-        <h2 className="text-sm font-bold mb-1 mt-3 ml-2">User Mail</h2>
+        <h1>
+          Find User
+        </h1>
+        <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Mail Address</h2>
         <input
           type="email"
           placeholder="email@mail.com"
@@ -121,10 +136,10 @@ const FindUser = () => {
           }}
         />
 
-        <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Username</h2>
+        <h2 className="text-sm font-bold mb-1 mt-3 ml-2">IG Username</h2>
         <input
           type="username"
-          placeholder="username"
+          placeholder="IG Username"
           className="form-input text-sm"
           value={username}
           onChange={(e) => {
@@ -146,14 +161,24 @@ const FindUser = () => {
           </ul>
         )}
 
-        <h2 className="text-sm font-bold mb-1 mt-3 ml-2">User No</h2>
+        <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Phone Number:</h2>
         <input
           type="tel"
-          placeholder="phone number (ex: 905555555555)"
+          placeholder="905*********"
           className="form-input text-sm"
           value={phone}
           onChange={(e) => {
             setPhone(e.target.value);
+          }}
+        />
+        <h2 className="text-sm font-bold mb-1 mt-3 ml-2">User ID:</h2>
+        <input
+          type="text"
+          placeholder="User ID"
+          className="form-input text-sm"
+          value={_id}
+          onChange={(e) => {
+            setId(e.target.value);
           }}
         />
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
