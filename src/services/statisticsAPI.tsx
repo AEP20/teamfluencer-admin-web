@@ -45,3 +45,41 @@ export const TAtcNoControl = async (
     throw error;
   }
 };
+
+export const TAgetPopularBrands = async (perPage: any, page: number, token: string) => {
+  try {
+    const response = await apiClient.get(`/admin/brand/getpopularbrands?perPage=${perPage}&page=${page}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Update failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAgetMostContentUsernames = async (perPage: any, page: number, token: string) => {
+  try {
+    const response = await apiClient.get(`/insta/insta-most-content-usernames?perPage=${perPage}&page=${page}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Update failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};

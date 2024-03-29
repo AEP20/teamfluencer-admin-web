@@ -21,6 +21,7 @@ import ApprovedCampaigns from './screens/ApprovedCampaigns';
 import Dashboard from './screens/Dashboard';
 import HashtagSearch from './screens/HashtagSearch';
 import PopularBrands from './screens/PopularBrands';
+import TAgetMostContentUsernames from './screens/MostContentUsernames';
 
 function App() {
   const token = useSelector(selectToken);
@@ -101,7 +102,6 @@ function BrandsLayout() {
             <Route path="/find" element={<FindBrand />} />
             <Route path="/find-all" element={<AllBrands />} />
             <Route path="/find/:id" element={<FindBrand />} />
-            <Route path="/getpopular" element={<PopularBrands />} />
           </Routes>
         </CommonLayout>
       </Suspense>
@@ -135,6 +135,8 @@ function StatisticsLayout() {
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/hashtag-search" element={<HashtagSearch />} />
+            <Route path="/popular-brands" element={<PopularBrands />} />
+            <Route path="/most-content-usernames" element={<TAgetMostContentUsernames />} />
           </Routes>
         </CommonLayout>
       </Suspense>
