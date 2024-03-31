@@ -3,6 +3,7 @@ import apiClient from './axiosInstance';
 export const TAstatistics = async (token: string) => {
   try {
     const response = await apiClient.get(`/admin/statistics/statisticsnum`, {
+      timeout: 20000, // Set a timeout of 5 seconds
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -46,7 +47,7 @@ export const TAtcNoControl = async (
   }
 };
 
-export const TAgetPopularBrands = async (perPage: any, page: number, token: string) => {
+export const TargetPopularBrands = async (perPage: any, page: number, token: string) => {
   try {
     const response = await apiClient.get(`/admin/brand/getpopularbrands?perPage=${perPage}&page=${page}`, {
       headers: {
