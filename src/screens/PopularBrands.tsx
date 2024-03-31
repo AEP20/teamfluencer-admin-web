@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { TAgetPopularBrands } from '../services/statisticsAPI';
+import { TargetPopularBrands } from '../services/statisticsAPI';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
@@ -12,7 +12,7 @@ import { faEye } from '@fortawesome/free-solid-svg-icons';
 
 const fetchData = async (page: number, perPage: number, token: string) => {
   try {
-    const response = await TAgetPopularBrands(perPage, page, token);
+    const response = await TargetPopularBrands(perPage, page, token);
     console.log('response', response);
     return response;
   } catch (error: any) {

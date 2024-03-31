@@ -171,32 +171,32 @@ const Dashboard = () => {
         {error && <div className="text-red-500">{error}</div>}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-6 text-white">
           {/* Total Brands */}
-          <div className="flex flex-col panel bg-gray-500">
+          <div className="flex flex-col panel bg-indigo-100">
             <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Total Brands</div>
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Total Brands</div>
             </div>
             <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{totalBrands}</div>
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{totalBrands}</div>
             </div>
           </div>
 
           {/* Paid Brands */}
-          <div className="flex flex-col panel bg-gray-500">
+          <div className="flex flex-col panel bg-indigo-100">
             <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Paid Brands</div>
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Paid Brands</div>
             </div>
             <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{paidBrands}</div>
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{paidBrands}</div>
             </div>
           </div>
 
           {/*  Brands in TR / out of TR  */}
-          <div className="flex flex-col panel bg-gray-500">
+          <div className="flex flex-col panel bg-indigo-100">
             <div className="flex justify-between">
               {buttonClicked === false ? (
-                <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold">Brands in TR</div>
+                <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold text-indigo-600">Brands in TR</div>
               ) : (
-                <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold">Brands out of TR</div>
+                <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold text-indigo-600">Brands out of TR</div>
               )}
               <div className="dropdown">
                 <Dropdown
@@ -232,18 +232,18 @@ const Dashboard = () => {
             </div>
             {buttonClicked === false ? (
               <div className="flex justify-center mt-7">
-                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{inTurkeys}</div>
+                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{inTurkeys}</div>
               </div>
             ) : (
               <div className="flex justify-center mt-7">
-                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{outOfTurkeys}</div>
+                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{outOfTurkeys}</div>
               </div>
             )}
           </div>
 
           {/* Active Brands */}
-          <div className="flex flex-col panel bg-gray-500">
-            <div className="flex justify-between">
+          <div className="flex flex-col panel bg-indigo-100">
+            <div className="flex justify-between text-indigo-600">
               {buttonClicked2 === 0 ? (
                 <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold">Active brands in the last 30 days</div>
               ) : buttonClicked2 === 1 ? (
@@ -290,96 +290,96 @@ const Dashboard = () => {
             </div>
             {buttonClicked2 === 0 ? (
               <div className="flex justify-center mt-7">
-                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{activeBrands30}</div>
+                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{activeBrands30}</div>
               </div>
             ) : buttonClicked2 === 1 ? (
               <div className="flex justify-center mt-7">
-                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{activeBrands15}</div>
+                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{activeBrands15}</div>
               </div>
             ) : (
               <div className="flex justify-center mt-7">
-                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{activeBrands7}</div>
+                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{activeBrands7}</div>
               </div>
             )}
           </div>
 
           {/* Total Campaigns */}
-          <div className="flex flex-col panel bg-gray-500">
+          <div className="flex flex-col panel bg-indigo-100">
             <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Total Campaigns</div>
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Total Campaigns</div>
             </div>
             <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{totalCampaigns}</div>
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{totalCampaigns}</div>
             </div>
           </div>
 
           {/* Active Campaigns */}
-          <div className="flex flex-col panel bg-gray-500">
+          <div className="flex flex-col panel bg-indigo-100">
             <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Active Campaigns</div>
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Active Campaigns</div>
             </div>
             <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{activeCampaigns}</div>
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{activeCampaigns}</div>
             </div>
           </div>
 
           {/* Waiting Approval Campaigns */}
-          <div className="flex flex-col panel bg-gray-500">
+          <div className="flex flex-col panel bg-indigo-100">
             <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Waiting Approval Campaigns</div>
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Waiting Approval Campaigns</div>
             </div>
             <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{waitingApprovalCampaigns}</div>
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{waitingApprovalCampaigns}</div>
             </div>
           </div>
 
           {/* Total Cooperations */}
-          <div className="flex flex-col panel bg-gray-500">
+          <div className="flex flex-col panel bg-indigo-100">
             <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Total Cooperations (done)</div>
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Total Cooperations (done)</div>
             </div>
             <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{totalCooperations}</div>
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{totalCooperations}</div>
             </div>
           </div>
 
           {/* Total Users */}
-          <div className="flex flex-col panel bg-gray-500">
+          <div className="flex flex-col panel bg-indigo-100">
             <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Total Users</div>
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Total Users</div>
             </div>
             <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{totalUsers}</div>
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{totalUsers}</div>
             </div>
           </div>
 
           {/* Approved Users */}
-          <div className="flex flex-col panel bg-gray-500">
+          <div className="flex flex-col panel bg-indigo-100">
             <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Approved Users</div>
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Approved Users</div>
             </div>
             <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{approvedUsers}</div>
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{approvedUsers}</div>
             </div>
           </div>
 
           {/* Waiting Approval Users */}
-          <div className="flex flex-col panel bg-gray-500">
+          <div className="flex flex-col panel bg-indigo-100">
             <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Waiting Approval Users</div>
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Waiting Approval Users</div>
             </div>
             <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{waitingApprovalUsers}</div>
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{waitingApprovalUsers}</div>
             </div>
           </div>
 
           {/* Deleted Users */}
-          <div className="flex flex-col panel bg-gray-500">
+          <div className="flex flex-col panel bg-indigo-100">
             <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold">Deleted Users</div>
+              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Deleted Users</div>
             </div>
             <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3">{deletedUsers}</div>
+              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{deletedUsers}</div>
             </div>
           </div>
         </div>

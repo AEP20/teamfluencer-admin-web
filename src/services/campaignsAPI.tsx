@@ -64,6 +64,26 @@ export const TAfindApprovedCampaigns = async (page: number, perPage: number, tok
   }
 };
 
+
+export const TAfindCampaignById = async (_id: any, token: string) => {
+  try {
+    const response = await apiClient.get(`/admin/campaign/_id/${_id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      console.log("response", response)
+      throw new Error('Find User failed');
+    }
+  } catch (error) {
+    console.log("error: ", error)
+    throw error;
+  }
+};
+
 export const TAsetVisibility = async (_id: string, status: boolean = true, token: string) => {
   try {
     const response = await apiClient.get(`/admin/campaign/set-visibilty?status=${status}&_id=${_id}`, {

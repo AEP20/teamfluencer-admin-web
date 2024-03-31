@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CampaignType, InfoType, Limitations, ApplicationCounts } from '../types/campaignsData';
 import './styles/styles.css';
 
-const CampaignProfile = (data: CampaignType) => {
+export const CampaignProfile = (data: CampaignType) => {
   const [_id, set_Id] = useState('');
   const [name, setName] = useState('');
   const [country, setCountry] = useState('');
@@ -83,48 +83,53 @@ const CampaignProfile = (data: CampaignType) => {
   ];
 
   return (
-    <div className="profile-section bg-white p-3 shadow-md mb-3">
-      <h3 className="section-title text-lg font-semibold mb-3">Campaign Information</h3>
-      <table className="table-responsive">
-        <tbody>
-          {campaignInfo.map((info: InfoType) => (
-            <tr key={info.key}>
-              <td className="info-key">{info.key}</td>
-              <td className="info-value">{info.value}</td>
-            </tr>
-          ))}
-          <tr>
-            <td className="info-key">Limitations:</td>
-            <td className="info-value">
-              <div>Gender : {limitations.gender}</div>
-              <div>Min Age : {limitations.min_age}</div>
-              <div>Max Age : {limitations.max_age}</div>
-              <div>Min Follower : {limitations.min_follower}</div>
-              <div>Max Follower : {limitations.max_follower}</div>
-              <div>School : {limitations.school}</div>
-              <div>City : {limitations.city}</div>
-            </td>
-          </tr>
-          <tr>
-            <td className="info-key">Application Counts:</td>
-            <td className="info-value">
-              <div>First Application : {applicationCounts.first_application}</div>
-              <div>Waiting Content : {applicationCounts.waiting_content}</div>
-              <div>Content Offered : {applicationCounts.content_offered}</div>
-              <div>Content To Share : {applicationCounts.content_to_share}</div>
-              <div>Content Rejected : {applicationCounts.content_rejected}</div>
-              <div>Content Shared : {applicationCounts.content_shared}</div>
-              <div>Content Approved : {applicationCounts.content_approved}</div>
-              <div>Account Rejected : {applicationCounts.account_rejected}</div>
-              <div>Brand: Canceled : {applicationCounts.brand_canceled}</div>
-              <div>User Canceled : {applicationCounts.user_canceled}</div>
-              <div>Application Done : {applicationCounts.application_done}</div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div className="bg-gradient-to-rt from-teal-50 to-blue-50 p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
+      <h3 className="text-2xl font-semibold mb-4 text-gray-800">Campaign Information</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <DetailItem label="Campaign Name" value={data.name} />
+        <DetailItem label="Country" value={data.country} />
+        <DetailItem label="Description" value={data.description} />
+        <DetailItem label="Platform" value={data.platform} />
+        <DetailItem label="Visibility" value={data.visibility ? 'Visible' : 'Hidden'} />
+        <DetailItem label="Is Verified" value={data.is_verified ? 'Yes' : 'No'} />
+        <DetailItem label="Rejected Reason" value={data.rejected_reason || 'N/A'} />
+
+        {/* Limitations */}
+        <div className="col-span-1 md:col-span-2">
+          <h4 className="text-lg font-semibold mb-2 text-gray-700">Limitations</h4>
+          <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Gender: {data.limitations.gender}</li>
+              <li>Age: {data.limitations.min_age} to {data.limitations.max_age}</li>
+              <li>Followers: {data.limitations.min_follower} to {data.limitations.max_follower}</li>
+              <li>School: {data.limitations.school || 'Any'}</li>
+              <li>City: {data.limitations.city || 'Any'}</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Application Counts */}
+        <div className="col-span-1 md:col-span-2">
+          <h4 className="text-lg font-semibold mb-2 text-gray-700">Application Counts</h4>
+          <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
+            <ul className="list-disc pl-5 space-y-1">
+              {Object.entries(data.application_counts).map(([key, value]) => (
+                <li key={key}>{`${key.replace(/_/g, ' ')}: ${value}`}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
+
+const DetailItem: React.FC<{ label: string, value: string | number }> = ({ label, value }) => (
+  <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
+    <h5 className="text-md font-semibold mb-1 text-gray-700">{label}</h5>
+    <p className="text-gray-600">{value}</p>
+  </div>
+);
+
 
 export default CampaignProfile;

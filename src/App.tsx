@@ -9,6 +9,7 @@ import { useEffect, Suspense } from 'react';
 import CommonLayout from './components/CommonLayout';
 import WaitingApprovalUser from './screens/WaitingApprovalUser';
 import FindBrand from './screens/FindBrand';
+import FindCampaign from './screens/FindCampaign';
 import AllBrands from './screens/AllBrands';
 import AllCampaign from './screens/AllCampaign';
 import DoApprovalScreen from './screens/DoApprovalScreen';
@@ -115,7 +116,7 @@ function CampaignsLayout() {
       <Suspense fallback={<div>Loading...</div>}>
         <CommonLayout>
           <Routes>
-            <Route path="/find" element={<FindBrand />} />
+            <Route path="/find/:_id" element={<FindCampaign />} />
             <Route path="/find-all" element={<AllBrands />} />
             <Route path="/do-approval" element={<DoApprovalCampaigns />} />
             <Route path="/find-all-campaigns" element={<AllCampaign />} />
