@@ -8,9 +8,9 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { sortBy } from 'lodash';
 import { PostData } from '../types/hashtagSearchPostData';
 
-const fetchData = async (page: number, perPage: number, token: string) => {
+const fetchData = async (page: number, perPage: number, description: string, token: string) => {
   try {
-    const response = await TAgetHashtagPostsLastThreeMonths(page, perPage, token);
+    const response = await TAgetHashtagPostsLastThreeMonths(page, perPage, description, token);
     if (response.posts && response.posts.length > 0) {
       const totalLength = response.posts.length;
       const totalPages = response.totalPages;
@@ -42,12 +42,13 @@ const HashtagSearch = () => {
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [description, setDescription] = useState('');
 
   useEffect(() => {
     setLoading(true);
     const loadBrands = async () => {
       try {
-        const response = await fetchData(page, pageSize, token);
+        const response = await fetchData(page, pageSize, description, token);
         if (response !== undefined) {
           setInitialRecords(response.data);
           setTotalPages(response.totalPages);
@@ -60,7 +61,7 @@ const HashtagSearch = () => {
       }
     };
     loadBrands();
-  }, [page, pageSize, token]);
+  }, [page, pageSize, description, token]);
 
   useEffect(() => {
     setPage(1);
@@ -85,6 +86,21 @@ const HashtagSearch = () => {
         {error && <div className="bg-red-200 text-red-800 border border-red-600 p-2 rounded">{error}</div>}
       </div>
       <div className="datatables">
+        <div>
+          <div className="md:flex md:flex-col flex-1 mb-4">
+            <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Search Description</h2>
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => {
+                setDescription(e.target.value);
+                console.log(e.target.value);
+              }}
+              className="form-input"
+              placeholder={`Description`}
+            />
+          </div>
+        </div>
         {loading ? (
           <div className="flex items-center justify-center h-40">
             <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-pink-600"></div>

@@ -352,7 +352,6 @@ const GetAllUsers = () => {
   const autofillHobby = async () => {
     try {
       const response = await TAfindHobbies(hobby, token);
-      console.log('response', response);
       setAutofillHobbies(response);
     } catch (error) {
       throw error;
