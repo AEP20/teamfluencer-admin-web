@@ -7,7 +7,7 @@ export const logoutUser = () => {
 
 const apiClient = axios.create({
   baseURL: `${process.env.REACT_APP_AUTH_API_URL}`,
-  timeout: 15000,
+  timeout: 60000,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -19,6 +19,7 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {  
+    console.log("axios error", error);
     if (error.response.status === 401 && error.response.data.message === 'TOKEN_EXPIRED') {
       logoutUser();
     }

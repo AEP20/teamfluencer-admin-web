@@ -100,7 +100,7 @@ const Sidebar = () => {
               </h2>
 
               <li className="nav-item">
-                <ul>
+                <ul className='flex-col overflow-y-auto'>
                   <h2 className="flex justify-center font-extrabold mt-3 mb-2 font-xl">Dashboard</h2>
                   <li className="nav-item">
                     <NavLink to="/statistics/dashboard" className="group">

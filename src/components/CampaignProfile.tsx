@@ -83,43 +83,87 @@ export const CampaignProfile = (data: CampaignType) => {
   ];
 
   return (
-    <div className="bg-gradient-to-rt from-teal-50 to-blue-50 p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
+    <div className="bg-gradient-to-rt from-teal-50 to-blue-50 p-6 rounded-lg shadow-lg max-w-6xl mx-auto mb-12">
       <h3 className="text-2xl font-semibold mb-4 text-gray-800">Campaign Information</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <DetailItem label="Campaign Name" value={data.name} />
-        <DetailItem label="Country" value={data.country} />
+
+        <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
+          <table className="table-auto w-full">
+            <tbody>
+              <tr className="border-b">
+                <td className="py-2 font-semibold text-gray-700">Country</td>
+                <td className="py-2 text-gray-600">{data.country}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-semibold text-gray-700">Platform</td>
+                <td className="py-2 text-gray-600">{data.platform}</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-2 font-semibold text-gray-700">Visibility</td>
+                <td className="py-2 text-gray-600">{data.visibility ? 'Visible' : 'Hidden'}</td>
+              </tr>
+              <tr>
+                <td className="py-2 font-semibold text-gray-700">Is Verified</td>
+                <td className="py-2 text-gray-600">{data.is_verified ? 'Yes' : 'No'}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
         <DetailItem label="Description" value={data.description} />
-        <DetailItem label="Platform" value={data.platform} />
-        <DetailItem label="Visibility" value={data.visibility ? 'Visible' : 'Hidden'} />
-        <DetailItem label="Is Verified" value={data.is_verified ? 'Yes' : 'No'} />
-        <DetailItem label="Rejected Reason" value={data.rejected_reason || 'N/A'} />
+
 
         {/* Limitations */}
-        <div className="col-span-1 md:col-span-2">
-          <h4 className="text-lg font-semibold mb-2 text-gray-700">Limitations</h4>
+        <div className="col-span-1 md:col-span-1">
+          <h4 className="text-lg font-semibold mb-4 text-gray-700">Limitations</h4>
           <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
-            <ul className="list-disc pl-5 space-y-1">
-              <li>Gender: {data.limitations.gender}</li>
-              <li>Age: {data.limitations.min_age} to {data.limitations.max_age}</li>
-              <li>Followers: {data.limitations.min_follower} to {data.limitations.max_follower}</li>
-              <li>School: {data.limitations.school || 'Any'}</li>
-              <li>City: {data.limitations.city || 'Any'}</li>
-            </ul>
+            <table className="table-auto w-6/12">
+              <tbody>
+                <tr className="border-b">
+                  <td className="py-2">Gender</td>
+                  <td className="py-2">{data.limitations.gender ? data.limitations.gender : "Any"}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2">Age</td>
+                  <td className="py-2">{data.limitations.min_age} to {data.limitations.max_age}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2">Followers</td>
+                  <td className="py-2">{data.limitations.min_follower} to {data.limitations.max_follower}</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-2">School</td>
+                  <td className="py-2">{data.limitations.school || 'Any'}</td>
+                </tr>
+                <tr>
+                  <td className="py-2">City</td>
+                  <td className="py-2">{data.limitations.city || 'Any'}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
+
         {/* Application Counts */}
-        <div className="col-span-1 md:col-span-2">
-          <h4 className="text-lg font-semibold mb-2 text-gray-700">Application Counts</h4>
+        <div className="col-span-1 md:col-span-1 mb-5">
+          <h4 className="text-lg font-semibold mb-4 text-gray-700">Application Counts</h4>
           <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
-            <ul className="list-disc pl-5 space-y-1">
-              {Object.entries(data.application_counts).map(([key, value]) => (
-                <li key={key}>{`${key.replace(/_/g, ' ')}: ${value}`}</li>
-              ))}
-            </ul>
+            <table className="table-auto  w-6/12">
+              <tbody>
+                {Object.entries(data.application_counts).map(([key, value]) => (
+                  <tr key={key} className="border-b">
+                    <td className="py-2">{key.replace(/_/g, ' ').charAt(0).toUpperCase() + key.replace(/_/g, ' ').slice(1)}</td>
+                    <td className="py-2">{value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
+      <DetailItem label="Rejected Reason" value={data.rejected_reason || '-'} />
+
     </div>
   );
 };

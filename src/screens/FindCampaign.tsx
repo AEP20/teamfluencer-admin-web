@@ -1,8 +1,9 @@
-import { useDispatch, useSelector } from 'react-redux';
+
+import { AnyIfEmpty, useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { TAfindBrand, TAfindBrandName } from '../services/brandAPI';
 import { TAfindCampaignById } from '../services/campaignsAPI';
-import { TAfindApplicationByCampaignId } from '../services/applicationAPI';
+import { TAfindApplicationByCampaignId, TAnewApplicationPricing } from '../services/applicationAPI';
 import { BrandType, MoneyExchanges } from '../types/brandData';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import BrandProfile from '../components/BrandProfile';
@@ -11,6 +12,7 @@ import { useParams } from 'react-router-dom';
 import { CampaignType, InfoType, Limitations, ApplicationCounts } from '../types/campaignsData';
 import { CampaignProfile } from '../components/CampaignProfile';
 import { AddApplicationModal } from '../components/AddApplicationModal';
+import { set } from 'lodash';
 
 const applicationStates = [
   'first_application', 'account_rejected', 'waiting_address', 'address_to_approve', 'address_rejected',
@@ -19,10 +21,34 @@ const applicationStates = [
 ];
 
 
-const DetailedApplicationsTable = ({ application_data }: any) => {
+const DetailedApplicationsTable = ({ application_data, token }: { application_data: any, token: string },) => {
   const [showAllKeywords, setShowAllKeywords] = useState<any>({});
   const [showAllHobbies, setShowAllHobbies] = useState<any>({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newPricingBrand, setNewPricingBrand] = useState<number>(0);
+  const [newPricingUser, setNewPricingUser] = useState<number>(0);
+  const [application, setApplication] = useState<any>({});
 
+  const handleOpenPricingModal = (application: any) => {
+    console.log('application : ', application)
+    setApplication(application);
+    setNewPricingBrand(application.price_brand);
+    setNewPricingUser(application.price_user);
+    setIsModalOpen(true);
+  };
+
+  useEffect(() => {
+  }, [application]);
+
+  const handleClosePricingModal = () => {
+    setIsModalOpen(false);
+    setApplication({});
+  };
+
+  const handleSavePricingData = (app: any) => {
+    const response = TAnewApplicationPricing({ price_brand: newPricingBrand, price_user: newPricingUser }, app._id, token);
+    setIsModalOpen(false);
+  };
   // Toggle visibility function
   const toggleKeywordsVisibility = (index: any) => {
     setShowAllKeywords((prevShowAllKeywords: any) => ({
@@ -38,14 +64,19 @@ const DetailedApplicationsTable = ({ application_data }: any) => {
     }));
   }
 
+
+
   return (
+
     <div className="overflow-x-auto mt-6">
+
       <table className="min-w-full table-auto text-sm">
         <thead className="bg-gray-200">
           <tr>
             <th className="border px-4 py-2">Username</th>
-            <th className="border px-4 py-2">State</th>
+            <th className="border px-4 py-2">Pricing User/Brand</th>
             <th className="border px-4 py-2">Followers</th>
+            <th className="border px-4 py-2">State</th>
             <th className="border px-4 py-2">Engagement Rate</th>
             <th className="border px-4 py-2">Application Date</th>
             {/* <th className="border px-4 py-2">State History</th>
@@ -71,9 +102,41 @@ const DetailedApplicationsTable = ({ application_data }: any) => {
           {application_data.map((app: any, index: any) => (
             <tr className="border-t">
               <td className="border px-4 py-2">{app.insta_username}</td>
-              <td className="border px-4 py-2">{app.state}</td>
+              <td className="border px-4 py-2">{app.price_user}/{app.price_brand}
+                <button 
+                className='text-indigo-600 bg-indigo-100 rounded px-2 py-1  text-xs'
+                onClick={() => handleOpenPricingModal(app)}>Edit</button>
+              </td>
+              {isModalOpen ?
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+                  <div className="bg-white p-8 rounded-lg shadow-lg  overflow-y-auto h-5/6 max-w-md w-full space-y-4">
+                    <h2 className="text-xl font-semibold mb-4">Pricing Settings</h2>
+                    <form onSubmit={handleClosePricingModal} className="space-y-4 flex-col">
+                      <label htmlFor="newPricingBrand">New Pricing User</label>
+                      <input
+                        type="text"
+                        value={newPricingUser}
+                        onChange={(e) => setNewPricingUser(parseInt(e.target.value))}
+                        placeholder="Enter new pricing user"
+                        className="block w-full p-2 border rounded"
+                      />
+                      <label htmlFor="newPricingBrand">New Pricing Brand</label>
+                      <input
+                        type="text"
+                        value={newPricingBrand}
+                        onChange={(e) => setNewPricingBrand(parseInt(e.target.value))}
+                        placeholder="Enter new pricing brand"
+                        className="block w-full p-2 border rounded"
+                      />
+                      <button className='bg-indigo-100 px-4 py-2 rounded mr-4 ' onClick={() => handleSavePricingData(application)}>Save</button>
+                      <button className='bg-indigo-100 px-4 py-2 rounded mr-4 ' onClick={handleClosePricingModal}>Cancel</button>
+                    </form>
+                  </div>
+
+                </div> : null}
               <td className="border px-4 py-2">{app.insta_followers}</td>
-              <td className="border px-4 py-2">{`${parseFloat(app.insta_engagement_rate).toFixed(2)}%`}</td>
+              <td className="border px-4 py-2">{app.state}</td>
+              <td className="border px-4 py-2">{`${app.insta_engagement_rate}%`}</td>
               <td className="border px-4 py-2">{new Date(app.application_date).toLocaleDateString()}</td>
               {/* <td className="border px-4 py-2">
                 {app.state_history.map((history: any, hIndex: any) => (
@@ -194,7 +257,7 @@ const FindCampaign = () => {
           {campaign && <CampaignProfile {...campaign} />}
         </div>
         <div className="w-full ">
-          <button onClick={handleOpenModal}>Add New Application</button>
+          <button className='bg-indigo-100 px-8 py-4 rounded-md my-4' onClick={handleOpenModal}>Add New Application</button>
           <AddApplicationModal isOpen={isModalOpen} onClose={handleCloseModal} _id={_id} token={token} currency={campaign ? campaign.currency : "TRY"} />
           <select
             className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -206,7 +269,7 @@ const FindCampaign = () => {
               <option key={state} value={state}>{state}</option>
             ))}
           </select>
-          <DetailedApplicationsTable application_data={applications} />
+          <DetailedApplicationsTable application_data={applications} token={token} />
         </div>
 
         <form className="w-1/4 absolute top-5 right-6">

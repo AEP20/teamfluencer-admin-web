@@ -3,7 +3,7 @@ import apiClient from './axiosInstance';
 export const TAstatistics = async (token: string) => {
   try {
     const response = await apiClient.get(`/admin/statistics/statisticsnum`, {
-      timeout: 20000, // Set a timeout of 5 seconds
+      timeout: 60000, // Set a timeout of 5 seconds
       headers: {
         Authorization: `Bearer ${token}`,
       },

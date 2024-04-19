@@ -157,6 +157,7 @@ function AllCampaign() {
     setPage(1);
   }, [pageSize]);
 
+
   const verifiedIcon = (visibility: boolean) => {
     if (visibility) {
       return <FontAwesomeIcon size="lg" icon={faCheck} color="green" />;
@@ -428,6 +429,19 @@ function AllCampaign() {
             className="whitespace-nowrap table-hover"
             records={initialRecords}
             columns={[
+              {
+                accessor: '_id',
+                title: 'Campaign',
+                sortable: false,
+                render: ({ _id }: any) => (
+                  <Link to={`/campaigns/find/${_id}`}>
+                    <div className="text-center items-center mr-4">
+                      <FontAwesomeIcon icon={faEye} style={{ color: '#005eff' }} />
+                    </div>
+                  </Link>
+                ),
+              },
+
               {
                 accessor: 'brand',
                 title: 'Brand',
