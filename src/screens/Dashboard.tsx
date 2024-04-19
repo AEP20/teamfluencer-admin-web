@@ -19,6 +19,7 @@ import { TAgetPopularHashtagSearchPost } from '../services/hashtagSearchAPI';
 import HashtagSearchPostProfile from '../components/HashtagSearchPostProfile';
 import { PostData } from '../types/hashtagSearchPostData';
 import PostPicture from '../components/HashtagSearchPostPicture';
+import { chooseFile } from '../components/ReadCSVFile';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -147,16 +148,70 @@ const Dashboard = () => {
       if (!response) {
         throw new Error('No Data Found');
       }
-      console.log('responseeee', response.response);
       if (response.response === true) {
         setTcControl('true');
       } else if (response.response === false) {
         setTcControl('false');
       }
+      return response.response;
     } catch (error: any) {
       console.log('error', error);
       throw new Error(error);
     }
+  };
+  const convertToCSV = (data: any[]) => {
+    const csvContent = [];
+    const headers = Object.keys(data[0]);
+    csvContent.push('sep=,' + '\n' + headers.map((header) => `"${header}"`).join(','));
+
+    for (const item of data) {
+      const row = [];
+      for (const header of headers) {
+        let cell = item[header];
+        if (cell === null || cell === undefined) {
+          cell = '';
+        } else if (typeof cell !== 'string') {
+          cell = cell.toString();
+        }
+        cell = cell.replace(/"/g, '""');
+        cell = `"${cell}"`;
+        row.push(cell);
+      }
+      csvContent.push(row.join(','));
+    }
+
+    return '\ufeff' + csvContent.join('\n');
+  };
+
+  const downloadCSV = (csvContent: string, fileName: string) => {
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', fileName);
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
+  const checkTcNoFromCSV = async () => {
+    const CSVFile = await chooseFile();
+
+    for (const excelContents of CSVFile) {
+      let tcNo = excelContents.TcNo;
+      let firstName = excelContents.Firstname;
+      let lastName = excelContents.Lastname;
+      let birthYear = excelContents.BirthYear;
+      const checkTcNo = await testIdentifierNumber(tcNo, firstName, lastName, birthYear, token);
+      excelContents.alidity = checkTcNo;
+    }
+    console.log('CSV File: ', CSVFile);
+    const csvContent = convertToCSV(CSVFile);
+    downloadCSV(csvContent, 'processed_data.csv');
   };
 
   return (
@@ -384,6 +439,226 @@ const Dashboard = () => {
           </div>
         </div>
 
+        <div className="pt-5">
+          {/*  Test Activities  */}
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
+            <div className="panel sm:col-span-2 xl:col-span-1 mb-2">
+              <div className="flex justify-between mb-3">
+                <h5 className="font-semibold text-lg dark:text-white-light mb-5">Test Activities</h5>
+                <button className="btn" onClick={testActivities}>
+                  Send Request
+                </button>
+              </div>
+              <div className="text-sm cursor-pointer">
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Brand Login</div>
+                  {brandLogin === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : brandLogin === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    brandLogin === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Brand Email Password</div>
+                  {brandEmailPassword === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : brandEmailPassword === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    brandEmailPassword === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">User Login</div>
+                  {userLogin === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : userLogin === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    userLogin === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Notificate</div>
+                  {notificate === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : notificate === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    notificate === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">For Brand</div>
+                  {forBrand3 === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : forBrand3 === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    forBrand3 === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Application Keywords</div>
+                  {applicationKeywords === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : applicationKeywords === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    applicationKeywords === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Instagram Graph Api</div>
+                  {instaGraph === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : instaGraph === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    instaGraph === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Instagram Hashtag Search</div>
+                  {hashtahSearch === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : hashtahSearch === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    hashtahSearch === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div>
+                {/* <div className="flex items-center py-1.5 relative group">
+                  <div className="bg-black w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
+                  <div className="flex-1">Instagram User Analysis</div>
+                  {instaUserAnalysis === 'pending' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-yellow-500">Pending</span>
+                  ) : instaUserAnalysis === 'done' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500">Done</span>
+                  ) : (
+                    instaUserAnalysis === 'failed' && (
+                      <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500">Failed</span>
+                    )
+                  )}
+                </div> */}
+              </div>
+            </div>
+
+            <div className="panel sm:col-span-2 xl:col-span-1 mb-2">
+              <div className="flex justify-between mb-3">
+                <h5 className="font-semibold text-lg dark:text-white-light mb-5">Kimlik No Control</h5>
+                <button
+                  className="btn"
+                  onClick={() => testIdentifierNumber(tcNo, firstName, lastName, birthYear, token)}
+                >
+                  Send Request
+                </button>
+              </div>
+              <div className="text-sm cursor-pointer">
+                <label htmlFor="tcNo" className="block text-sm font-medium text-gray-700 dark:text-gray-400">
+                  TC No
+                </label>
+                <input
+                  type="text"
+                  id="tcNo"
+                  name="tcNo"
+                  value={tcNo}
+                  onChange={(e) => setTcNo(e.target.value)}
+                  className="mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md w-full"
+                />
+
+                <label htmlFor="firstName" className="block mt-4 text-sm font-medium text-gray-700 dark:text-gray-400">
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md w-full"
+                />
+
+                <label htmlFor="lastName" className="block mt-4 text-sm font-medium text-gray-700 dark:text-gray-400">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md w-full"
+                />
+
+                <label htmlFor="birthYear" className="block mt-4 text-sm font-medium text-gray-700 dark:text-gray-400">
+                  Birth Year
+                </label>
+                <input
+                  type="text"
+                  id="birthYear"
+                  name="birthYear"
+                  value={birthYear}
+                  onChange={(e) => setBirthYear(e.target.value)}
+                  className="mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md w-full"
+                />
+                <div className="flex items-center py-1.5 relative group mt-5">
+                  {tcControl === 'true' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-green-500 text-center text-sm font-medium">
+                      True
+                    </span>
+                  ) : tcControl === 'false' ? (
+                    <span className="badge absolute ltr:right-0 rtl:left-0 text-xs bg-red-500 text-center text-sm font-medium">
+                      False
+                    </span>
+                  ) : null}
+                </div>
+              </div>
+              <div className="flex items-center justify-center">
+                <button className="btn bg-green-500" onClick={() => checkTcNoFromCSV()}>
+                  Download CSV
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/*  Popular Post  */}
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
+            <div className="panel h-full sm:col-span-2 xl:col-span-1 mb-2">
+              <h5 className="font-semibold text-lg dark:text-white-light mb-5">Popular Post</h5>
+              <div className="flex flex-row items-center mr-16">
+                <PostPicture postData={postData} />
+              </div>
+              <div className="w-full">{postData && <HashtagSearchPostProfile {...postData} />}</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
