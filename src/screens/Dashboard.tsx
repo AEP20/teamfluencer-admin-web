@@ -75,8 +75,10 @@ const Dashboard = () => {
   const [birthYear, setBirthYear] = useState<string>('');
   const [tcControl, setTcControl] = useState<string>('');
   // const [instaUserAnalysis, setInstaUserAnalysis] = useState<string>('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     const loadStatistics = async () => {
       try {
         const response = await fetchData(token);
@@ -96,6 +98,7 @@ const Dashboard = () => {
           setApprovedUsers(response.statistics_response.approvedUsers);
           setDeletedUsers(response.statistics_response.deletedUsers);
           setTotalCooperations(response.statistics_response.totalCooperations);
+          setLoading(false);
         } else {
           setError('No Data Found');
         }
@@ -169,221 +172,226 @@ const Dashboard = () => {
       </ul>
       <div className="pt-5">
         {error && <div className="text-red-500">{error}</div>}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-6 text-white">
-          {/* Total Brands */}
-          <div className="flex flex-col panel bg-indigo-100">
-            <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Total Brands</div>
-            </div>
-            <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{totalBrands}</div>
-            </div>
+        {loading ? (
+          <div className="flex items-center justify-center h-40">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-pink-600"></div>
           </div>
-
-          {/* Paid Brands */}
-          <div className="flex flex-col panel bg-indigo-100">
-            <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Paid Brands</div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-6 text-white">
+            {/* Total Brands */}
+            <div className="flex flex-col panel bg-indigo-100">
+              <div className="flex">
+                <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Total Brands</div>
+              </div>
+              <div className="flex justify-center mt-7">
+                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{totalBrands}</div>
+              </div>
             </div>
-            <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{paidBrands}</div>
-            </div>
-          </div>
 
-          {/*  Brands in TR / out of TR  */}
-          <div className="flex flex-col panel bg-indigo-100">
-            <div className="flex justify-between">
+            {/* Paid Brands */}
+            <div className="flex flex-col panel bg-indigo-100">
+              <div className="flex">
+                <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Paid Brands</div>
+              </div>
+              <div className="flex justify-center mt-7">
+                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{paidBrands}</div>
+              </div>
+            </div>
+
+            {/*  Brands in TR / out of TR  */}
+            <div className="flex flex-col panel bg-indigo-100">
+              <div className="flex justify-between">
+                {buttonClicked === false ? (
+                  <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold text-indigo-600">Brands in TR</div>
+                ) : (
+                  <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold text-indigo-600">Brands out of TR</div>
+                )}
+                <div className="dropdown">
+                  <Dropdown
+                    offset={[0, 5]}
+                    btnClassName="hover:opacity-80"
+                    button={
+                      <svg
+                        className="w-5 h-5 opacity-70"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <circle cx="5" cy="12" r="2" stroke="currentColor" strokeWidth="1.5" />
+                        <circle opacity="0.5" cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="1.5" />
+                        <circle cx="19" cy="12" r="2" stroke="currentColor" strokeWidth="1.5" />
+                      </svg>
+                    }
+                  >
+                    <ul className="text-black dark:text-white-dark">
+                      <li>
+                        <button type="button" onClick={() => setButtonClicked(false)}>
+                          in TR
+                        </button>
+                      </li>
+                      <li>
+                        <button type="button" onClick={() => setButtonClicked(true)}>
+                          out of TR
+                        </button>
+                      </li>
+                    </ul>
+                  </Dropdown>
+                </div>
+              </div>
               {buttonClicked === false ? (
-                <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold text-indigo-600">Brands in TR</div>
+                <div className="flex justify-center mt-7">
+                  <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{inTurkeys}</div>
+                </div>
               ) : (
-                <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold text-indigo-600">Brands out of TR</div>
+                <div className="flex justify-center mt-7">
+                  <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{outOfTurkeys}</div>
+                </div>
               )}
-              <div className="dropdown">
-                <Dropdown
-                  offset={[0, 5]}
-                  btnClassName="hover:opacity-80"
-                  button={
-                    <svg
-                      className="w-5 h-5 opacity-70"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <circle cx="5" cy="12" r="2" stroke="currentColor" strokeWidth="1.5" />
-                      <circle opacity="0.5" cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="1.5" />
-                      <circle cx="19" cy="12" r="2" stroke="currentColor" strokeWidth="1.5" />
-                    </svg>
-                  }
-                >
-                  <ul className="text-black dark:text-white-dark">
-                    <li>
-                      <button type="button" onClick={() => setButtonClicked(false)}>
-                        in TR
-                      </button>
-                    </li>
-                    <li>
-                      <button type="button" onClick={() => setButtonClicked(true)}>
-                        out of TR
-                      </button>
-                    </li>
-                  </ul>
-                </Dropdown>
-              </div>
             </div>
-            {buttonClicked === false ? (
-              <div className="flex justify-center mt-7">
-                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{inTurkeys}</div>
-              </div>
-            ) : (
-              <div className="flex justify-center mt-7">
-                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{outOfTurkeys}</div>
-              </div>
-            )}
-          </div>
 
-          {/* Active Brands */}
-          <div className="flex flex-col panel bg-indigo-100">
-            <div className="flex justify-between text-indigo-600">
+            {/* Active Brands */}
+            <div className="flex flex-col panel bg-indigo-100">
+              <div className="flex justify-between text-indigo-600">
+                {buttonClicked2 === 0 ? (
+                  <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold">Active brands in the last 30 days</div>
+                ) : buttonClicked2 === 1 ? (
+                  <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold">Active brands in the last 15 days</div>
+                ) : (
+                  <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold">Active brands in the last 7 days</div>
+                )}
+                <div className="dropdown">
+                  <Dropdown
+                    offset={[0, 5]}
+                    btnClassName="hover:opacity-80"
+                    button={
+                      <svg
+                        className="w-5 h-5 opacity-70"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <circle cx="5" cy="12" r="2" stroke="currentColor" strokeWidth="1.5" />
+                        <circle opacity="0.5" cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="1.5" />
+                        <circle cx="19" cy="12" r="2" stroke="currentColor" strokeWidth="1.5" />
+                      </svg>
+                    }
+                  >
+                    <ul className="text-black dark:text-white-dark">
+                      <li>
+                        <button type="button" onClick={() => setButtonClicked2(0)}>
+                          Last 30
+                        </button>
+                      </li>
+                      <li>
+                        <button type="button" onClick={() => setButtonClicked2(1)}>
+                          Last 15
+                        </button>
+                      </li>
+                      <li>
+                        <button type="button" onClick={() => setButtonClicked2(2)}>
+                          Last 7
+                        </button>
+                      </li>
+                    </ul>
+                  </Dropdown>
+                </div>
+              </div>
               {buttonClicked2 === 0 ? (
-                <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold">Active brands in the last 30 days</div>
+                <div className="flex justify-center mt-7">
+                  <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{activeBrands30}</div>
+                </div>
               ) : buttonClicked2 === 1 ? (
-                <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold">Active brands in the last 15 days</div>
+                <div className="flex justify-center mt-7">
+                  <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{activeBrands15}</div>
+                </div>
               ) : (
-                <div className="ltr:mr-1 rtl:ml-1 text-md font-semibold">Active brands in the last 7 days</div>
+                <div className="flex justify-center mt-7">
+                  <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{activeBrands7}</div>
+                </div>
               )}
-              <div className="dropdown">
-                <Dropdown
-                  offset={[0, 5]}
-                  btnClassName="hover:opacity-80"
-                  button={
-                    <svg
-                      className="w-5 h-5 opacity-70"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <circle cx="5" cy="12" r="2" stroke="currentColor" strokeWidth="1.5" />
-                      <circle opacity="0.5" cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="1.5" />
-                      <circle cx="19" cy="12" r="2" stroke="currentColor" strokeWidth="1.5" />
-                    </svg>
-                  }
-                >
-                  <ul className="text-black dark:text-white-dark">
-                    <li>
-                      <button type="button" onClick={() => setButtonClicked2(0)}>
-                        Last 30
-                      </button>
-                    </li>
-                    <li>
-                      <button type="button" onClick={() => setButtonClicked2(1)}>
-                        Last 15
-                      </button>
-                    </li>
-                    <li>
-                      <button type="button" onClick={() => setButtonClicked2(2)}>
-                        Last 7
-                      </button>
-                    </li>
-                  </ul>
-                </Dropdown>
-              </div>
             </div>
-            {buttonClicked2 === 0 ? (
+
+            {/* Total Campaigns */}
+            <div className="flex flex-col panel bg-indigo-100">
+              <div className="flex">
+                <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Total Campaigns</div>
+              </div>
               <div className="flex justify-center mt-7">
-                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{activeBrands30}</div>
+                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{totalCampaigns}</div>
               </div>
-            ) : buttonClicked2 === 1 ? (
+            </div>
+
+            {/* Active Campaigns */}
+            <div className="flex flex-col panel bg-indigo-100">
+              <div className="flex">
+                <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Active Campaigns</div>
+              </div>
               <div className="flex justify-center mt-7">
-                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{activeBrands15}</div>
+                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{activeCampaigns}</div>
               </div>
-            ) : (
+            </div>
+
+            {/* Waiting Approval Campaigns */}
+            <div className="flex flex-col panel bg-indigo-100">
+              <div className="flex">
+                <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Waiting Approval Campaigns</div>
+              </div>
               <div className="flex justify-center mt-7">
-                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{activeBrands7}</div>
+                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{waitingApprovalCampaigns}</div>
               </div>
-            )}
-          </div>
+            </div>
 
-          {/* Total Campaigns */}
-          <div className="flex flex-col panel bg-indigo-100">
-            <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Total Campaigns</div>
+            {/* Total Cooperations */}
+            <div className="flex flex-col panel bg-indigo-100">
+              <div className="flex">
+                <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Total Cooperations (done)</div>
+              </div>
+              <div className="flex justify-center mt-7">
+                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{totalCooperations}</div>
+              </div>
             </div>
-            <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{totalCampaigns}</div>
-            </div>
-          </div>
 
-          {/* Active Campaigns */}
-          <div className="flex flex-col panel bg-indigo-100">
-            <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Active Campaigns</div>
+            {/* Total Users */}
+            <div className="flex flex-col panel bg-indigo-100">
+              <div className="flex">
+                <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Total Users</div>
+              </div>
+              <div className="flex justify-center mt-7">
+                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{totalUsers}</div>
+              </div>
             </div>
-            <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{activeCampaigns}</div>
-            </div>
-          </div>
 
-          {/* Waiting Approval Campaigns */}
-          <div className="flex flex-col panel bg-indigo-100">
-            <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Waiting Approval Campaigns</div>
+            {/* Approved Users */}
+            <div className="flex flex-col panel bg-indigo-100">
+              <div className="flex">
+                <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Approved Users</div>
+              </div>
+              <div className="flex justify-center mt-7">
+                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{approvedUsers}</div>
+              </div>
             </div>
-            <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{waitingApprovalCampaigns}</div>
-            </div>
-          </div>
 
-          {/* Total Cooperations */}
-          <div className="flex flex-col panel bg-indigo-100">
-            <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Total Cooperations (done)</div>
+            {/* Waiting Approval Users */}
+            <div className="flex flex-col panel bg-indigo-100">
+              <div className="flex">
+                <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Waiting Approval Users</div>
+              </div>
+              <div className="flex justify-center mt-7">
+                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{waitingApprovalUsers}</div>
+              </div>
             </div>
-            <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{totalCooperations}</div>
-            </div>
-          </div>
 
-          {/* Total Users */}
-          <div className="flex flex-col panel bg-indigo-100">
-            <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Total Users</div>
-            </div>
-            <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{totalUsers}</div>
-            </div>
-          </div>
-
-          {/* Approved Users */}
-          <div className="flex flex-col panel bg-indigo-100">
-            <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Approved Users</div>
-            </div>
-            <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{approvedUsers}</div>
+            {/* Deleted Users */}
+            <div className="flex flex-col panel bg-indigo-100">
+              <div className="flex">
+                <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Deleted Users</div>
+              </div>
+              <div className="flex justify-center mt-7">
+                <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{deletedUsers}</div>
+              </div>
             </div>
           </div>
-
-          {/* Waiting Approval Users */}
-          <div className="flex flex-col panel bg-indigo-100">
-            <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Waiting Approval Users</div>
-            </div>
-            <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{waitingApprovalUsers}</div>
-            </div>
-          </div>
-
-          {/* Deleted Users */}
-          <div className="flex flex-col panel bg-indigo-100">
-            <div className="flex">
-              <div className="ltr:mr-1 rtl:ml-1 text-md font-bold text-indigo-600">Deleted Users</div>
-            </div>
-            <div className="flex justify-center mt-7">
-              <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3 text-indigo-600">{deletedUsers}</div>
-            </div>
-          </div>
-        </div>
-
+        )}
       </div>
     </div>
   );
