@@ -446,8 +446,7 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-        </div>
-
+        )}
         <div className="pt-5">
           {/*  Test Activities  */}
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
