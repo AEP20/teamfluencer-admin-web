@@ -1,5 +1,29 @@
 import apiClient from './axiosInstance';
 
+
+export const TASearchByUsername = async (username: string, token: string) => {
+  try {
+    const response = await apiClient.get(`/admin/user/search-by-username?username=${username}`, {
+      timeout: 10000,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    console.log(response)
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      console.log("response", response);
+      throw new Error('Username search failed');
+    }
+  } catch (error) {
+    console.log("error: ", error);
+    throw error;
+  }
+};
+
+
 export const TAfindApplicationByCampaignId
   = async (campaign_id: any, token: string, state: string) => {
     try {
@@ -62,21 +86,28 @@ export const TACreateApplication = async (applicationUser: {
 };
 
 
-export const TASearchByUsername = async (username: string, token: string) => {
+//const response = TAnewApplicationPricing(newPricingBrand, newPricingUser, application._id, token);
+export const TAnewApplicationPricing = async (update: any, _id: string, token: string) => {
   try {
-    const response = await apiClient.get(`/admin/user/search-by-username?username=${username}`, {
-      timeout: 10000,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+    console.log("update: ", update, " _id: ", _id, " token: ", token);
+    const response = await apiClient.post(`/admin/application/update`, 
+      {
+        _id: _id,
+        update: update,
       },
-    });
-    console.log(response)
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        }
+      }
+    );
+    console.log(response);
     if (response.status === 200) {
       return response.data;
     } else {
       console.log("response", response);
-      throw new Error('Username search failed');
+      throw new Error('Updating application pricing failed');
     }
   } catch (error) {
     console.log("error: ", error);
