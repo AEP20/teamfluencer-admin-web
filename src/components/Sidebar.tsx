@@ -12,7 +12,6 @@ const Sidebar = () => {
   const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
   const location = useLocation();
   const dispatch = useDispatch();
-  const token = useSelector(selectToken);
 
   useEffect(() => {
     const selector = document.querySelector('.sidebar ul a[href="' + window.location.pathname + '"]');
@@ -45,7 +44,7 @@ const Sidebar = () => {
           semidark ? 'text-white-dark' : ''
         }`}
       >
-        <div className="bg-white dark:bg-black h-full">
+        <div className="bg-white dark:bg-black h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-900 scrollbar-track-gray-700">
           <div className="flex justify-between items-center px-4 py-3">
             <NavLink to="/" className="main-logo flex items-center shrink-0">
               <img className="w-36 ml-[22px] flex-none" src="/assets/images/teamfluencer.webp" alt="logo" />

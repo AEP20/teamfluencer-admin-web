@@ -7,6 +7,7 @@ module.exports = {
       center: true,
     },
     extend: {
+      scrollbar: ['rounded'],
       colors: {
         primary: {
           DEFAULT: '#4361ee',
@@ -88,5 +89,6 @@ module.exports = {
     }),
     require('@tailwindcss/typography'),
     require('@tailwindcss/line-clamp'),
+    require('tailwind-scrollbar'),
   ],
 };
