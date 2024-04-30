@@ -88,6 +88,7 @@ export const TAupdateBrand = async (id: any, data: any, token: string) => {
     });
 
     if (response.status === 200) {
+      console.log('response.data', response.data.brand_logo);
       return response.data;
     } else {
       throw new Error('Update failed');
