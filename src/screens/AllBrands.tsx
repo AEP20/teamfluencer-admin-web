@@ -1,15 +1,14 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { TAfindAllBrands } from '../services/brandAPI';
+import { TAfindAllBrands, TAupdateBrandNote } from '../services/brandAPI';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { AllBrandType } from '../types/brandData';
 import { selectToken } from '../redux/store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDollarSign, faEye } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
+import { faDollarSign, faEye, faEdit, faSave } from '@fortawesome/free-solid-svg-icons';
 
 const fetchData = async (page: number, perPage: number, brand: string, token: string) => {
   try {
@@ -48,6 +47,16 @@ const AllBrands = () => {
   const [brandname, setBrandname] = useState('');
   // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [notes, setNotes] = useState<NotesState>({});
+  const [editMode, setEditMode] = useState<EditModeState>({});
+
+  interface NotesState {
+    [key: string]: string;
+  }
+
+  interface EditModeState {
+    [key: string]: boolean;
+  }
 
   useEffect(() => {
     setLoading(true);
@@ -87,6 +96,28 @@ const AllBrands = () => {
     const recordIndex = itemsPerPage + index;
     const brandId = recordIndex - pageSize + 1;
     return <div>{brandId}</div>;
+  };
+
+  const handleUpdateNote = async (_id: string, brandNotes: string) => {
+    try {
+      const brand = await TAupdateBrandNote(_id, brandNotes, token);
+      if (brand) {
+        alert('Note updated successfully');
+        setEditMode((prev) => ({ ...prev, [_id]: false }));
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Failed to update the note');
+    }
+  };
+
+  const handleInputChange = (_id: string, value: string) => {
+    setNotes((prev) => ({ ...prev, [_id]: value }));
+  };
+
+  const toggleEditMode = (_id: string, initialNote: string) => {
+    setEditMode((prev) => ({ ...prev, [_id]: true }));
+    setNotes((prev) => ({ ...prev, [_id]: initialNote }));
   };
 
   return (
@@ -185,7 +216,38 @@ const AllBrands = () => {
                 sortable: true,
                 render: ({ last_login }: any) => <div>{new Date(last_login).toLocaleDateString()}</div>,
               },
-              { accessor: 'notes', title: 'Notes' },
+              {
+                accessor: 'notes',
+                title: 'Notes',
+                render: ({ _id, notes: initialNote }: { _id: string; notes: string }) => (
+                  <div className="text-center items-center mr-4">
+                    {editMode[_id] ? (
+                      <div>
+                        <input
+                          type="text"
+                          value={notes[_id] ?? initialNote}
+                          onChange={(e) => handleInputChange(_id, e.target.value)}
+                          className="text-input"
+                        />
+                        <FontAwesomeIcon
+                          icon={faSave}
+                          style={{ color: 'green', cursor: 'pointer', marginLeft: '10px' }}
+                          onClick={() => handleUpdateNote(_id, notes[_id] ?? initialNote)}
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        <span>{initialNote}</span>
+                        <FontAwesomeIcon
+                          icon={faEdit}
+                          style={{ color: '#005eff', cursor: 'pointer', marginLeft: '10px' }}
+                          onClick={() => toggleEditMode(_id, initialNote)}
+                        />
+                      </>
+                    )}
+                  </div>
+                ),
+              },
             ]}
             totalRecords={totalPages * pageSize}
             recordsPerPage={pageSize}
