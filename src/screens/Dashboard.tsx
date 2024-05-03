@@ -77,6 +77,7 @@ const Dashboard = () => {
   const [tcControl, setTcControl] = useState<string>('');
   // const [instaUserAnalysis, setInstaUserAnalysis] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -216,6 +217,15 @@ const Dashboard = () => {
     const csvContent = convertToCSV(CSVFile);
     downloadCSV(csvContent, 'processed_data.csv');
   };
+
+  const csvExample = `HEADERS- TcNo, Firstname, Lastname, BirthYear
+
+CONTENT- 12345678901, John, Doe,  1990
+CONTENT- 12345678901, John, Doe,  1990
+CONTENT- 12345678901, John, Doe,  1990
+                    .
+                    .
+                    .`;
 
   return (
     <div>
@@ -648,10 +658,30 @@ const Dashboard = () => {
                   ) : null}
                 </div>
               </div>
-              <div className="flex items-center justify-center">
+              <div className="flex flex-col items-center justify-center">
                 <button className="btn bg-green-500" onClick={() => checkTcNoFromCSV()}>
                   Upload CSV
                 </button>
+                <div>
+                  <button
+                    className="btn bg-gray-700 text-white text-custom mt-3 py-0.5 px-1 text-xs"
+                    onClick={() => setModalOpen(true)}
+                  >
+                    CSV example for Upload
+                  </button>
+
+                  {isModalOpen && (
+                    <div className="fixed inset-0 flex justify-center items-center z-50">
+                      <div className="bg-gray-800 p-4 rounded">
+                        <h2 className="text-lg text-white mb-2">CSV Example</h2>
+                        <pre className="text-white">{csvExample}</pre>
+                        <button className="mt-3 btn text-white" onClick={() => setModalOpen(false)}>
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

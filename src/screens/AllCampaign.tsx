@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { selectToken } from '../redux/store/userSlice';
-import { TAfindAllCampaigns } from '../services/campaignsAPI';
+import { TAfindAllCampaigns, TAspamCampaign } from '../services/campaignsAPI';
 import { CampaignType } from '../types/campaignsData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faEye, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faCheck, faEye, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faHeartPulse } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 
@@ -157,7 +157,6 @@ function AllCampaign() {
     setPage(1);
   }, [pageSize]);
 
-
   const verifiedIcon = (visibility: boolean) => {
     if (visibility) {
       return <FontAwesomeIcon size="lg" icon={faCheck} color="green" />;
@@ -213,6 +212,10 @@ function AllCampaign() {
     const recordIndex = itemsPerPage + index;
     const brandId = recordIndex - pageSize + 1;
     return <div>{brandId}</div>;
+  };
+
+  const handleSpamCampaign = (_id: any) => {
+    TAspamCampaign(_id, 'true', token);
   };
 
   return (
@@ -525,6 +528,19 @@ function AllCampaign() {
                 render: ({ created_at }: any) => (
                   <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {new Date(created_at).toLocaleDateString()}
+                  </div>
+                ),
+              },
+              {
+                accessor: 'is_spam',
+                title: 'Is Spam',
+                render: ({ _id }: any) => (
+                  <div>
+                    <FontAwesomeIcon
+                      icon={faBan}
+                      style={{ color: 'green', cursor: 'pointer', marginLeft: '10px' }}
+                      onClick={() => handleSpamCampaign(_id)}
+                    />
                   </div>
                 ),
               },

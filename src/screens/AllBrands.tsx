@@ -1,14 +1,14 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { TAfindAllBrands, TAupdateBrandNote } from '../services/brandAPI';
+import { TASpamBrand, TAfindAllBrands, TAupdateBrandNote } from '../services/brandAPI';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { AllBrandType } from '../types/brandData';
 import { selectToken } from '../redux/store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDollarSign, faEye, faEdit, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faDollarSign, faEye, faEdit, faSave, faBan } from '@fortawesome/free-solid-svg-icons';
 
 const fetchData = async (page: number, perPage: number, brand: string, token: string) => {
   try {
@@ -120,6 +120,10 @@ const AllBrands = () => {
     setNotes((prev) => ({ ...prev, [_id]: initialNote }));
   };
 
+  const handleSpamBrand = (_id: any) => {
+    TASpamBrand(_id, 'true', token);
+  };
+
   return (
     <div className="panel">
       <div className="mb-4.5 flex md:items-center md:flex-row flex-col gap-5">
@@ -215,6 +219,19 @@ const AllBrands = () => {
                 title: 'Last Login',
                 sortable: true,
                 render: ({ last_login }: any) => <div>{new Date(last_login).toLocaleDateString()}</div>,
+              },
+              {
+                accessor: 'is_spam',
+                title: 'Is Spam',
+                render: ({ _id }: any) => (
+                  <div>
+                    <FontAwesomeIcon
+                      icon={faBan}
+                      style={{ color: 'green', cursor: 'pointer', marginLeft: '10px' }}
+                      onClick={() => handleSpamBrand(_id)}
+                    />
+                  </div>
+                ),
               },
               {
                 accessor: 'notes',

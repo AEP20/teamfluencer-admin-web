@@ -156,3 +156,20 @@ export const TAaddBalance = async (id: any, balance: number, token: string) => {
     throw error;
   }
 };
+
+export const TASpamBrand = async (id: any, is_spam: any, token: string) => {
+  try {
+    const response = await apiClient.put(`/admin/brand/setspambrand/${id}/${is_spam}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Find User failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
