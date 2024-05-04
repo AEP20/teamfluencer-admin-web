@@ -99,7 +99,6 @@ function AllCampaign() {
 
   useEffect(() => {
     setLoading(true);
-    setPage(1);
     const loadCampaigns = async () => {
       try {
         const response = await fetchData(
@@ -156,7 +155,6 @@ function AllCampaign() {
   useEffect(() => {
     setPage(1);
   }, [pageSize]);
-
 
   const verifiedIcon = (visibility: boolean) => {
     if (visibility) {

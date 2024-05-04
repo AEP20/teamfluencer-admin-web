@@ -9,7 +9,6 @@ import { AllBrandType } from '../types/brandData';
 import { selectToken } from '../redux/store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollarSign, faEye } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
 
 const fetchData = async (page: number, perPage: number, brand: string, token: string) => {
   try {

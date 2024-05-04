@@ -377,8 +377,10 @@ const GetAllUsers = () => {
   }, [job]);
 
   useEffect(() => {
-    if (hobby) {
+    if (hobby.length > 0) {
       autofillHobby();
+    } else {
+      setAutofillHobbies(['healtfitness', 'Benetton', 'adventure', 'animal', 'basketboll']);
     }
   }, [hobby]);
 
@@ -393,14 +395,6 @@ const GetAllUsers = () => {
   const handleJobSuggestionClick = (key: any, selectedJob: any) => {
     setFilter(key, 'value', selectedJob);
     setAutofillJobs([]);
-  };
-  const handleHobbySuggestionClick = (key: any, selectedHobby: string[]) => {
-    if (hobby.length > 1) {
-      setHobby([...hobby.slice(0, -1), selectedHobby[0]]);
-    } else {
-      setHobby([selectedHobby[0]]);
-    }
-    setFilter('hobbies', 'value', hobby);
   };
 
   const removeVerification = (id: any) => {
@@ -638,14 +632,14 @@ const GetAllUsers = () => {
                       <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Hobbies</h2>
                       <input
                         type="text"
-                        value={hobby}
+                        value={filters[key].join(',')}
                         onClick={() => setIsHobbyDropdownOpen(true)}
                         onChange={(e) => {
                           const hobbies = e.target.value.split(',').map((word) => {
                             const trimmedWord = word.trim();
                             return trimmedWord.charAt(0) + trimmedWord.slice(1).toLowerCase();
                           });
-                          setFilter('hobbies', 'value', hobbies);
+                          setFilter(key, 'value', hobbies);
                           setHobby(hobbies);
                         }}
                         className="form-input"
@@ -653,14 +647,29 @@ const GetAllUsers = () => {
                       />
                     </div>
                     {isHobbyDropdownOpen && (
-                      <ul className="suggestion-list" style={{ position: 'absolute', zIndex: 9999 }}>
-                        {[...new Set(autofillHobbies)].slice(0, 5).map((autofillHobby, index) => (
+                      <ul className="suggestion-list ml-5" style={{ position: 'absolute', zIndex: 9999 }}>
+                        {autofillHobbies.slice(0, 5).map((hobby, index) => (
                           <li
                             key={index}
-                            className="bg-white p-2 ml-6 text-black cursor-pointer hover:bg-gray-200"
-                            onClick={() => handleHobbySuggestionClick('hobbies', [autofillHobby])}
+                            className="bg-white p-2 text-black cursor-pointer hover:bg-gray-200"
+                            onClick={() => {
+                              const currentInput = filters[key].join(', ');
+
+                              if (currentInput.includes(',')) {
+                                const parts = currentInput.split(',');
+                                parts[parts.length - 1] = hobby;
+                                setFilter(
+                                  key,
+                                  'value',
+                                  parts.map((part) => part.trim()),
+                                );
+                              } else {
+                                setFilter(key, 'value', [hobby]);
+                              }
+                              setIsDropdownOpen(false);
+                            }}
                           >
-                            {[autofillHobby]}
+                            {hobby}
                           </li>
                         ))}
                       </ul>
@@ -761,7 +770,7 @@ const GetAllUsers = () => {
                     {verification ? (
                       <FontAwesomeIcon
                         icon={faStar}
-                        style={{ color: '#ffba00', cursor: 'pointer'}}
+                        style={{ color: '#ffba00', cursor: 'pointer' }}
                         onClick={() => removeVerification(_id)}
                       />
                     ) : null}
