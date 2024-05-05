@@ -3,7 +3,7 @@ import { MoneyExchanges, BillingAddress, BrandType, InfoType } from '../types/br
 import './styles/styles.css';
 import { useSelector } from 'react-redux';
 import { selectToken } from '../redux/store/userSlice';
-import { TAdeleteNote, TAupdateBrand, TAupdateBrandNote } from '../services/brandAPI';
+import { TAdeleteNote, TAupdateBrand, TAupdateBrandLogo, TAupdateBrandNote } from '../services/brandAPI';
 
 const BrandProfile = ({
   _id,
@@ -75,11 +75,39 @@ const BrandProfile = ({
 
   const handleUploadPhoto = async (logo_url: any) => {
     try {
-      console.log('logo_url', logo_url);
       TAupdateBrand(_id, { brand_logo: logo_url }, token);
       setIsOpen(false);
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const handleSelectPhotoFromPC = async () => {
+    try {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = async (e) => {
+        if (!(e.target instanceof HTMLInputElement) || !e.target.files) return;
+
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append('brand_logo', file);
+
+        try {
+          const response = await TAupdateBrandLogo(_id, formData, token);
+          if (!response.ok) {
+            throw new Error('Failed to upload brand logo');
+          }
+
+          const result = await response.json();
+        } catch (error) {
+          console.error('Error uploading photo:', error);
+        }
+      };
+      input.click();
+    } catch (error) {
+      console.error('Error selecting photo:', error);
     }
   };
 
@@ -89,12 +117,14 @@ const BrandProfile = ({
       {brand_logo && (
         <div className="flex items-center">
           <img src={brand_logo} alt="Brand Logo" className="w-20 h-20 rounded-full mr-4" />
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            onClick={() => setIsOpen(true)}
-          >
-            Change Picture
-          </button>
+          {!isOpen && (
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={() => setIsOpen(true)}
+            >
+              Change Picture
+            </button>
+          )}
         </div>
       )}
       {!brand_logo && (
@@ -112,13 +142,19 @@ const BrandProfile = ({
             placeholder="Enter photo url"
             value={logo_url}
             onChange={(e) => setLogo_url(e.target.value)}
-            className="border border-gray-400 rounded py-2 px-4 mb-2"
+            className="border border-gray-400 rounded py-2 px-4 mb-2 mt-2"
           />
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 rounded"
             onClick={() => handleUploadPhoto(logo_url)}
           >
             Save
+          </button>
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 rounded"
+            onClick={() => handleSelectPhotoFromPC()}
+          >
+            Select Photo from Computer
           </button>
         </div>
       )}
