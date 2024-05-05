@@ -7,6 +7,7 @@ type WaitingApprovalUserData = {
   country: string;
   city: string;
   gender: string;
+  keyword: string[];
   followers: number;
   insta_post_number: number;
   average_like: number;
@@ -36,6 +37,7 @@ type Filters = {
   tiktok_average_like: FilterValue;
   tiktok_engagement_rate: FilterValue;
   country: CountryFilterValue;
+  keyword: string[];
 };
 
 export type { WaitingApprovalUserData, FilterValue, Filters, FilterType, CountryFilterValue };

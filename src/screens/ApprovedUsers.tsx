@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { TAapprovedUser } from '../services/userAPI';
+import { TAapprovedUser, TAfindCountry } from '../services/userAPI';
 import { WaitingApprovalUserData } from '../types/waitingApprovalUserData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
@@ -10,6 +10,7 @@ import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { Filters, FilterValue, FilterType, CountryFilterValue } from '../types/waitingApprovalUserData';
 // import DownloadPdfButton from '../components/DownloadPdfButton';
 import DownloadCSVButton from '../components/DownloadCSVButton';
+import KeywordData from '../JSON/KEYWORDS.json';
 import { selectToken } from '../redux/store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVenus, faMars, faEye } from '@fortawesome/free-solid-svg-icons';
@@ -56,6 +57,7 @@ const fetchData = async (page: number, perPage: number, token: string) => {
         country: item.country,
         phone: phoneNumberFixer(item.phone),
         gender: item.gender,
+        keyword: item.insta.keywords,
         profile_complete: item.profile_complete,
         followers: item.followers,
         insta_post_number: item.post_number,
@@ -90,6 +92,10 @@ const ApprovedUsers = () => {
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [country, setCountry] = useState('');
+  const [keyword, setKeyword] = useState('');
+  const [autofillCountries, setAutofillCountries] = useState<string[]>([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -186,6 +192,15 @@ const ApprovedUsers = () => {
         }
       }
 
+      const keywordFilter = filters.keyword;
+      if (keywordFilter.length > 0) {
+        const allKeywordsIncluded = keywordFilter.every((filterKeyword) => item.keyword.includes(filterKeyword));
+
+        if (!allKeywordsIncluded) {
+          return true;
+        }
+      }
+
       return true;
     });
   };
@@ -222,12 +237,17 @@ const ApprovedUsers = () => {
     tiktok_average_like: { min: '', max: '' },
     tiktok_engagement_rate: { min: '', max: '' },
     country: { value: '' },
+    keyword: [],
   };
 
   const [filters, setFilters] = useState<Filters>(defaultState);
 
-  const setFilter = (key: keyof Filters, type: FilterType, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value } }));
+  const setFilter = (key: keyof Filters, type: FilterType, value: string | string[]) => {
+    if (key === 'keyword') {
+      setFilters((prev) => ({ ...prev, [key]: value as string[] }));
+    } else {
+      setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value } }));
+    }
   };
   useEffect(() => {
     setPage(1);
@@ -245,9 +265,19 @@ const ApprovedUsers = () => {
           } else if (countryValue.value === 'Other') {
             dt = dt.filter((d) => d[key as keyof typeof d] !== 'TR');
           } else {
-            // any other country
             dt = dt.filter((d) => d[key as keyof typeof d] === countryValue.value);
           }
+        }
+      } else if (key === 'keyword') {
+        const keywordValue = value as string[];
+        if (keywordValue.length > 0) {
+          dt = dt.filter((d) => {
+            const itemKeywords = d[key as keyof typeof d];
+            if (Array.isArray(itemKeywords)) {
+              return keywordValue.every((keyword) => itemKeywords.includes(keyword));
+            }
+            return false;
+          });
         }
       } else {
         const { min, max } = value as FilterValue;
@@ -274,6 +304,7 @@ const ApprovedUsers = () => {
     'tiktok_average_like',
     'tiktok_engagement_rate',
     'country',
+    'keyword',
   ];
 
   const formatKey = (key: string) => {
@@ -292,6 +323,8 @@ const ApprovedUsers = () => {
         return 'TikTok Engagement Rate';
       case 'country':
         return 'Country';
+      case 'keyword':
+        return 'Keyword';
       default:
         return key;
     }
@@ -304,16 +337,58 @@ const ApprovedUsers = () => {
     return <div>{brandId}</div>;
   };
 
+  const autofillCountry = async () => {
+    try {
+      const response = await TAfindCountry(country, token);
+      setAutofillCountries(response);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    if (country.length > 0) {
+      autofillCountry();
+    }
+  }, [country]);
+
+  const handleCountrySuggestionClick = (key: any, selectedCountry: any) => {
+    setFilter(key, 'value', selectedCountry);
+    setAutofillCountries([]);
+  };
+
+  const handleInputChange = (e: any) => {
+    const inputKeywords = e.target.value
+      .split(' ')
+      .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+    setKeyword(inputKeywords);
+
+    if (inputKeywords.length === 0) {
+      setIsDropdownOpen(false);
+      setFilter('keyword', 'value', []);
+    } else {
+      setIsDropdownOpen(true);
+    }
+  };
+
+  const autoCompleteKeywords = keyword.split(',').map((keyword) => keyword.trim());
+
+  const lastKeyword = autoCompleteKeywords[autoCompleteKeywords.length - 1];
+
+  const uniqueKeywords = [...new Set(KeywordData.keywords)];
+  const filteredKeywords = uniqueKeywords
+    .filter((keyword: string) => keyword.toLowerCase().startsWith(lastKeyword.toLowerCase()))
+    .slice(0, 4);
+
+  const autoCompleteKeyword: string[] = autoCompleteKeywords.length === 0 ? [] : filteredKeywords;
+
   return (
     <div className="panel">
       <div className=" flex md:items-center md:flex-row flex-col gap-5">
-        {/* <div className="flex flex-col justify-center text-center">
-          <p className="mb-7 font-bold">MIN</p>
-          <p className="mb-2 font-bold">MAX</p>
-        </div> */}
         <div className="md:flex md:flex-row w-full">
           {filterKeys.map((key) => {
-            if (key !== 'country') {
+            if (key !== 'country' && key !== 'keyword') {
               return (
                 <div key={key} className="md:flex md:flex-col flex-1 mb-1 mr-2">
                   <h2 className="text-sm font-bold mb-2 ml-2">{formatKey(key)}</h2>
@@ -349,16 +424,84 @@ const ApprovedUsers = () => {
               if (key === 'country') {
                 return (
                   <div key={key} className="md:flex md:flex-col flex-1 mb-4">
-                    <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Country Name</h2>
-                    <input
-                      type="text"
-                      value={filters[key].value}
-                      onChange={(e) => {
-                        setFilter(key, 'value', e.target.value);
-                      }}
-                      className="form-input w-full"
-                      placeholder={`Country name`}
-                    />
+                    <div>
+                      <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Country Name</h2>
+                      <input
+                        type="text"
+                        value={filters[key].value}
+                        onChange={(e) => {
+                          setFilter(key, 'value', e.target.value);
+                          setCountry(e.target.value);
+                        }}
+                        className="form-input w-full"
+                        placeholder={`Country name`}
+                      />
+                    </div>
+                    {autofillCountries.length > 0 && country.length > 0 && (
+                      <ul className="suggestion-list mt-20 ml-2" style={{ position: 'absolute', zIndex: 9999 }}>
+                        {[...new Set(autofillCountries)].slice(0, 5).map((autofillCountry, index) => (
+                          <li
+                            key={index}
+                            className="bg-white p-2 text-black cursor-pointer hover:bg-gray-200"
+                            onClick={() => handleCountrySuggestionClick('country', autofillCountry)}
+                          >
+                            {autofillCountry}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                );
+              } else if (key === 'keyword') {
+                return (
+                  <div key={key} className="md:flex md:flex-col flex-1 mb-4 mt-3 ml-2">
+                    <div>
+                      <h2 className="text-sm font-bold ml-2 mb-1">Keywords</h2>
+                      <input
+                        type="text"
+                        value={filters[key].join(',')}
+                        onChange={(e) => {
+                          const keywords = e.target.value.split(',').map((word) => {
+                            const trimmedWord = word.trim();
+                            return trimmedWord.charAt(0).toUpperCase() + trimmedWord.slice(1).toLowerCase();
+                          });
+                          setFilter(key, 'value', keywords);
+                          handleInputChange(e);
+                        }}
+                        className="form-input w-full"
+                        placeholder={`keyword1, keyword2..`}
+                      />
+                    </div>
+                    {isDropdownOpen && keyword.length > 0 && (
+                      <div>
+                        <ul className="suggestion-list" style={{ position: 'absolute', zIndex: 9999 }}>
+                          {autoCompleteKeyword.map((keyword, index) => (
+                            <li
+                              key={index}
+                              className="bg-white p-2 text-black cursor-pointer hover:bg-gray-200"
+                              onClick={() => {
+                                const currentInput = filters[key].join(', ');
+
+                                if (currentInput.includes(',')) {
+                                  const parts = currentInput.split(',');
+                                  parts[parts.length - 1] = keyword;
+                                  setFilter(
+                                    key,
+                                    'value',
+                                    parts.map((part) => part.trim()),
+                                  );
+                                } else {
+                                  setFilter(key, 'value', [keyword]);
+                                }
+                                setIsDropdownOpen(false);
+                              }}
+                            >
+                              {keyword}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 );
               }
