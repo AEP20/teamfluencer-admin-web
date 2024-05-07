@@ -64,7 +64,6 @@ export const TAfindApprovedCampaigns = async (page: number, perPage: number, tok
   }
 };
 
-
 export const TAfindCampaignById = async (_id: any, token: string) => {
   try {
     const response = await apiClient.get(`/admin/campaign/_id/${_id}`, {
@@ -75,11 +74,11 @@ export const TAfindCampaignById = async (_id: any, token: string) => {
     if (response.status === 200) {
       return response.data;
     } else {
-      console.log("response", response)
+      console.log('response', response);
       throw new Error('Find User failed');
     }
   } catch (error) {
-    console.log("error: ", error)
+    console.log('error: ', error);
     throw error;
   }
 };
@@ -167,6 +166,28 @@ export const TAdoApprovalCampaign = async (status: string, rejected_reason: any,
     const response = await apiClient.post(
       `/admin/campaign/verificate?${query}`,
       {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Approval Campaign failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAupdateCampaignNotes = async (id: string, notes: string[], token: string) => {
+  try {
+    const response = await apiClient.put(
+      `/admin/campaign/updatenote/${id}`,
+      { notes },
       {
         headers: {
           Authorization: `Bearer ${token}`,
