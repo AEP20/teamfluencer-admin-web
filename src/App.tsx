@@ -23,6 +23,7 @@ import Dashboard from './screens/Dashboard';
 import HashtagSearch from './screens/HashtagSearch';
 import PopularBrands from './screens/PopularBrands';
 import TAgetMostContentUsernames from './screens/MostContentUsernames';
+import TcNoControl from './screens/TcNoControl';
 
 function App() {
   const token = useSelector(selectToken);
@@ -138,6 +139,7 @@ function StatisticsLayout() {
             <Route path="/hashtag-search" element={<HashtagSearch />} />
             <Route path="/popular-brands" element={<PopularBrands />} />
             <Route path="/most-content-usernames" element={<TAgetMostContentUsernames />} />
+            <Route path="/tcno-control" element={<TcNoControl />} />
           </Routes>
         </CommonLayout>
       </Suspense>
