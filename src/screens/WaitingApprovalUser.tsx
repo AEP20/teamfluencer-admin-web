@@ -14,6 +14,10 @@ import { selectToken } from '../redux/store/userSlice';
 import KeywordData from '../JSON/KEYWORDS.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVenus, faMars, faEye } from '@fortawesome/free-solid-svg-icons';
+import {
+  selectWaitingApprovalUserFilters,
+  setWaitingApprovalUserFilters,
+} from '../redux/store/waitingApprovalUserFilterSlice';
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
@@ -77,9 +81,13 @@ const fetchData = async (page: number, perPage: number, token: string) => {
 
 const WaitingApprovalUser = () => {
   const token = useSelector(selectToken);
+  const waitingApprovalUserFilters = useSelector(selectWaitingApprovalUserFilters);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setPageTitle('Range Search Table'));
+    const initialFilters = waitingApprovalUserFilters;
+    setFilters(initialFilters);
+    setSearch(initialFilters.keywords);
   });
   const [userData, setUserData] = useState([] as WaitingApprovalUserData[]);
   const [page, setPage] = useState(1);
@@ -246,6 +254,12 @@ const WaitingApprovalUser = () => {
     } else {
       setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value } }));
     }
+  };
+
+  const handleKeywordSearch = (keyword: any) => {
+    setSearch(keyword);
+    const newFilters = { ...filters, keywords: keyword };
+    dispatch(setWaitingApprovalUserFilters(newFilters));
   };
 
   useEffect(() => {
@@ -416,6 +430,16 @@ const WaitingApprovalUser = () => {
       </div>
       <div className="flex w-full justify-between flex-end">
         <div className="flex flex-row items-center w-1/3">
+          <div className="ltr:ml-auto rtl:mr-auto mr-2 mb-4 mt-3">
+            <h2 className="text-sm font-bold ml-2 mb-1">Keywords</h2>
+            <input
+              type="text"
+              className="form-input w-auto"
+              value={search}
+              placeholder="Keywords"
+              onChange={(e) => handleKeywordSearch(e.target.value)}
+            />
+          </div>
           <div className="md:flex md:flex-row w-3/4">
             {filterKeys.map((key) => {
               if (key === 'country') {

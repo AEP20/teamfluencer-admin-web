@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { selectToken } from '../redux/store/userSlice';
-import { TAfindAllCampaigns } from '../services/campaignsAPI';
+import { TAfindAllCampaigns, TAspamCampaign } from '../services/campaignsAPI';
 import { CampaignType } from '../types/campaignsData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faEye, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faCheck, faEye, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faHeartPulse } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import { selectCampaignFilters, setCampaignFilters } from '../redux/store/campaignFilterSlice';
 
 const fetchData = async (
   created_at: string,
@@ -68,8 +69,23 @@ const fetchData = async (
 function AllCampaign() {
   const dispatch = useDispatch();
   const token = useSelector(selectToken);
+  const campaignFilters = useSelector(selectCampaignFilters);
   useEffect(() => {
     dispatch(setPageTitle('All Campaigns'));
+    const initialFilters = campaignFilters;
+    console.log('initialFilters: ', initialFilters);
+    setPlatform(initialFilters.platform);
+    setCreated_at(initialFilters.created_at);
+    setIs_verified(initialFilters.is_verified);
+    setVisibility(initialFilters.visibility);
+    setGender(initialFilters.gender);
+    setCountry(initialFilters.country);
+    setMax_follower(initialFilters.max_follower);
+    setMin_follower(initialFilters.min_follower);
+    setMax_age(initialFilters.max_age);
+    setMin_age(initialFilters.min_age);
+    setMax_cost(initialFilters.max_cost);
+    setCampaignName(initialFilters.campaignName);
   }, [dispatch]);
 
   const [campaignData, setCampaignData] = useState([] as CampaignType[]);
@@ -79,27 +95,26 @@ function AllCampaign() {
   const [totalPages, setTotalPages] = useState(0);
   const [initialRecords, setInitialRecords] = useState(sortBy(campaignData, 'id'));
   const [error, setError] = useState<string | null>(null);
-  const [campaignName, setCampaignName] = useState('');
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'desc' });
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [created_at, setCreated_at] = useState('');
-  const [country, setCountry] = useState('');
   const [platform, setPlatform] = useState('');
+  const [created_at, setCreated_at] = useState('');
   const [is_verified, setIs_verified] = useState('');
   const [visibility, setVisibility] = useState('');
-  const [max_cost, setMax_cost] = useState('');
   const [gender, setGender] = useState('');
-  const [min_follower, setMin_follower] = useState('');
+  const [country, setCountry] = useState('');
   const [max_follower, setMax_follower] = useState('');
-  const [min_age, setMin_age] = useState('');
+  const [min_follower, setMin_follower] = useState('');
   const [max_age, setMax_age] = useState('');
+  const [min_age, setMin_age] = useState('');
+  const [max_cost, setMax_cost] = useState('');
+  const [campaignName, setCampaignName] = useState('');
   const [SortBy, setSortBy] = useState('');
 
   useEffect(() => {
     setLoading(true);
-    setPage(1);
     const loadCampaigns = async () => {
       try {
         const response = await fetchData(
@@ -157,7 +172,6 @@ function AllCampaign() {
     setPage(1);
   }, [pageSize]);
 
-
   const verifiedIcon = (visibility: boolean) => {
     if (visibility) {
       return <FontAwesomeIcon size="lg" icon={faCheck} color="green" />;
@@ -166,8 +180,13 @@ function AllCampaign() {
     }
   };
 
+  useEffect(() => {
+    console.log('filters', campaignFilters);
+  }, [created_at, country, platform, is_verified, visibility, max_cost]);
+
   const handleCampaignSelect = (selectedCampaign: any) => {
     setCampaignName(selectedCampaign.name);
+    dispatch(setCampaignFilters({ campaignName: selectedCampaign.name }));
   };
 
   useEffect(() => {
@@ -215,6 +234,14 @@ function AllCampaign() {
     return <div>{brandId}</div>;
   };
 
+  const handleSpamCampaign = (_id: any) => {
+    TAspamCampaign(_id, 'true', token);
+}
+  const handleFilterChange = (filterName: any, value: any, setState: any) => {
+    setState(value);
+    dispatch(setCampaignFilters({ ...campaignFilters, [filterName]: value }));
+  };
+
   return (
     <div className="panel">
       {error && <div className="alert alert-danger">{error}</div>}
@@ -230,7 +257,7 @@ function AllCampaign() {
                   name="platform"
                   value={value}
                   checked={platform === value}
-                  onChange={(e) => setPlatform(e.target.value)}
+                  onChange={(e) => handleFilterChange('platform', e.target.value, setPlatform)}
                 />
                 <label className="form-check-label ml-2 mt-2" htmlFor={value}>
                   {value === '' ? 'any' : value}
@@ -248,7 +275,7 @@ function AllCampaign() {
                   name="created_at"
                   value={value}
                   checked={created_at === value}
-                  onChange={(e) => setCreated_at(e.target.value)}
+                  onChange={(e) => handleFilterChange('created_at', e.target.value, setCreated_at)}
                 />
                 <label className="form-check-label ml-2 mt-2" htmlFor={value}>
                   {value === '' ? 'any' : value}
@@ -266,7 +293,7 @@ function AllCampaign() {
                   name="is_verified"
                   value={value}
                   checked={is_verified === value}
-                  onChange={(e) => setIs_verified(e.target.value)}
+                  onChange={(e) => handleFilterChange('is_verified', e.target.value, setIs_verified)}
                 />
                 <label className="form-check-label ml-2 mt-2" htmlFor={value}>
                   {value === '' ? 'any' : value}
@@ -284,7 +311,7 @@ function AllCampaign() {
                   name="visibility"
                   value={value}
                   checked={visibility === value}
-                  onChange={(e) => setVisibility(e.target.value)}
+                  onChange={(e) => handleFilterChange('visibility', e.target.value, setVisibility)}
                 />
                 <label className="form-check-label ml-2 mt-2" htmlFor={value}>
                   {value === '' ? 'any' : value}
@@ -302,7 +329,7 @@ function AllCampaign() {
                   name="gender"
                   value={value}
                   checked={gender === value}
-                  onChange={(e) => setGender(e.target.value)}
+                  onChange={(e) => handleFilterChange('gender', e.target.value, setGender)}
                 />
                 <label className="form-check-label ml-2 mt-2" htmlFor={value}>
                   {value === '' ? 'any' : value}
@@ -320,7 +347,7 @@ function AllCampaign() {
                   name="country"
                   value={value}
                   checked={country === value}
-                  onChange={(e) => setCountry(e.target.value)}
+                  onChange={(e) => handleFilterChange('country', e.target.value, setCountry)}
                 />
                 <label className="form-check-label ml-2 mt-2" htmlFor={value}>
                   {value === '' ? 'any' : value}
@@ -336,7 +363,7 @@ function AllCampaign() {
                   type="number"
                   className="bg-gray-100 rounded-md px-3 py-2 w-20 focus:outline-none focus:ring focus:border-blue-300"
                   value={max_follower}
-                  onChange={(e) => setMax_follower(e.target.value)}
+                  onChange={(e) => handleFilterChange('max_follower', e.target.value, setMax_follower)}
                 />
               </div>
             </div>
@@ -347,7 +374,7 @@ function AllCampaign() {
                   type="number"
                   className="bg-gray-100 rounded-md px-3 py-2 w-20 focus:outline-none focus:ring focus:border-blue-300"
                   value={min_follower}
-                  onChange={(e) => setMin_follower(e.target.value)}
+                  onChange={(e) => handleFilterChange('min_follower', e.target.value, setMin_follower)}
                 />
               </div>
             </div>
@@ -360,7 +387,7 @@ function AllCampaign() {
                   type="number"
                   className="bg-gray-100 rounded-md px-3 py-2 w-20 focus:outline-none focus:ring focus:border-blue-300"
                   value={max_age}
-                  onChange={(e) => setMax_age(e.target.value)}
+                  onChange={(e) => handleFilterChange('max_age', e.target.value, setMax_age)}
                 />
               </div>
             </div>
@@ -371,7 +398,7 @@ function AllCampaign() {
                   type="number"
                   className="bg-gray-100 rounded-md px-3 py-2 w-20 focus:outline-none focus:ring focus:border-blue-300"
                   value={min_age}
-                  onChange={(e) => setMin_age(e.target.value)}
+                  onChange={(e) => handleFilterChange('min_age', e.target.value, setMin_age)}
                 />
               </div>
             </div>
@@ -383,7 +410,7 @@ function AllCampaign() {
                 type="number"
                 className="bg-gray-100 rounded-md px-3 py-2 w-20 focus:outline-none focus:ring focus:border-blue-300"
                 value={max_cost}
-                onChange={(e) => setMax_cost(e.target.value)}
+                onChange={(e) => handleFilterChange('max_cost', e.target.value, setMax_cost)}
               />
             </div>
           </div>
@@ -397,7 +424,7 @@ function AllCampaign() {
                 name="campaignName"
                 placeholder="Search Campaign Name"
                 value={campaignName}
-                onChange={(e) => setCampaignName(e.target.value)}
+                onChange={(e) => handleFilterChange('campaignName', e.target.value, setCampaignName)}
               />
               <label className="form-check-label ml-2 mt-2"></label>
             </div>
@@ -492,7 +519,7 @@ function AllCampaign() {
                 ),
               },
               {
-                accessor: 'visibility',
+                accessor: 'toggle_visibility',
                 title: 'Set Visibility',
                 sortable: true,
                 render: ({ _id, visibility }) => {
@@ -525,6 +552,19 @@ function AllCampaign() {
                 render: ({ created_at }: any) => (
                   <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {new Date(created_at).toLocaleDateString()}
+                  </div>
+                ),
+              },
+              {
+                accessor: 'is_spam',
+                title: 'Is Spam',
+                render: ({ _id }: any) => (
+                  <div>
+                    <FontAwesomeIcon
+                      icon={faBan}
+                      style={{ color: 'green', cursor: 'pointer', marginLeft: '10px' }}
+                      onClick={() => handleSpamCampaign(_id)}
+                    />
                   </div>
                 ),
               },

@@ -14,6 +14,7 @@ import KeywordData from '../JSON/KEYWORDS.json';
 import { selectToken } from '../redux/store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVenus, faMars, faEye } from '@fortawesome/free-solid-svg-icons';
+import { selectApprovedUserFilters, setApprovedUserFilters } from '../redux/store/approvedUserFilterSlice';
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
@@ -77,9 +78,12 @@ const fetchData = async (page: number, perPage: number, token: string) => {
 
 const ApprovedUsers = () => {
   const token = useSelector(selectToken);
+  const approvedUserFilters = useSelector(selectApprovedUserFilters);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setPageTitle('Range Search Table'));
+    const initialFilters = approvedUserFilters;
+    setFilters(initialFilters);
   });
   const [userData, setUserData] = useState([] as WaitingApprovalUserData[]);
   const [page, setPage] = useState(1);
@@ -247,8 +251,8 @@ const ApprovedUsers = () => {
       setFilters((prev) => ({ ...prev, [key]: value as string[] }));
     } else {
       setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value } }));
-    }
   };
+  
   useEffect(() => {
     setPage(1);
   }, [pageSize, filters]);
