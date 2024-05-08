@@ -45,6 +45,7 @@ type CampaignType = {
   application_counts: ApplicationCounts;
   cover_photo: string;
   description: string;
+  notes: Array<string>;
   platform: 'insta-post' | 'insta-story' | 'insta-reels' | 'tiktok';
   is_verified: boolean;
   verification: string;
@@ -71,6 +72,7 @@ type Campaign = {
   rejected_reason: string;
   visibility: boolean;
   content_offered: boolean;
+  notes: string[];
   limitations: Limitations;
   statistics: Statistic[];
   max_cost: number;

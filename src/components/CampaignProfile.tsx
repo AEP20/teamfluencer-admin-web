@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { CampaignType, InfoType, Limitations, ApplicationCounts } from '../types/campaignsData';
 import './styles/styles.css';
+import { TAupdateCampaignNotes } from '../services/campaignsAPI';
 import { useSelector } from 'react-redux';
 import { selectToken } from '../redux/store/userSlice';
-import { TAupdateCampaign } from '../services/campaignsAPI';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+
 
 export const CampaignProfile = (data: CampaignType) => {
   const token = useSelector(selectToken);
@@ -14,6 +17,8 @@ export const CampaignProfile = (data: CampaignType) => {
   const [description, setDescription] = useState('');
   const [coverPhoto, setCoverPhoto] = useState('');
   const [platform, setPlatform] = useState('');
+  const [campaignNotes, setCampaignNotes] = useState(['']);
+  const [notes, setNotes] = useState('');
   const [isVerified, setIsVerified] = useState(Boolean);
   const [visibility, setVisibility] = useState(Boolean);
   const [rejectedReason, setRejectedReason] = useState('');
@@ -49,6 +54,7 @@ export const CampaignProfile = (data: CampaignType) => {
     setDescription(data?.description ?? '');
     setCoverPhoto(data?.cover_photo ?? '');
     setPlatform(data?.platform ?? '');
+    setCampaignNotes(data?.notes ?? ['']);
     setIsVerified(data?.is_verified ?? Boolean);
     setVisibility(data?.visibility ?? Boolean);
     setRejectedReason(data?.rejected_reason ?? '');
@@ -91,13 +97,31 @@ export const CampaignProfile = (data: CampaignType) => {
     { key: 'Rejected Reason:', value: rejectedReason === '' ? 'No rejected Reason' : rejectedReason },
   ];
 
+
+  const handleUpdateNote = async (campaignNotes: any) => {
+    try {
+      const brand = await TAupdateCampaignNotes(_id, campaignNotes, token);
+      if (brand) alert('Note updated successfully');
+          } catch (error) {
+      console.error(error);
+    }
+  };
+
+
   const handleUploadPhoto = async (logo_url: any) => {
     try {
       TAupdateCampaign(_id, { cover_photo: logo_url }, token);
       setIsOpen(false);
+
     } catch (error) {
       console.error(error);
     }
+  };
+
+
+  const handleDeleteNote = (index: any) => {
+    const newNotes = campaignNotes.filter((note, noteIndex) => noteIndex !== index);
+    handleUpdateNote(newNotes);
   };
 
   return (
@@ -203,7 +227,38 @@ export const CampaignProfile = (data: CampaignType) => {
             </table>
           </div>
         </div>
-
+        {/* Campaign Notes */}
+        <div className="flex flex-col">
+          <h4 className="text-lg font-semibold mb-4 text-gray-700">Notes</h4>
+          <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
+            <ul>
+              {campaignNotes.map((note, index) => (
+                <li key={index} className="text-gray-600 mt-2">
+                  {note}
+                  <FontAwesomeIcon
+                    icon={faTrash}
+                    style={{ color: '#005eff', marginLeft: '8px' }}
+                    onClick={() => handleDeleteNote(index)}
+                  />
+                </li>
+              ))}
+            </ul>
+            <textarea
+              className="w-full mt-4 p-2 border border-gray-200 rounded-md"
+              placeholder="Add a note"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
+            <div className="flex gap-12 mt-2">
+              <button
+                className="bg-blue-500 text-white rounded-md px-3 py-2 w-full"
+                onClick={() => handleUpdateNote([...campaignNotes, notes])}
+              >
+                Update Note
+              </button>
+            </div>
+          </div>
+        </div>
         {/* Application Counts */}
         <div className="col-span-1 md:col-span-1 mb-5">
           <h4 className="text-lg font-semibold mb-4 text-gray-700">Application Counts</h4>
