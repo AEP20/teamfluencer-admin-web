@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { selectToken } from '../redux/store/userSlice';
-import { TAfindAllCampaigns } from '../services/campaignsAPI';
+import { TAfindAllCampaigns, TAspamCampaign } from '../services/campaignsAPI';
 import { CampaignType } from '../types/campaignsData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faEye, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faCheck, faEye, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faHeartPulse } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { selectCampaignFilters, setCampaignFilters } from '../redux/store/campaignFilterSlice';
@@ -235,6 +235,9 @@ function AllCampaign() {
     return <div>{brandId}</div>;
   };
 
+  const handleSpamCampaign = (_id: any) => {
+    TAspamCampaign(_id, 'true', token);
+}
   const handleFilterChange = (filterName: any, value: any, setState: any) => {
     setState(value);
     dispatch(setCampaignFilters({ ...campaignFilters, [filterName]: value }));
@@ -550,6 +553,19 @@ function AllCampaign() {
                 render: ({ created_at }: any) => (
                   <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {new Date(created_at).toLocaleDateString()}
+                  </div>
+                ),
+              },
+              {
+                accessor: 'is_spam',
+                title: 'Is Spam',
+                render: ({ _id }: any) => (
+                  <div>
+                    <FontAwesomeIcon
+                      icon={faBan}
+                      style={{ color: 'green', cursor: 'pointer', marginLeft: '10px' }}
+                      onClick={() => handleSpamCampaign(_id)}
+                    />
                   </div>
                 ),
               },
