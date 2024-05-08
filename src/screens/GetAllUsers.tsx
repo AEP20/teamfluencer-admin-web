@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate, Link, redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import {
@@ -28,6 +27,7 @@ import DownloadCSVButton from '../components/DownloadCSVButton';
 import KeywordData from '../JSON/KEYWORDS.json';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVenus, faMars, faEye, faStar } from '@fortawesome/free-solid-svg-icons';
+import { setUserFilters, selectUserFilters } from '../redux/store/userFilterSlice';
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
@@ -104,10 +104,16 @@ const fetchData = async (page: number, query: any, token: string) => {
 
 const GetAllUsers = () => {
   const token = useSelector(selectToken);
+  const userFilters = useSelector(selectUserFilters);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setPageTitle('Range Search Table'));
-  });
+    const initialFilters = userFilters; // assuming this comes from `useSelector(selectUserFilters)`
+    if (Object.keys(initialFilters).length > 0 && JSON.stringify(initialFilters) !== JSON.stringify(defaultState)) {
+      setFilterss(initialFilters);
+    }
+  }, [dispatch]);
+
   const [userData, setUserData] = useState([] as WaitingApprovalUserData[]);
   const [page, setPage] = useState(1);
   const PAGE_SIZES = [10, 20, 30, 50, 100];
@@ -151,22 +157,37 @@ const GetAllUsers = () => {
     type: FilterType,
     value: string | string[] | ('male' | 'female' | '' | 'true' | 'false'),
   ) => {
-    if (key === 'keywords' || key === 'hobbies') {
+    if (key === 'keywords') {
       setFilterss((prev) => ({ ...prev, [key]: value as string[] }));
+      dispatch(setUserFilters({ ...filters }));
+    } else if (key === 'hobbies') {
+      const newHobbies = Array.isArray(value) ? value : [value];
+      setFilterss((prev) => ({ ...prev, [key]: newHobbies }));
+      dispatch(setUserFilters({ ...filters, [key]: newHobbies }));
     } else if (key === 'verification') {
       setFilterss((prev) => ({ ...prev, [key]: value as 'true' | 'false' | '' }));
+      dispatch(setUserFilters({ ...filters }));
     } else if (key === 'gender') {
       setFilterss((prev) => ({ ...prev, [key]: value as 'male' | 'female' | '' }));
+      dispatch(setUserFilters({ ...filters }));
     } else if (key === 'city') {
       setFilterss((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
+      dispatch(setUserFilters({ ...filters }));
     } else if (key === 'country') {
       setFilterss((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
+      dispatch(setUserFilters({ ...filters }));
     } else if (key === 'job') {
       setFilterss((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
+      dispatch(setUserFilters({ ...filters }));
     } else {
       setFilterss((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value as string } }));
+      dispatch(setUserFilters({ ...filters }));
     }
   };
+
+  useEffect(() => {
+    dispatch(setUserFilters(filters));
+  }, [filters, dispatch]);
 
   const handleFetchData = async () => {
     setLoading(true);
@@ -236,7 +257,7 @@ const GetAllUsers = () => {
     'verification',
   ];
 
-  const handleInputChange = (e: any) => {
+  const handleKeywordInputChange = (e: any) => {
     const inputKeywords = e.target.value
       .split(' ')
       .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -247,6 +268,18 @@ const GetAllUsers = () => {
       setIsDropdownOpen(false);
     } else {
       setIsDropdownOpen(true);
+    }
+  };
+
+  const handleHobbyInputChange = (e: any) => {
+    const inputHobbies = e.target.value.split(',').map((hobby: any) => hobby.trim());
+    setFilter('hobbies', 'value', inputHobbies);
+    setHobby(inputHobbies);
+
+    if (inputHobbies.length === 0) {
+      setIsHobbyDropdownOpen(false);
+    } else {
+      setIsHobbyDropdownOpen(true);
     }
   };
 
@@ -351,6 +384,7 @@ const GetAllUsers = () => {
   };
   const autofillHobby = async () => {
     try {
+      if (hobby.length < 1) return;
       const response = await TAfindHobbies(hobby, token);
       setAutofillHobbies(response);
     } catch (error) {
@@ -395,12 +429,10 @@ const GetAllUsers = () => {
     setAutofillJobs([]);
   };
   const handleHobbySuggestionClick = (key: any, selectedHobby: string[]) => {
-    if (hobby.length > 1) {
-      setHobby([...hobby.slice(0, -1), selectedHobby[0]]);
-    } else {
-      setHobby([selectedHobby[0]]);
-    }
-    setFilter('hobbies', 'value', hobby);
+    const updatedHobbies = hobby.length > 1 ? [...hobby.slice(0, -1), selectedHobby[0]] : [selectedHobby[0]];
+
+    setHobby(updatedHobbies);
+    setFilter(key, 'value', updatedHobbies);
   };
 
   const removeVerification = (id: any) => {
@@ -638,15 +670,14 @@ const GetAllUsers = () => {
                       <h2 className="text-sm font-bold mb-1 mt-3 ml-2">Hobbies</h2>
                       <input
                         type="text"
-                        value={hobby}
-                        onClick={() => setIsHobbyDropdownOpen(true)}
+                        value={Array.isArray(filters.hobbies) ? filters.hobbies.join(',') : ''}
                         onChange={(e) => {
                           const hobbies = e.target.value.split(',').map((word) => {
                             const trimmedWord = word.trim();
                             return trimmedWord.charAt(0) + trimmedWord.slice(1).toLowerCase();
                           });
-                          setFilter('hobbies', 'value', hobbies);
-                          setHobby(hobbies);
+                          setFilter(key, 'value', hobbies);
+                          handleHobbyInputChange(e);
                         }}
                         className="form-input"
                         placeholder={`hobby1, hobby2, ...`}
@@ -680,7 +711,7 @@ const GetAllUsers = () => {
                           return trimmedWord.charAt(0).toUpperCase() + trimmedWord.slice(1).toLowerCase();
                         });
                         setFilter(key, 'value', keywords);
-                        handleInputChange(e);
+                        handleKeywordInputChange(e);
                       }}
                       className="form-input"
                       placeholder={`Keyword1, Keyword2, ...`}
@@ -761,7 +792,7 @@ const GetAllUsers = () => {
                     {verification ? (
                       <FontAwesomeIcon
                         icon={faStar}
-                        style={{ color: '#ffba00', cursor: 'pointer'}}
+                        style={{ color: '#ffba00', cursor: 'pointer' }}
                         onClick={() => removeVerification(_id)}
                       />
                     ) : null}

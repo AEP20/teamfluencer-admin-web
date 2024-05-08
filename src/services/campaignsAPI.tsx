@@ -183,10 +183,18 @@ export const TAdoApprovalCampaign = async (status: string, rejected_reason: any,
   }
 };
 
+
 export const TAspamCampaign = async (_id: any, is_spam: any, token: string) => {
   try {
     const response = await apiClient.put(`/admin/campaign/setspamcampaign/${_id}/${is_spam}`, {
       headers: {
+
+export const TAupdateCampaign = async (id: any, data: any, token: string) => {
+  try {
+    const response = await apiClient.put(`/admin/campaign/updatecampaign/${id}`, data, {
+      headers: {
+        'Content-Type': 'application/json',
+
         Authorization: `Bearer ${token}`,
       },
     });
@@ -194,7 +202,7 @@ export const TAspamCampaign = async (_id: any, is_spam: any, token: string) => {
     if (response.status === 200) {
       return response.data;
     } else {
-      throw new Error('Find Campaign failed');
+      throw new Error('Update failed');
     }
   } catch (error) {
     throw error;
