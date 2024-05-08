@@ -80,14 +80,10 @@ const ApprovedUsers = () => {
   const token = useSelector(selectToken);
   const approvedUserFilters = useSelector(selectApprovedUserFilters);
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(setPageTitle('Range Search Table'));
-    const initialFilters = approvedUserFilters;
-    setFilters(initialFilters);
-  });
+  const PAGE_SIZES = [10, 20, 30, 50, 100];
+
   const [userData, setUserData] = useState([] as WaitingApprovalUserData[]);
   const [page, setPage] = useState(1);
-  const PAGE_SIZES = [10, 20, 30, 50, 100];
   const [pageSize, setPageSize] = useState(PAGE_SIZES[2]);
   const [totalPages, setTotalPages] = useState(0);
   const [initialRecords, setInitialRecords] = useState(sortBy(userData, 'id'));
@@ -100,6 +96,12 @@ const ApprovedUsers = () => {
   const [keyword, setKeyword] = useState('');
   const [autofillCountries, setAutofillCountries] = useState<string[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    dispatch(setPageTitle('Range Search Table'));
+    const initialFilters = approvedUserFilters;
+    setFilters(initialFilters);
+  });
 
   useEffect(() => {
     setLoading(true);
@@ -251,8 +253,9 @@ const ApprovedUsers = () => {
       setFilters((prev) => ({ ...prev, [key]: value as string[] }));
     } else {
       setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value } }));
-  };
-  
+    };
+  }
+
   useEffect(() => {
     setPage(1);
   }, [pageSize, filters]);

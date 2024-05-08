@@ -194,16 +194,32 @@ export const TAupdateCampaignNotes = async (id: string, notes: string[], token: 
         },
       },
     );
-  } catch(err) {
-          throw new Error('Update failed. Err: '
-                         + err);
+  } catch (err) {
+    throw new Error('Update failed. Err: '
+      + err);
   }
-    }
+}
 
 export const TAspamCampaign = async (_id: any, is_spam: any, token: string) => {
   try {
     const response = await apiClient.put(`/admin/campaign/setspamcampaign/${_id}/${is_spam}`, {
       headers: {
+        'Content-Type': 'application/json',
+
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Approval Campaign failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 
 export const TAupdateCampaign = async (id: any, data: any, token: string) => {
   try {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { CampaignType, InfoType, Limitations, ApplicationCounts } from '../types/campaignsData';
 import './styles/styles.css';
-import { TAupdateCampaignNotes } from '../services/campaignsAPI';
+import { TAupdateCampaignNotes, TAupdateCampaign } from '../services/campaignsAPI';
 import { useSelector } from 'react-redux';
 import { selectToken } from '../redux/store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -100,9 +100,9 @@ export const CampaignProfile = (data: CampaignType) => {
 
   const handleUpdateNote = async (campaignNotes: any) => {
     try {
-      const brand = await TAupdateCampaignNotes(_id, campaignNotes, token);
+      const brand: any = await TAupdateCampaignNotes(_id, campaignNotes, token); // ! UPDATE TYPES
       if (brand) alert('Note updated successfully');
-          } catch (error) {
+    } catch (error) {
       console.error(error);
     }
   };
