@@ -46,6 +46,7 @@ export const TAfindApplicationByCampaignId
 
 
 export const TACreateApplication = async (applicationUser: {
+  user_id: string,
   insta_username: string,
   age: number,
   gender: string,
@@ -59,12 +60,13 @@ export const TACreateApplication = async (applicationUser: {
   birthday: string,
   verification: boolean,
   hobbies: string[]
-}, campaign_id: string, token: string, selectedState: string) => {
+}, campaign_id: string, token: string, selectedState: string, useCredentials: any) => {
   try {
     const response = await apiClient.post(`/admin/application/create`, {
       user: applicationUser, // Make sure this matches ApplicationUserInterface
       campaign_id: campaign_id, // The actual campaign ID
-      state: selectedState
+      state: selectedState,
+      use_credentials: useCredentials
     }, {
       timeout: 120000,
       headers: {
@@ -86,8 +88,8 @@ export const TACreateApplication = async (applicationUser: {
 };
 
 
-//const response = TAnewApplicationPricing(newPricingBrand, newPricingUser, application._id, token);
-export const TAnewApplicationPricing = async (update: any, _id: string, token: string) => {
+//const response = TAupdateApplication(newPricingBrand, newPricingUser, application._id, token);
+export const TAupdateApplication = async (update: any, _id: string, token: string) => {
   try {
     console.log("update: ", update, " _id: ", _id, " token: ", token);
     const response = await apiClient.post(`/admin/application/update`, 

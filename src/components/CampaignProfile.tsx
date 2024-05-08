@@ -91,6 +91,10 @@ export const CampaignProfile = (data: CampaignType) => {
           <table className="table-auto w-full">
             <tbody>
               <tr className="border-b">
+                <td className="py-2 font-semibold text-gray-700">Campaign Id</td>
+                <td className="py-2 text-gray-600">{data._id}</td>
+              </tr>
+              <tr className="border-b">
                 <td className="py-2 font-semibold text-gray-700">Country</td>
                 <td className="py-2 text-gray-600">{data.country}</td>
               </tr>
