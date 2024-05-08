@@ -115,7 +115,6 @@ function AllCampaign() {
 
   useEffect(() => {
     setLoading(true);
-    setPage(1);
     const loadCampaigns = async () => {
       try {
         const response = await fetchData(
