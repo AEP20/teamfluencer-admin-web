@@ -47,6 +47,8 @@ type AllBrandType = {
   email: string;
   phone: string;
   balance: number;
+  notes: string;
+  _id: string;
 };
 
 export type { BillingAddress, MoneyExchanges, BrandType, InfoType, AllBrandType };

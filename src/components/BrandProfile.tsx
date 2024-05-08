@@ -3,23 +3,43 @@ import { MoneyExchanges, BillingAddress, BrandType, InfoType } from '../types/br
 import './styles/styles.css';
 import { useSelector } from 'react-redux';
 import { selectToken } from '../redux/store/userSlice';
-import { TAdeleteNote, TAupdateBrandNote } from '../services/brandAPI';
+import { TAdeleteNote, TAupdateBrand, TAupdateBrandLogo, TAupdateBrandNote } from '../services/brandAPI';
 
-const BrandProfile = ({ _id, email, phone, country, first_name, last_name, currency, language, job_title, brand_name, balance, billing_address, money_exchanges, notes }: BrandType) => {
+const BrandProfile = ({
+  _id,
+  email,
+  phone,
+  country,
+  first_name,
+  last_name,
+  currency,
+  language,
+  job_title,
+  brand_name,
+  balance,
+  billing_address,
+  money_exchanges,
+  notes,
+  brand_logo,
+}: BrandType) => {
   const token = useSelector(selectToken);
-  
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [logo_url, setLogo_url] = useState('');
   const [brandNotes, setNotes] = useState(notes ?? '');
-  const [moneyExchanges, setMoneyExchanges] = useState<MoneyExchanges[]>(money_exchanges.slice(0,50) ?? []);
-  const [billingAddress, setBillingAddress] = useState<BillingAddress>(billing_address ?? {
-    type: '',
-    firm_name: '',
-    contact_name: '',
-    id: '',
-    city: '',
-    country: '',
-    address: '',
-    zip_code: '',
-  });
+  const [moneyExchanges, setMoneyExchanges] = useState<MoneyExchanges[]>(money_exchanges.slice(0, 50) ?? []);
+  const [billingAddress, setBillingAddress] = useState<BillingAddress>(
+    billing_address ?? {
+      type: '',
+      firm_name: '',
+      contact_name: '',
+      id: '',
+      city: '',
+      country: '',
+      address: '',
+      zip_code: '',
+    },
+  );
 
   const brandInfo: InfoType[] = [
     { key: 'Brand Name', value: brand_name },
@@ -53,9 +73,92 @@ const BrandProfile = ({ _id, email, phone, country, first_name, last_name, curre
     }
   };
 
+  const handleUploadPhoto = async (logo_url: any) => {
+    try {
+      TAupdateBrand(_id, { brand_logo: logo_url }, token);
+      setIsOpen(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleSelectPhotoFromPC = async () => {
+    try {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = async (e) => {
+        if (!(e.target instanceof HTMLInputElement) || !e.target.files) return;
+
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append('brand_logo', file);
+
+        try {
+          const response = await TAupdateBrandLogo(_id, formData, token);
+          if (!response.ok) {
+            throw new Error('Failed to upload brand logo');
+          }
+
+          const result = await response.json();
+        } catch (error) {
+          console.error('Error uploading photo:', error);
+        }
+      };
+      input.click();
+    } catch (error) {
+      console.error('Error selecting photo:', error);
+    }
+  };
+
   return (
     <div className="profile-section bg-white p-3 shadow-md mb-3 w-3/5">
       <h3 className="section-title text-xl font-bold mb-3">Brand Information</h3>
+      {brand_logo && (
+        <div className="flex items-center">
+          <img src={brand_logo} alt="Brand Logo" className="w-20 h-20 rounded-full mr-4" />
+          {!isOpen && (
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={() => setIsOpen(true)}
+            >
+              Change Picture
+            </button>
+          )}
+        </div>
+      )}
+      {!brand_logo && (
+        <div
+          className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 text-sm font-bold cursor-pointer"
+          onClick={() => setIsOpen(true)}
+        >
+          Add Picture
+        </div>
+      )}
+      {isOpen && (
+        <div>
+          <input
+            type="text"
+            placeholder="Enter photo url"
+            value={logo_url}
+            onChange={(e) => setLogo_url(e.target.value)}
+            className="border border-gray-400 rounded py-2 px-4 mb-2 mt-2"
+          />
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 rounded"
+            onClick={() => handleUploadPhoto(logo_url)}
+          >
+            Save
+          </button>
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 rounded"
+            onClick={() => handleSelectPhotoFromPC()}
+          >
+            Select Photo from Computer
+          </button>
+        </div>
+      )}
+
       <table className="table-responsive">
         <tbody>
           {brandInfo.map((info, index) => (
@@ -75,8 +178,12 @@ const BrandProfile = ({ _id, email, phone, country, first_name, last_name, curre
           onChange={(e) => setNotes(e.target.value)}
         />
         <div className="flex gap-12 mt-2">
-          <button className="bg-blue-500 text-white rounded-md px-3 py-2 w-full" onClick={handleUpdateNote}>Update Note</button>
-          <button className="bg-blue-500 text-white rounded-md px-3 py-2 w-full" onClick={handleDeleteNote}>Delete Note</button>
+          <button className="bg-blue-500 text-white rounded-md px-3 py-2 w-full" onClick={handleUpdateNote}>
+            Update Note
+          </button>
+          <button className="bg-blue-500 text-white rounded-md px-3 py-2 w-full" onClick={handleDeleteNote}>
+            Delete Note
+          </button>
         </div>
       </div>
       {Object.values(billingAddress).some((value) => value) && (

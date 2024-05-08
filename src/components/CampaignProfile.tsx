@@ -7,6 +7,7 @@ import { selectToken } from '../redux/store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
+
 export const CampaignProfile = (data: CampaignType) => {
   const token = useSelector(selectToken);
 
@@ -14,6 +15,7 @@ export const CampaignProfile = (data: CampaignType) => {
   const [name, setName] = useState('');
   const [country, setCountry] = useState('');
   const [description, setDescription] = useState('');
+  const [coverPhoto, setCoverPhoto] = useState('');
   const [platform, setPlatform] = useState('');
   const [campaignNotes, setCampaignNotes] = useState(['']);
   const [notes, setNotes] = useState('');
@@ -42,12 +44,15 @@ export const CampaignProfile = (data: CampaignType) => {
     user_canceled: 0,
     application_done: 0,
   });
+  const [isOpen, setIsOpen] = useState(false);
+  const [logo_url, setLogo_url] = useState('');
 
   useEffect(() => {
     set_Id(data?._id ?? '');
     setName(data?.name ?? '');
     setCountry(data?.country ?? '');
     setDescription(data?.description ?? '');
+    setCoverPhoto(data?.cover_photo ?? '');
     setPlatform(data?.platform ?? '');
     setCampaignNotes(data?.notes ?? ['']);
     setIsVerified(data?.is_verified ?? Boolean);
@@ -92,14 +97,27 @@ export const CampaignProfile = (data: CampaignType) => {
     { key: 'Rejected Reason:', value: rejectedReason === '' ? 'No rejected Reason' : rejectedReason },
   ];
 
+
   const handleUpdateNote = async (campaignNotes: any) => {
     try {
       const brand = await TAupdateCampaignNotes(_id, campaignNotes, token);
       if (brand) alert('Note updated successfully');
+          } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+  const handleUploadPhoto = async (logo_url: any) => {
+    try {
+      TAupdateCampaign(_id, { cover_photo: logo_url }, token);
+      setIsOpen(false);
+
     } catch (error) {
       console.error(error);
     }
   };
+
 
   const handleDeleteNote = (index: any) => {
     const newNotes = campaignNotes.filter((note, noteIndex) => noteIndex !== index);
@@ -111,8 +129,48 @@ export const CampaignProfile = (data: CampaignType) => {
       <h3 className="text-2xl font-semibold mb-4 text-gray-800">Campaign Information</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
+          {coverPhoto && (
+            <div className="flex items-center">
+              <img src={coverPhoto} alt="Brand Logo" className="w-28 h-28 rounded-full mr-4" />
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => setIsOpen(true)}
+              >
+                Change Picture
+              </button>
+            </div>
+          )}
+          {!coverPhoto && (
+            <div
+              className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 text-sm font-bold cursor-pointer"
+              onClick={() => setIsOpen(true)}
+            >
+              Add Picture
+            </div>
+          )}
+          {isOpen && (
+            <div>
+              <input
+                type="text"
+                placeholder="Enter photo url"
+                value={logo_url}
+                onChange={(e) => setLogo_url(e.target.value)}
+                className="border border-gray-400 rounded py-2 px-4 mb-2"
+              />
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => handleUploadPhoto(logo_url)}
+              >
+                Save
+              </button>
+            </div>
+          )}
           <table className="table-auto w-full">
             <tbody>
+              <tr className="border-b">
+                <td className="py-2 font-semibold text-gray-700">Campaign Id</td>
+                <td className="py-2 text-gray-600">{data._id}</td>
+              </tr>
               <tr className="border-b">
                 <td className="py-2 font-semibold text-gray-700">Country</td>
                 <td className="py-2 text-gray-600">{data.country}</td>
