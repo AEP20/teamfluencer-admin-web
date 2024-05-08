@@ -64,7 +64,6 @@ export const TAfindApprovedCampaigns = async (page: number, perPage: number, tok
   }
 };
 
-
 export const TAfindCampaignById = async (_id: any, token: string) => {
   try {
     const response = await apiClient.get(`/admin/campaign/_id/${_id}`, {
@@ -75,11 +74,11 @@ export const TAfindCampaignById = async (_id: any, token: string) => {
     if (response.status === 200) {
       return response.data;
     } else {
-      console.log("response", response)
+      console.log('response', response);
       throw new Error('Find User failed');
     }
   } catch (error) {
-    console.log("error: ", error)
+    console.log('error: ', error);
     throw error;
   }
 };
@@ -184,4 +183,22 @@ export const TAdoApprovalCampaign = async (status: string, rejected_reason: any,
   }
 };
 
+export const TAupdateCampaign = async (id: any, data: any, token: string) => {
+  try {
+    const response = await apiClient.put(`/admin/campaign/updatecampaign/${id}`, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Update failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
 

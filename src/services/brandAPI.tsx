@@ -88,6 +88,7 @@ export const TAupdateBrand = async (id: any, data: any, token: string) => {
     });
 
     if (response.status === 200) {
+      console.log('response.data', response.data.brand_logo);
       return response.data;
     } else {
       throw new Error('Update failed');
@@ -144,6 +145,25 @@ export const TAaddBalance = async (id: any, balance: number, token: string) => {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Update failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAupdateBrandLogo = async (id: any, data: any, token: string) => {
+  try {
+    const response = await apiClient.put(`/admin/brand/updatebrandlogo/${id}`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent></calculated>',
       },
     });
 
