@@ -13,6 +13,7 @@ import DownloadCSVButton from '../components/DownloadCSVButton';
 import { selectToken } from '../redux/store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVenus, faMars, faEye } from '@fortawesome/free-solid-svg-icons';
+import { selectApprovedUserFilters, setApprovedUserFilters } from '../redux/store/approvedUserFilterSlice';
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
@@ -75,9 +76,12 @@ const fetchData = async (page: number, perPage: number, token: string) => {
 
 const ApprovedUsers = () => {
   const token = useSelector(selectToken);
+  const approvedUserFilters = useSelector(selectApprovedUserFilters);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setPageTitle('Range Search Table'));
+    const initialFilters = approvedUserFilters;
+    setFilters(initialFilters);
   });
   const [userData, setUserData] = useState([] as WaitingApprovalUserData[]);
   const [page, setPage] = useState(1);
@@ -228,7 +232,10 @@ const ApprovedUsers = () => {
 
   const setFilter = (key: keyof Filters, type: FilterType, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value } }));
+    const newFilters = { ...filters, [key]: { ...filters[key], [type]: value } };
+    dispatch(setApprovedUserFilters(newFilters));
   };
+  
   useEffect(() => {
     setPage(1);
   }, [pageSize, filters]);

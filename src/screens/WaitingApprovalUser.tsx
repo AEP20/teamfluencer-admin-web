@@ -13,6 +13,10 @@ import DownloadCSVButton from '../components/DownloadCSVButton';
 import { selectToken } from '../redux/store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVenus, faMars, faEye } from '@fortawesome/free-solid-svg-icons';
+import {
+  selectWaitingApprovalUserFilters,
+  setWaitingApprovalUserFilters,
+} from '../redux/store/waitingApprovalUserFilterSlice';
 
 const phoneNumberFixer = (phoneNumber: string) => {
   const fixedPhoneNumber = phoneNumber.slice(0, 13);
@@ -75,9 +79,13 @@ const fetchData = async (page: number, perPage: number, token: string) => {
 
 const WaitingApprovalUser = () => {
   const token = useSelector(selectToken);
+  const waitingApprovalUserFilters = useSelector(selectWaitingApprovalUserFilters);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setPageTitle('Range Search Table'));
+    const initialFilters = waitingApprovalUserFilters;
+    setFilters(initialFilters);
+    setSearch(initialFilters.keywords);
   });
   const [userData, setUserData] = useState([] as WaitingApprovalUserData[]);
   const [page, setPage] = useState(1);
@@ -227,7 +235,16 @@ const WaitingApprovalUser = () => {
 
   const setFilter = (key: keyof Filters, type: FilterType, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value } }));
+    const newFilters = { ...filters, [key]: { ...filters[key], [type]: value } };
+    dispatch(setWaitingApprovalUserFilters(newFilters));
   };
+
+  const handleKeywordSearch = (keyword: any) => {
+    setSearch(keyword);
+    const newFilters = { ...filters, keywords: keyword };
+    dispatch(setWaitingApprovalUserFilters(newFilters));
+  };
+
   useEffect(() => {
     setPage(1);
   }, [pageSize, filters]);
@@ -347,7 +364,7 @@ const WaitingApprovalUser = () => {
               className="form-input w-auto"
               value={search}
               placeholder="Keywords"
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleKeywordSearch(e.target.value)}
             />
           </div>
           <div className="md:flex md:flex-row w-3/4">
