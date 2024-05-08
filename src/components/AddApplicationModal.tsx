@@ -11,6 +11,7 @@ const applicationStates = [
     'content_approved', 'brand_canceled', 'user_canceled', 'content_shared', 'application_done',
 ];
 interface FormData {
+    user_id: string;
     insta_username: string;
     age: number;
     gender: string;
@@ -31,6 +32,7 @@ interface FormData {
 export const AddApplicationModal = ({ isOpen, onClose, _id, token, currency }: { isOpen: boolean, onClose: any, _id: any, token: string, currency: string }) => {
     const [formData, setFormData] = useState<FormData>
         ({
+            user_id: '',
             insta_username: '',
             age: 0,
             gender: '',
@@ -53,7 +55,7 @@ export const AddApplicationModal = ({ isOpen, onClose, _id, token, currency }: {
     const [formError, setFormError] = useState<string>('');
     const sortedJobsArray: any[] = jobsArray.sort((a, b) => a.label.localeCompare(b.label));
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
+    const [use_credentials, setUseCredentials] = useState<any>(false);
 
     useEffect(() => {
         if (formData.insta_username.length >= 3) {
@@ -148,7 +150,7 @@ export const AddApplicationModal = ({ isOpen, onClose, _id, token, currency }: {
                 return;
             }
 
-            const response: any = await TACreateApplication(formData, _id, token, selectedState);
+            const response: any = await TACreateApplication(formData, _id, token, selectedState, use_credentials);
             console.log("response handleSubmit : ", response);
             if (response.success) {
                 onClose(); // Close modal if submission is successful
@@ -171,6 +173,7 @@ export const AddApplicationModal = ({ isOpen, onClose, _id, token, currency }: {
             // Example of setting state based on the response. Adjust according to your actual data structure.
             setFormData({
                 ...formData,
+                user_id: response._id,
                 insta_username: response.instagram.username,
                 age: response.age, // Direct mapping
                 gender: response.gender,
@@ -232,6 +235,19 @@ export const AddApplicationModal = ({ isOpen, onClose, _id, token, currency }: {
                             </ul>
                         </div>
                     )}
+
+                    {formData.user_id && (
+                        <label className="block">
+                            <input
+                                id="default-checkbox"
+                                type="checkbox"
+                                value={use_credentials}
+                                onChange={(e) => setUseCredentials(e.target.checked)}
+                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                            <span className="text-gray-700 ml-2">Add User Credentials</span>
+                        </label>
+                    )}
+
 
                     <label className="block">
                         <span className="text-gray-700">Currency: {currency}</span>

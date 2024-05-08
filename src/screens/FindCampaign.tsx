@@ -3,7 +3,7 @@ import { AnyIfEmpty, useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { TAfindBrand, TAfindBrandName } from '../services/brandAPI';
 import { TAfindCampaignById } from '../services/campaignsAPI';
-import { TAfindApplicationByCampaignId, TAnewApplicationPricing } from '../services/applicationAPI';
+import { TAfindApplicationByCampaignId, TAupdateApplication } from '../services/applicationAPI';
 import { BrandType, MoneyExchanges } from '../types/brandData';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import BrandProfile from '../components/BrandProfile';
@@ -13,21 +13,25 @@ import { CampaignType, InfoType, Limitations, ApplicationCounts } from '../types
 import { CampaignProfile } from '../components/CampaignProfile';
 import { AddApplicationModal } from '../components/AddApplicationModal';
 import { set } from 'lodash';
+import { use } from 'i18next';
 
 const applicationStates = [
   'first_application', 'account_rejected', 'waiting_address', 'address_to_approve', 'address_rejected',
   'waiting_content', 'content_offered', 'content_to_share', 'content_rejected',
   'content_approved', 'brand_canceled', 'user_canceled', 'content_shared', 'application_done',
 ];
+const brandCanceledStates = ['first_application'];
 
 
-const DetailedApplicationsTable = ({ application_data, token }: { application_data: any, token: string },) => {
+const DetailedApplicationsTable = ({ application_data, token, reload }: { application_data: any, token: string, reload: any },) => {
   const [showAllKeywords, setShowAllKeywords] = useState<any>({});
   const [showAllHobbies, setShowAllHobbies] = useState<any>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newPricingBrand, setNewPricingBrand] = useState<number>(0);
   const [newPricingUser, setNewPricingUser] = useState<number>(0);
   const [application, setApplication] = useState<any>({});
+  const [newStateChange, setNewStateChange] = useState<any>({});
+  const [newStateUpdateMessage, setNewStateUpdateMessage] = useState<any>([]);
 
   const handleOpenPricingModal = (application: any) => {
     console.log('application : ', application)
@@ -38,15 +42,23 @@ const DetailedApplicationsTable = ({ application_data, token }: { application_da
   };
 
   useEffect(() => {
+
   }, [application]);
 
   const handleClosePricingModal = () => {
     setIsModalOpen(false);
     setApplication({});
   };
+  const handleNewStateChange = (e: any, application_id: string, index: number) => {
+    setNewStateChange((prevState: any) => ({ ...prevState, [index]: e.target.value }));
+
+    console.log('new state : ', e.target.value, ' application_id : ', application_id)
+    // TAupdateApplication({ state: e.target.value }, application_id, token);
+  }
+
 
   const handleSavePricingData = (app: any) => {
-    const response = TAnewApplicationPricing({ price_brand: newPricingBrand, price_user: newPricingUser }, app._id, token);
+    const response = TAupdateApplication({ price_brand: newPricingBrand, price_user: newPricingUser }, app._id, token);
     setIsModalOpen(false);
   };
   // Toggle visibility function
@@ -63,7 +75,19 @@ const DetailedApplicationsTable = ({ application_data, token }: { application_da
       [index]: !prevShowAllKeywords[index],
     }));
   }
+  const updateApplication = async (update: any, _id: string, token: string, index: any) => {
+    TAupdateApplication(update, _id, token)
+      .then((response) => {
+        setNewStateUpdateMessage((prevState: any) => ({ ...prevState, [index]: 'State updated successfully' }));
+        setNewStateChange([])
+        setNewStateUpdateMessage([])
+      })
+      .catch((error) => {
+        setNewStateUpdateMessage((prevState: any) => ({ ...prevState, [index]: 'State update failed' + error }));
+      });
 
+
+  }
 
 
   return (
@@ -74,6 +98,7 @@ const DetailedApplicationsTable = ({ application_data, token }: { application_da
         <thead className="bg-gray-200">
           <tr>
             <th className="border px-4 py-2">Username</th>
+            <th className="border px-4 py-2">Update State</th>
             <th className="border px-4 py-2">Pricing User/Brand</th>
             <th className="border px-4 py-2">Followers</th>
             <th className="border px-4 py-2">State</th>
@@ -101,18 +126,59 @@ const DetailedApplicationsTable = ({ application_data, token }: { application_da
         <tbody>
           {application_data.map((app: any, index: any) => (
             <tr className="border-t">
-              <td className="border px-4 py-2">{app.insta_username}</td>
-              <td className="border px-4 py-2">{app.price_user}/{app.price_brand}
-                <button 
-                className='text-indigo-600 bg-indigo-100 rounded px-2 py-1  text-xs'
-                onClick={() => handleOpenPricingModal(app)}>Edit</button>
+              <td className="border px-4 py-2">
+                {app.insta_username}
+              </td>
+              <td className="border px-4 py-2">
+                {app.state === "brand_canceled" || app.state === "account_rejected" ?
+                  <>
+                    <select
+                      className="w-48 bg-gray-200 text-xs border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                      value={newStateChange[index]}
+                      onChange={(e) => handleNewStateChange(e, app._id, index)}
+                    >
+                      <option>
+                        Select New State
+                      </option>
+                      {brandCanceledStates.map((state) => (
+                        <option key={state} value={state}>{state}</option>
+                      ))}
+                    </select>
+                    {newStateChange[index] ?
+                      <button
+                        className='bg-indigo-100 px-4 py-2 rounded mr-4 mt-2'
+                        onClick={() => updateApplication({ state: newStateChange[index] }, app._id, token, index)}>
+                        Save
+                      </button>
+                      : null
+                    }
+                    {newStateUpdateMessage[index] ?
+                      <p className="text-red-500 text-xs">{newStateUpdateMessage[index]}</p>
+                      : null
+                    }
+                  </>
+                  : null}
+              </td>
+              <td className="border px-4 py-2">
+                <div className="flex items-center justify-between w-32">
+                {app.price_user}/{app.price_brand}
+                <button
+                  className='text-indigo-600 bg-indigo-100 rounded px-2 py-1 ml-3 text-xs'
+                  onClick={() => handleOpenPricingModal(app)}>
+                  Edit
+                </button>
+                </div>
               </td>
               {isModalOpen ?
                 <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
                   <div className="bg-white p-8 rounded-lg shadow-lg  overflow-y-auto h-5/6 max-w-md w-full space-y-4">
-                    <h2 className="text-xl font-semibold mb-4">Pricing Settings</h2>
+                    <h2 className="text-xl font-semibold mb-4">
+                      Pricing Settings
+                    </h2>
                     <form onSubmit={handleClosePricingModal} className="space-y-4 flex-col">
-                      <label htmlFor="newPricingBrand">New Pricing User</label>
+                      <label htmlFor="newPricingBrand">
+                        New Pricing User
+                      </label>
                       <input
                         type="text"
                         value={newPricingUser}
@@ -235,8 +301,9 @@ const FindCampaign = () => {
     setSelectedState(e.target.value);
   };
 
-  const handleForm = async (e: any) => {
-    e.preventDefault();
+  const reload = async (e: any) => {
+    const application_data = await TAfindApplicationByCampaignId(_id, token, selectedState);
+    setApplications(application_data.applications);
 
   };
 
@@ -256,9 +323,11 @@ const FindCampaign = () => {
         <div className="w-full ">
           {campaign && <CampaignProfile {...campaign} />}
         </div>
-        <div className="w-full ">
+        <div className="w-full">
+          <label className="text-sm">Create New Application:</label>
           <button className='bg-indigo-100 px-8 py-4 rounded-md my-4' onClick={handleOpenModal}>Add New Application</button>
           <AddApplicationModal isOpen={isModalOpen} onClose={handleCloseModal} _id={_id} token={token} currency={campaign ? campaign.currency : "TRY"} />
+          <label className="text-sm">Filter Applications:</label>
           <select
             className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             value={selectedState}
@@ -269,7 +338,10 @@ const FindCampaign = () => {
               <option key={state} value={state}>{state}</option>
             ))}
           </select>
-          <DetailedApplicationsTable application_data={applications} token={token} />
+          <label className="text-lg mt-5">Applications</label>
+          <DetailedApplicationsTable application_data={applications} token={token}
+            reload={reload}
+          />
         </div>
 
         <form className="w-1/4 absolute top-5 right-6">
