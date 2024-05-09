@@ -1,5 +1,5 @@
 import Dropdown from '../components/Dropdown';
-import { TAstatistics, TAtcNoControl } from '../services/statisticsAPI';
+import { TAstatistics} from '../services/statisticsAPI';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectToken } from '../redux/store/userSlice';
 import { useEffect, useState } from 'react';
