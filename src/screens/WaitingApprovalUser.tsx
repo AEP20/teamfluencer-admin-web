@@ -102,7 +102,7 @@ const WaitingApprovalUser = () => {
   const [keyword, setKeyword] = useState('');
   const [autofillCountries, setAutofillCountries] = useState<string[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+ 
   useEffect(() => {
     setLoading(true);
     const getUserData = async () => {
