@@ -1,14 +1,14 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { TASpamBrand, TAfindAllBrands, TAupdateBrandNote } from '../services/brandAPI';
+import { TASpamBrand, TAfindAllBrands, TAupdateBrandMeeting, TAupdateBrandNote } from '../services/brandAPI';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
-import { AllBrandType } from '../types/brandData';
+import { AllBrandType, Meetings } from '../types/brandData';
 import { selectToken } from '../redux/store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDollarSign, faEye, faEdit, faSave, faBan } from '@fortawesome/free-solid-svg-icons';
+import { faDollarSign, faEye, faEdit, faSave, faBan, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const fetchData = async (page: number, perPage: number, brand: string, token: string) => {
   try {
@@ -22,7 +22,6 @@ const fetchData = async (page: number, perPage: number, brand: string, token: st
           ...item,
         };
       });
-
       return { data, totalPages };
     }
   } catch (error: any) {
@@ -47,12 +46,15 @@ const AllBrands = () => {
   const [brandname, setBrandname] = useState('');
   // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [notes, setNotes] = useState<NotesState>({});
+  const [notes, setNotes] = useState('');
+  const [brandNotes, setBrandNotes] = useState(['']);
   const [editMode, setEditMode] = useState<EditModeState>({});
-
-  interface NotesState {
-    [key: string]: string;
-  }
+  const [brandMeetings, setBrandMeetings] = useState<Meetings>([
+    {
+      time: new Date(),
+      description: '',
+    },
+  ]);
 
   interface EditModeState {
     [key: string]: boolean;
@@ -98,7 +100,7 @@ const AllBrands = () => {
     return <div>{brandId}</div>;
   };
 
-  const handleUpdateNote = async (_id: string, brandNotes: string) => {
+  const handleUpdateNote = async (_id: string, brandNotes: string[]) => {
     try {
       const brand = await TAupdateBrandNote(_id, brandNotes, token);
       if (brand) {
@@ -111,13 +113,35 @@ const AllBrands = () => {
     }
   };
 
-  const handleInputChange = (_id: string, value: string) => {
-    setNotes((prev) => ({ ...prev, [_id]: value }));
+  const handleDeleteNote = (_id: any, index: any) => {
+    const newNotes = brandNotes.filter((note, noteIndex) => noteIndex !== index);
+    handleUpdateNote(_id, newNotes);
   };
 
-  const toggleEditMode = (_id: string, initialNote: string) => {
+  const handleUpdateMeeting = async (_id: any, brandMeetings: any) => {
+    try {
+      const brand = await TAupdateBrandMeeting(_id, brandMeetings, token);
+      if (brand) alert('Meeting updated successfully');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDeleteMeeting = (_id: any, index: any) => {
+    if (brandMeetings !== undefined) {
+      const newMeetings = brandMeetings.filter((meeting, meetingIndex) => meetingIndex !== index);
+      handleUpdateMeeting(_id, newMeetings);
+    }
+  };
+
+  // const handleInputChange = (_id: string, value: string) => {
+  //   setNotes((prev) => ({ ...prev, [_id]: value }));
+  // };
+
+  const toggleEditMode = (_id: string, initialNote: string[] | string) => {
     setEditMode((prev) => ({ ...prev, [_id]: true }));
-    setNotes((prev) => ({ ...prev, [_id]: initialNote }));
+    const noteString = Array.isArray(initialNote) ? initialNote.join(', ') : initialNote;
+    // setNotes((prev) => ({ ...prev, [_id]: noteString }));
   };
 
   const handleSpamBrand = (_id: any) => {
@@ -236,20 +260,30 @@ const AllBrands = () => {
               {
                 accessor: 'notes',
                 title: 'Notes',
-                render: ({ _id, notes: initialNote }: { _id: string; notes: string }) => (
+                render: ({ _id, notes: initialNote }: { _id: string; notes: string[] }) => (
                   <div className="text-center items-center mr-4">
                     {editMode[_id] ? (
                       <div>
-                        <input
-                          type="text"
-                          value={notes[_id] ?? initialNote}
-                          onChange={(e) => handleInputChange(_id, e.target.value)}
-                          className="text-input"
-                        />
+                        <ul>
+                          {initialNote
+                            .filter((note) => note !== '')
+                            .map((note, index) => (
+                              <li key={index} className="flex items-center">
+                                <p className="text-gray-600 mt-2">{note}</p>
+                                <FontAwesomeIcon
+                                  icon={faTrash}
+                                  className="mt-2"
+                                  style={{ color: '#005eff', marginLeft: '8px', cursor: 'pointer' }}
+                                  onClick={() => handleDeleteNote(_id, index)}
+                                />
+                              </li>
+                            ))}
+                        </ul>
+                        <input type="text" onChange={(e) => setNotes(e.target.value)} className="text-input mt-2" />
                         <FontAwesomeIcon
                           icon={faSave}
                           style={{ color: 'green', cursor: 'pointer', marginLeft: '10px' }}
-                          onClick={() => handleUpdateNote(_id, notes[_id] ?? initialNote)}
+                          onClick={() => handleUpdateNote(_id, [...initialNote, notes])}
                         />
                       </div>
                     ) : (
@@ -258,10 +292,30 @@ const AllBrands = () => {
                         <FontAwesomeIcon
                           icon={faEdit}
                           style={{ color: '#005eff', cursor: 'pointer', marginLeft: '10px' }}
-                          onClick={() => toggleEditMode(_id, initialNote)}
+                          onClick={() => {
+                            toggleEditMode(_id, initialNote);
+                            setBrandNotes(initialNote);
+                          }}
                         />
                       </>
                     )}
+                  </div>
+                ),
+              },
+              {
+                accessor: 'meetings',
+                title: 'Meetings',
+                render: ({ _id, meetings: initialMeeting }: { _id: string; meetings: Meetings }) => (
+                  <div className="text-center items-center mr-4">
+                    <ul>
+                      {initialMeeting &&
+                        initialMeeting.map((meeting, index) => (
+                          <li key={index} className="flex items-center">
+                            <p className="text-gray-600 mt-2">{new Date(meeting.time).toLocaleString('tr-TR')}</p>
+                            <p className="text-gray-600 mt-2 ml-4 font-bold">{meeting.description}</p>
+                          </li>
+                        ))}
+                    </ul>
                   </div>
                 ),
               },
