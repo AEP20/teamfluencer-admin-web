@@ -149,7 +149,7 @@ const WaitingApprovalUser = () => {
       ) {
         return false;
       }
-
+ 
       const averageLikeFilter = filters.average_like;
       if (
         (averageLikeFilter.min !== '' && Number(item.average_like) < Number(averageLikeFilter.min)) ||
