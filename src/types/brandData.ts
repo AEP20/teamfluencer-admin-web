@@ -13,8 +13,16 @@ type BrandType = {
   job_title: string;
   billing_address: BillingAddress;
   money_exchanges: MoneyExchanges[];
-  notes: string;
+  notes: Array<string>;
+  meetings: Meetings;
 };
+
+type Meetings = [
+  {
+    time: Date;
+    description: string;
+  },
+];
 
 type BillingAddress = {
   type: string;
@@ -47,8 +55,9 @@ type AllBrandType = {
   email: string;
   phone: string;
   balance: number;
-  notes: string;
+  notes: Array<string>;
+  meetings: Meetings;
   _id: string;
 };
 
-export type { BillingAddress, MoneyExchanges, BrandType, InfoType, AllBrandType };
+export type { BillingAddress, MoneyExchanges, BrandType, InfoType, AllBrandType, Meetings };

@@ -98,11 +98,11 @@ export const TAupdateBrand = async (id: any, data: any, token: string) => {
   }
 };
 
-export const TAupdateBrandNote = async (id: string, notes: string, token: string) => {
+export const TAupdateBrandNote = async (id: string, notes: string[], token: string) => {
   try {
     const response = await apiClient.put(
-      `/admin/brand/updatenote/${id}/${notes}`,
-      {},
+      `/admin/brand/updatenote/${id}`,
+      { notes },
       {
         headers: {
           'Content-Type': 'application/json',
@@ -183,6 +183,29 @@ export const TAupdateBrandLogo = async (id: any, data: any, token: string) => {
         'Content-Type': 'multipart/form-data; boundary=<calculated when request is sent></calculated>',
       },
     });
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error('Update failed');
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const TAupdateBrandMeeting = async (id: string, meeting: any, token: string) => {
+  try {
+    const response = await apiClient.put(
+      `/admin/brand/updatemeeting/${id}`,
+      { meeting },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
 
     if (response.status === 200) {
       return response.data;

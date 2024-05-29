@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { MoneyExchanges, BillingAddress, BrandType, InfoType } from '../types/brandData';
+import { MoneyExchanges, BillingAddress, BrandType, InfoType, Meetings } from '../types/brandData';
 import './styles/styles.css';
 import { useSelector } from 'react-redux';
 import { selectToken } from '../redux/store/userSlice';
-import { TAdeleteNote, TAupdateBrand, TAupdateBrandLogo, TAupdateBrandNote } from '../services/brandAPI';
+import { TAupdateBrand, TAupdateBrandLogo, TAupdateBrandMeeting, TAupdateBrandNote } from '../services/brandAPI';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import TimePicker from 'react-time-picker';
+import 'react-time-picker/dist/TimePicker.css';
 
 const BrandProfile = ({
   _id,
@@ -21,12 +27,22 @@ const BrandProfile = ({
   money_exchanges,
   notes,
   brand_logo,
+  meetings,
 }: BrandType) => {
   const token = useSelector(selectToken);
 
   const [isOpen, setIsOpen] = useState(false);
   const [logo_url, setLogo_url] = useState('');
-  const [brandNotes, setNotes] = useState(notes ?? '');
+  const [brandNotes, setBrandNotes] = useState(['']);
+  const [notess, setNotess] = useState('');
+  const [meetingDescription, setMeetingDescription] = useState('');
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [brandMeetings, setBrandMeetings] = useState<Meetings>([
+    {
+      time: new Date(),
+      description: '',
+    },
+  ]);
   const [moneyExchanges, setMoneyExchanges] = useState<MoneyExchanges[]>(money_exchanges.slice(0, 50) ?? []);
   const [billingAddress, setBillingAddress] = useState<BillingAddress>(
     billing_address ?? {
@@ -40,6 +56,20 @@ const BrandProfile = ({
       zip_code: '',
     },
   );
+
+  useEffect(() => {
+    if (Array.isArray(notes) && notes.length > 0) {
+      setBrandNotes(notes);
+    } else {
+      setBrandNotes(['']);
+    }
+  }, [notes]);
+
+  useEffect(() => {
+    if (meetings && Array.isArray(meetings)) {
+      setBrandMeetings(meetings);
+    }
+  }, [meetings, brandMeetings]);
 
   const brandInfo: InfoType[] = [
     { key: 'Brand Name', value: brand_name },
@@ -55,7 +85,7 @@ const BrandProfile = ({
     { key: 'Brand Id', value: _id },
   ];
 
-  const handleUpdateNote = async () => {
+  const handleUpdateNote = async (brandNotes: any) => {
     try {
       const brand = await TAupdateBrandNote(_id, brandNotes, token);
       if (brand) alert('Note updated successfully');
@@ -64,12 +94,24 @@ const BrandProfile = ({
     }
   };
 
-  const handleDeleteNote = async () => {
+  const handleDeleteNote = (index: any) => {
+    const newNotes = brandNotes.filter((note, noteIndex) => noteIndex !== index);
+    handleUpdateNote(newNotes);
+  };
+
+  const handleUpdateMeeting = async (brandMeetings: any) => {
     try {
-      const brand = await TAdeleteNote(_id, token);
-      if (brand) alert('Note deleted successfully');
+      const brand = await TAupdateBrandMeeting(_id, brandMeetings, token);
+      if (brand) alert('Meeting updated successfully');
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const handleDeleteMeeting = (index: any) => {
+    if (brandMeetings !== undefined) {
+      const newMeetings = brandMeetings.filter((meeting, meetingIndex) => meetingIndex !== index);
+      handleUpdateMeeting(newMeetings);
     }
   };
 
@@ -108,6 +150,20 @@ const BrandProfile = ({
       input.click();
     } catch (error) {
       console.error('Error selecting photo:', error);
+    }
+  };
+
+  const handleDateChange = (date: any) => {
+    setSelectedDate(date);
+  };
+
+  const handleTimeChange = (time: any) => {
+    if (time !== null) {
+      const newDate = new Date(selectedDate);
+      const [hours, minutes] = time.split(':');
+      newDate.setHours(hours);
+      newDate.setMinutes(minutes);
+      setSelectedDate(newDate);
     }
   };
 
@@ -170,22 +226,95 @@ const BrandProfile = ({
           ))}
         </tbody>
       </table>
-      <div className="flex flex-col">
-        <label className="text-sm font-semibold text-gray-500">Note</label>
-        <textarea
-          className="border border-gray-300 rounded-md p-2"
-          value={brandNotes}
-          onChange={(e) => setNotes(e.target.value)}
-        />
-        <div className="flex gap-12 mt-2">
-          <button className="bg-blue-500 text-white rounded-md px-3 py-2 w-full" onClick={handleUpdateNote}>
-            Update Note
-          </button>
-          <button className="bg-blue-500 text-white rounded-md px-3 py-2 w-full" onClick={handleDeleteNote}>
-            Delete Note
-          </button>
+      {/* Brand Notes */}
+      <div className="flex flex-col mt-2">
+        <label className="text-sm font-semibold text-gray-500">Notes</label>
+        <div className="flex bg-white p-4 rounded-lg shadow border border-gray-200">
+          <div className="flex flex-col mt-2">
+            <textarea
+              className="w-full p-2 border border-gray-200 rounded-md mb-4"
+              placeholder="Write a note"
+              value={notess}
+              onChange={(e) => setNotess(e.target.value)}
+            />
+            <button
+              className="bg-blue-500 text-white rounded-md px-3 py-2 w-full"
+              onClick={() => handleUpdateNote([...brandNotes, notess])}
+            >
+              Add Note
+            </button>
+          </div>
+          <div className="flex-grow ml-8">
+            <ul>
+              {brandNotes
+                .filter((note) => note !== '')
+                .map((note, index) => (
+                  <li key={index} className="flex items-center">
+                    <p className="text-gray-600 mt-2">{note}</p>
+                    <FontAwesomeIcon
+                      icon={faTrash}
+                      className="mt-2"
+                      style={{ color: '#005eff', marginLeft: '8px', cursor: 'pointer' }}
+                      onClick={() => handleDeleteNote(index)}
+                    />
+                  </li>
+                ))}
+            </ul>
+          </div>
         </div>
       </div>
+      {/* Brand Meetings */}
+      <div className="flex flex-col mt-2">
+        <label className="text-sm font-semibold text-gray-500">Meetings</label>
+        <div className="flex bg-white p-4 rounded-lg shadow border border-gray-200">
+          <div className="flex flex-col mt-2">
+            <TimePicker
+              onChange={handleTimeChange}
+              value={selectedDate ? selectedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+              className="w-full p-2 border border-gray-200 rounded-md mb-4"
+              disableClock={true}
+              clearIcon={null}
+            />
+            <DatePicker
+              selected={selectedDate}
+              onChange={handleDateChange}
+              className="w-full p-2 border border-gray-200 rounded-md mb-4"
+              placeholderText="mm/dd/yyyy"
+            />
+            <textarea
+              className="w-full p-2 border border-gray-200 rounded-md mb-4"
+              placeholder="Add a description"
+              value={meetingDescription}
+              onChange={(e) => setMeetingDescription(e.target.value)}
+            />
+            <button
+              className="bg-blue-500 text-white rounded-md px-3 py-2 w-full"
+              onClick={() =>
+                handleUpdateMeeting([...brandMeetings, { time: selectedDate, description: meetingDescription }])
+              }
+            >
+              Add Meeting
+            </button>
+          </div>
+          <div className="flex-grow ml-8">
+            <ul>
+              {brandMeetings.map((meeting, index) => (
+                <li key={index} className="flex items-center">
+                  <p className="text-gray-600 mt-2">{new Date(meeting.time).toLocaleString('tr-TR')}</p>
+                  <p className="text-gray-600 mt-2 ml-4 font-bold">{meeting.description}</p>
+                  <FontAwesomeIcon
+                    icon={faTrash}
+                    className="mt-2"
+                    style={{ color: '#005eff', marginLeft: '8px', cursor: 'pointer' }}
+                    onClick={() => handleDeleteMeeting(index)}
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
       {Object.values(billingAddress).some((value) => value) && (
         // Only render this section if there's any value in billingAddress
         <div className="mt-5">

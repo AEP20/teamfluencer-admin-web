@@ -7,7 +7,6 @@ import { selectToken } from '../redux/store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
-
 export const CampaignProfile = (data: CampaignType) => {
   const token = useSelector(selectToken);
 
@@ -86,38 +85,23 @@ export const CampaignProfile = (data: CampaignType) => {
     );
   }, [data]);
 
-  const campaignInfo: InfoType[] = [
-    { key: 'Campaign Id:', value: _id },
-    { key: 'Campaign Name:', value: name },
-    { key: 'Country:', value: country },
-    { key: 'Description:', value: description },
-    { key: 'Platform:', value: platform },
-    { key: 'Visibility:', value: visibility === true ? 'true' : 'false' },
-    { key: 'Is Verified:', value: isVerified === true ? 'true' : 'false' },
-    { key: 'Rejected Reason:', value: rejectedReason === '' ? 'No rejected Reason' : rejectedReason },
-  ];
-
-
   const handleUpdateNote = async (campaignNotes: any) => {
     try {
-      const brand: any = await TAupdateCampaignNotes(_id, campaignNotes, token); // ! UPDATE TYPES
-      if (brand) alert('Note updated successfully');
+      const campaign: any = await TAupdateCampaignNotes(_id, campaignNotes, token); // ! UPDATE TYPES
+      if (campaign) alert('Note updated successfully');
     } catch (error) {
       console.error(error);
     }
   };
-
 
   const handleUploadPhoto = async (logo_url: any) => {
     try {
       TAupdateCampaign(_id, { cover_photo: logo_url }, token);
       setIsOpen(false);
-
     } catch (error) {
       console.error(error);
     }
   };
-
 
   const handleDeleteNote = (index: any) => {
     const newNotes = campaignNotes.filter((note, noteIndex) => noteIndex !== index);

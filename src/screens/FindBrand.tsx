@@ -94,6 +94,7 @@ const FindBrand = () => {
             }))
           : [],
         notes: response.notes ? response.notes : '',
+        meetings: response.meetings ? response.meetings : '',
       };
       setbrandData(object);
     } catch (error: any) {

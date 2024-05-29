@@ -87,16 +87,14 @@ const WaitingApprovalUser = () => {
     dispatch(setPageTitle('Range Search Table'));
     const initialFilters = waitingApprovalUserFilters;
     setFilters(initialFilters);
-    setSearch(initialFilters.keywords);
   });
+
   const [userData, setUserData] = useState([] as WaitingApprovalUserData[]);
   const [page, setPage] = useState(1);
   const PAGE_SIZES = [10, 20, 30, 50, 100];
   const [pageSize, setPageSize] = useState(PAGE_SIZES[2]);
   const [totalPages, setTotalPages] = useState(0);
   const [initialRecords, setInitialRecords] = useState(sortBy(userData, 'id'));
-  const [tempData, setTempData] = useState(initialRecords);
-  const [search, setSearch] = useState('');
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -104,7 +102,7 @@ const WaitingApprovalUser = () => {
   const [keyword, setKeyword] = useState('');
   const [autofillCountries, setAutofillCountries] = useState<string[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+ 
   useEffect(() => {
     setLoading(true);
     const getUserData = async () => {
@@ -125,12 +123,7 @@ const WaitingApprovalUser = () => {
       }
     };
     getUserData();
-  }, [page, pageSize, token, search]);
-
-  useEffect(() => {
-    const filteredData = applyFilters(initialRecords);
-    setInitialRecords(filteredData);
-  }, [search]);
+  }, [page, pageSize, token]);
 
   const applyFilters = (data: WaitingApprovalUserData[]): WaitingApprovalUserData[] => {
     return data.filter((item) => {
@@ -203,31 +196,13 @@ const WaitingApprovalUser = () => {
         const allKeywordsIncluded = keywordFilter.every((filterKeyword) => item.keyword.includes(filterKeyword));
 
         if (!allKeywordsIncluded) {
-          return true;
+          return false;
         }
       }
 
       return true;
     });
   };
-
-  useEffect(() => {
-    setInitialRecords(() => {
-      return tempData.filter((item) => {
-        return (
-          //   item.id.toString().includes(search.toLowerCase()) ||
-          //   item.firstName.toLowerCase().includes(search.toLowerCase()) ||
-          item.name.toLowerCase().includes(search.toLowerCase()) ||
-          //   item.company.toLowerCase().includes(search.toLowerCase()) ||
-          item.email.toLowerCase().includes(search.toLowerCase()) ||
-          item.age.toString().toLowerCase().includes(search.toLowerCase()) ||
-          //   item.dob.toLowerCase().includes(search.toLowerCase()) ||
-          item.phone.toLowerCase().includes(search.toLowerCase())
-          //   item.profile_complete.toLowerCase().includes(search.toLowerCase())
-        );
-      });
-    });
-  }, [search, tempData]);
 
   useEffect(() => {
     const data = sortBy(initialRecords, sortStatus.columnAccessor);
@@ -254,11 +229,10 @@ const WaitingApprovalUser = () => {
     } else {
       setFilters((prev) => ({ ...prev, [key]: { ...prev[key], [type]: value } }));
     }
-  };
-
-  const handleKeywordSearch = (keyword: any) => {
-    setSearch(keyword);
-    const newFilters = { ...filters, keywords: keyword };
+    var newFilters = { ...filters, [key]: { ...filters[key], [type]: value } };
+    if (key === 'keyword') {
+      newFilters[key] = value as string[];
+    }
     dispatch(setWaitingApprovalUserFilters(newFilters));
   };
 
@@ -304,7 +278,6 @@ const WaitingApprovalUser = () => {
       }
     });
     setInitialRecords(dt);
-    setTempData(dt);
   }, [filters]);
 
   const filterKeys: (keyof Filters)[] = [
@@ -430,16 +403,6 @@ const WaitingApprovalUser = () => {
       </div>
       <div className="flex w-full justify-between flex-end">
         <div className="flex flex-row items-center w-1/3">
-          <div className="ltr:ml-auto rtl:mr-auto mr-2 mb-4 mt-3">
-            <h2 className="text-sm font-bold ml-2 mb-1">Keywords</h2>
-            <input
-              type="text"
-              className="form-input w-auto"
-              value={search}
-              placeholder="Keywords"
-              onChange={(e) => handleKeywordSearch(e.target.value)}
-            />
-          </div>
           <div className="md:flex md:flex-row w-3/4">
             {filterKeys.map((key) => {
               if (key === 'country') {

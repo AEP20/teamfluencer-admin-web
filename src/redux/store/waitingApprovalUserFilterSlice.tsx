@@ -11,8 +11,8 @@ export const waitingApprovalUserFilterSlice = createSlice({
       tiktok_average_like: { min: '', max: '' },
       tiktok_engagement_rate: { min: '', max: '' },
       country: { value: '' },
+      keyword: [],
     },
-    keywords: [],
   },
   reducers: {
     setWaitingApprovalUserFilters: (state, action) => {
