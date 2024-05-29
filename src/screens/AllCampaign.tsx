@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../redux/store/themeConfigSlice';
 import { selectToken } from '../redux/store/userSlice';
-import { TAfindAllCampaigns, TAspamCampaign } from '../services/campaignsAPI';
+import { TAfindAllCampaigns, TAsetVisibility, TAspamCampaign } from '../services/campaignsAPI';
 import { CampaignType } from '../types/campaignsData';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
@@ -73,7 +73,6 @@ function AllCampaign() {
   useEffect(() => {
     dispatch(setPageTitle('All Campaigns'));
     const initialFilters = campaignFilters;
-    console.log('initialFilters: ', initialFilters);
     setPlatform(initialFilters.platform);
     setCreated_at(initialFilters.created_at);
     setIs_verified(initialFilters.is_verified);
@@ -180,9 +179,7 @@ function AllCampaign() {
     }
   };
 
-  useEffect(() => {
-    console.log('filters', campaignFilters);
-  }, [created_at, country, platform, is_verified, visibility, max_cost]);
+  useEffect(() => {}, [created_at, country, platform, is_verified, visibility, max_cost]);
 
   const handleCampaignSelect = (selectedCampaign: any) => {
     setCampaignName(selectedCampaign.name);
@@ -236,10 +233,14 @@ function AllCampaign() {
 
   const handleSpamCampaign = (_id: any) => {
     TAspamCampaign(_id, 'true', token);
-}
+  };
   const handleFilterChange = (filterName: any, value: any, setState: any) => {
     setState(value);
     dispatch(setCampaignFilters({ ...campaignFilters, [filterName]: value }));
+  };
+
+  const handleToggleVisibility = async (_id: any, status: any, token: any) => {
+    const res = await TAsetVisibility(_id, status, token);
   };
 
   return (
@@ -529,7 +530,7 @@ function AllCampaign() {
                     <div className="flex">
                       <div style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         <button
-                          // onClick={() => handleToggleVisibility(_id, visibility ? 'false' : 'true', token)}
+                          onClick={() => handleToggleVisibility(_id, visibility ? 'false' : 'true', token)}
                           className="bg-blue-500 text-white rounded-md px-3 py-2 w-full hover:bg-blue-600"
                         >
                           {loading ? (
